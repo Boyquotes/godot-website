@@ -1,0 +1,69 @@
+from flask import render_template, flash, redirect
+from app import app
+from app.forms import LoginForm, RomanConsularDating
+from app.convert import Convert_roman_calendar
+
+
+@app.route('/')
+@app.route('/index')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/user/<name>')
+def user_greeting(name):
+    return render_template('user.html', title='Home', user=name)
+
+
+@app.route('/browse')
+@app.route('/browse/')
+def browse():
+    return render_template('browse.html', about_text='Browse Data')
+
+
+@app.route('/about')
+@app.route('/about/')
+def about():
+    return render_template('about.html', about_text='About GODOT')
+
+
+@app.route('/convert/roman_consuls', methods=['GET', 'POST'])
+def roman_consuls():
+    form = RomanConsularDating()
+    if form.consulship.data is not None:
+        # date validation: some date combinations are not valid
+
+        #
+        # convert date from roman calendar with consulship
+        # get year from form.consulship.data (number at beginning of string until colon)
+        year = form.consulship.data.split(':')[0]
+        converted_date = Convert_roman_calendar.consulship(
+            form.day_number.data, form.day_ref.data, form.months.data, year)
+        result_string = converted_date
+        consulate = form.consulship.data
+        consul_label, godot_uri = form.consulship.data.split('|')
+        day_number_label = Convert_roman_calendar.get_day_number_label(form.day_number.data)
+        # return conversion result to template
+        return render_template('roman_consuls_result.html', title='Roman Consuls', consulship=consul_label, day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data, result=result_string)
+    return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        # return redirect('/index')
+        return render_template('user.html', title='Home', user=form.username.data)
+    return render_template('login.html', title='Sign In', form=form)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500

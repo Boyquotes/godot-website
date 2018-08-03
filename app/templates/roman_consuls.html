@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Roman Calendar &ndash; Consular Dating</h1>
+    <h4>(100 BC &ndash; 534 AD)</h4>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.consulship.label }}<br>
+            {{ form.consulship(size=40, id="autosearch") }}
+        </p>
+        <p>
+            {{ form.day_number.label }}<br>
+            {{ form.day_number(style='width:10em;') }}
+        </p>
+        <p>
+            {{ form.day_ref.label }}<br>
+            {{ form.day_ref(style='width:10em;') }}
+        </p>
+        <p>
+            {{ form.months.label }}<br>
+            {{ form.months(style='width:10em;margin-bottom:1.5em') }}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+{% endblock %}

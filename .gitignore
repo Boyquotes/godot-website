@@ -105,3 +105,4 @@ venv.bak/
 
 # various
 .DS_Store
+app/__pycache__/

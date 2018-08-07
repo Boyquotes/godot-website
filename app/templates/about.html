@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block app_content %}
 <h1>{{ about_text }}</h1>
-<p>huhu</p>
+<p>The aim of this graph database system is to create and maintain a gazetteer of calendar dates in different calendar systems used in the Greek and Roman antiquity all across the mediterranean sea. Like geographical gazetteers this authority list can be used to provide stable, unique identifiers (URIs) for each date in any of the calendar systems that has been used to refer to an astronomical day in any ancient source, be it papyri, ostraca or inscriptions. It will serve as a means to search and browse ancient texts by their precise temporal footprint using these URIs in digital editions and database or TEI/EpiDoc XML driven projects.</p>
+<p>Where a clear system of conversions between different calendar systems has been established, dates will be converted algorithmically into (proleptic) Julian calendar and Julian Day Numbers. As more and more dates from antiquity are linked to the GODOT infrastructure, a complex knowledge graph of ancient dated objects and texts evolves.</p>
+<h2>Work Packages</h2>
+<p>GODOT is an international collaboration, supported by the <a href="https://mellon.org/">Andrew W. Mellon Foundation</a>, between Prof. M. Depauw (<a href="https://www.trismegistos.org/">Trismegistos</a> at KU Leuven), Prof. C. Roueché (<a href="https://www.kcl.ac.uk/">King's College London</a>) and Dr. F. Grieshaber (<a href="https://www.uni-heidelberg.de/index_e.html">Heidelberg University</a> & <a href="https://www.hadw-bw.de/">Heidelberg Academy of Sciences and Humanities</a>).</p>
+<h3>Work Package 1: Prof. M. Depauw (Trismegistos, KU Leuven)</h3>
+<p>At KU Leuven, Prof. M. Depauw together with Dr. H. Verreth will create a Named Entity Recognition workflow for (semi)automatically extracting date information from ancient Greek papyri. As a sample all ca. 3.000 papyri from the Berlin Collection have been selected. This will result in a wide variety of calendar dates in different calendar types like e.g. the Egyptian or the Macedonian calendar; for year reckoning also several different systems can be expected (regnal years, indictions, consular dating, etc.).</p>
+<h3>Work Package 2: Prof. C. Roueché (King's College London)</h3>
+<p>At King’s College London, the Inscriptions of Roman Cyrenaica project (<a href="http://www.ircyr.kcl.ac.uk/">http://www.ircyr.kcl.ac.uk</a>, Prof. C. Roueché in collaboration with Dr. G. Bodard from the Institute of Classical Studies in London) is preparing digital editions in Epidoc XML for Greek (and some Latin) epigraphic texts. Of the ca. 2,300 inscriptions, about half are explicitly dated in a variety of calendar systems: they refer to eponymous officials, e.g. local priesthoods or the Roman consuls, to the regnal year of the emperor, or to the years passed since the Battle of Actium (Actian era). Prof. C. Roueché will manually tag dates attested in the inscriptions in the EpiDoc XML assisted by the GODOT infrastructure.</p>
+<h3>Work Package 3: Dr. F. Grieshaber (IT development & project management)</h3>
+<p>At Heidelberg University, Dr. F. Grieshaber will set up and continuously refine the GODOT data model, and develop a backend and frontend for the GODOT gazetteer.</p>
+<p>During this prototype phase a series of four workshops are scheduled: two workshops which will focus on data modelling of ancient non-Gregorian dates, one workshop about ancient calendar dates and ancient prosopography, and one concluding workshop which will present results of this project.</p>
+<h2>GODOT data model</h2>
+<p>The GODOT data model is based on a graph data model: Owing to the multitude of very different calendar systems from antiquity (solar, lunar, civil calendars, or calendars based on eras or eponymous officials) there is a need for a data model with highest flexibility possible to store calendrical data.</p>
+<p><img src="/static/GODOTConceptualModel.png" style="border:1px solid #ccc"/></p>
+<p>Example of modelling an ancient Roman date with consular year dating attested in a Latin Inscription text (<a href="http://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD018571">HD018571</a>):</p>
+<p>… Kal(endis) Novembri[bus] / Sabino II et Anu/lino co(n)s(ulibus)<br />
+… first day of November during the consulate of Sabinus and Anulinus</p>
+<p><img src="/static/consularDating.png" style="border:1px solid #ccc"/></p>
+<p>In a graph linking nodes which represent dates in different calendar systems can be done by inserting only one edge, so modeling an ancient double date or coregency or any type of synchronism. These ancient synchronisms provide information about the relations between different ancient calendar systems and are therefore a key feature in the GODOT gazetteer.</p>
+<p>Wherever feasible ancient dates will be converted algorithmically into the (proleptic) Julian calendar and the Julian Day Number (using existing online date converters like <a href="http://dc.online-resourcen.de/rest_api">Date Converter for Ancient Egypt</a> or creating new ones) for simple comparing ancient dates from different calendar systems and doing calendrical calculations.</p>
+<p>A public API will give third party projects access to the complete GODOT data for reuse.</p>
+<p style="margin-bottom:2em">All data and scripts are available on <a href="https://github.com/godot-gazetteer">github</a>.</p>
 
 {% endblock %}

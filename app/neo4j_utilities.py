@@ -9,8 +9,7 @@ def get_session():
     uri = "bolt://localhost:7687"
     driver = GraphDatabase.driver(uri, auth=basic_auth(
         app.config['NEO4J_USER'], app.config['NEO4J_PASSWORD']))
-    session = driver.session()
-    return session
+    return driver.session()
 
 
 def get_godot_path(godot_uri):

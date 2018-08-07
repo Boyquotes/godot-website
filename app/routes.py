@@ -19,13 +19,13 @@ def user_greeting(name):
 @app.route('/browse')
 @app.route('/browse/')
 def browse():
-    return render_template('browse.html', about_text='Browse Data')
+    return render_template('browse.html', title='Browse Data', browse_text='Browse Data')
 
 
 @app.route('/about')
 @app.route('/about/')
 def about():
-    return render_template('about.html', about_text='About GODOT')
+    return render_template('about.html', title='About GODOT', about_text='About GODOT')
 
 
 @app.route('/id/<godot_uri>')

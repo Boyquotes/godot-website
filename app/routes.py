@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect
 from app import app
 from app.forms import LoginForm, RomanConsularDating
 from app.convert import Convert_roman_calendar
+from app.neo4j_utilities import get_session, get_godot_path, get_attestations
 
 
 @app.route('/')
@@ -12,7 +13,7 @@ def index():
 
 @app.route('/user/<name>')
 def user_greeting(name):
-    return render_template('user.html', title='Home', user=name)
+    return render_template('user.html', title='Welcome', user=name)
 
 
 @app.route('/browse')
@@ -25,6 +26,14 @@ def browse():
 @app.route('/about/')
 def about():
     return render_template('about.html', about_text='About GODOT')
+
+
+@app.route('/id/<godot_uri>')
+def display_godot_uri(godot_uri):
+    # get data/path and attestation links for this GODOT URI
+    paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    attestations = get_attestations("https://godot.date/id/" + godot_uri)
+    return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
 
 
 @app.route('/convert/roman_consuls', methods=['GET', 'POST'])

@@ -1,12 +1,12 @@
 $(function() {
     $("#autosearch").autocomplete({
           source: function( request, response ) {
-              var terms = request.term.split(" "); 
-              var q = "";
+              var terms = request.term.split(" ");
+              var q = "*";
               for (index = 0; index < terms.length; ++index) {
-                  q = q + terms[index] + "* AND label:";
+                  q = q + terms[index] + "* AND label:*";
               }
-              q = q.slice(0, -11)
+              q = q.slice(0, -12)
               $.ajax({
               url: "http://localhost:8983/solr/roman_consuls/select",
               data: {

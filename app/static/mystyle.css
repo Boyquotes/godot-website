@@ -15,6 +15,11 @@ a:hover, a:focus {
     color: #aa2222;
     text-decoration: none;
 }
+.container {
+    /* max-width: 100%; */
+    margin-left:2em;
+    margin-right:2em;
+}
 .footer {
   position: absolute;
   bottom: 0;
@@ -39,7 +44,7 @@ h1 {
     font-size: 2.5em
 }
 
-.navbar-inverse {
+.navbar-inverse > .container {
     background-color: #fff;
     border-color: transparent;
     background-size: cover;
@@ -47,6 +52,11 @@ h1 {
     background-position: center;
     border-bottom: 1px solid #333;
     height: 50px;
+    margin-left:0;
+    margin-right:0;
+}
+.navbar-inverse {
+
 }
 
 .btn-sm {
@@ -110,6 +120,7 @@ h1 {
 .navbar-inverse .navbar-toggle .icon-bar {
     background-color: #aa2222;
 }
+
 @media (min-width: 768px){
     .navbar-inverse {
         height: 250px;
@@ -149,8 +160,14 @@ h1 {
         font-size: 1.3em;
     }
     .container {
-        width: 700px;
-        margin-left:10em;
+        max-width: 80%;
+        margin-left:5em;
+        margin-right:5em;
+    }
+    .navbar-inverse .container {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
     }
 }
 

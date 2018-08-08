@@ -22,6 +22,12 @@ def browse():
     return render_template('browse.html', title='Browse Data', browse_text='Browse Data')
 
 
+@app.route('/contact')
+@app.route('/contact/')
+def contact():
+    return render_template('contact.html', title='Contact')
+
+
 @app.route('/about')
 @app.route('/about/')
 def about():

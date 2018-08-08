@@ -11,6 +11,10 @@ a {
     color: #aa2222;
     text-decoration: none;
 }
+a:hover, a:focus {
+    color: #aa2222;
+    text-decoration: none;
+}
 .footer {
   position: absolute;
   bottom: 0;

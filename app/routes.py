@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect
 from app import app
-from app.forms import LoginForm, RomanConsularDating
+from app.forms import LoginForm, RomanConsularDating, CyrenaicaYears
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_session, get_godot_path, get_attestations
 
@@ -61,6 +61,14 @@ def roman_consuls():
         # return conversion result to template
         return render_template('roman_consuls_result.html', title='Roman Consuls', consulship=consul_label, day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data, result=result_string)
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
+
+
+@app.route('/cyrenaica/years', methods=['GET', 'POST'])
+def cyrenaica_years():
+    form = CyrenaicaYears()
+    if form.validate_on_submit():
+        return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating')
+    return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

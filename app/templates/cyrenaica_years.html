@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Cyrenaica &ndash; Year Dating</h1>
+
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.year_reference_system.label }}<br>
+            {{ form.year_reference_system(style='width:10em;') }}
+        </p>
+        <p>
+            {{ form.apollo_priests_cyrenaica.label }}<br>
+            {{ form.apollo_priests_cyrenaica(style='width:30em;') }}
+        </p>
+        <p>
+            {{ form.year.label }}<br>
+            {{ form.year(size=10) }}
+            {% for error in form.year.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.attestation_uri.label }}<br>
+            {{ form.attestation_uri(size=50, style='width:30em;') }}
+            {% for error in form.attestation_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.date_string.label }}<br>
+            {{ form.date_string(size=50, style="margin-bottom:1.5em; width:30em") }}
+            {% for error in form.date_string.errors %} 
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+{% endblock %}

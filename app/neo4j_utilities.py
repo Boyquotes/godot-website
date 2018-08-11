@@ -16,7 +16,7 @@ def get_godot_path(godot_uri):
     """ returns all paths between Timeline node and the GODOT node
         specified by GODOT URI as list of dictionaries
     """
-    query = "match (t:Timeline),(g:GODOT {uri:'%s'}),p = ((t)-[*..15]-(g)) return p" % godot_uri
+    query = "match (t:Timeline),(g:GODOT {uri:'%s'}),p = ((t)-[*..15]->(g)) return p" % godot_uri
     session = get_session()
     print("get_godot_path: " + query)
     results = session.run(query)

@@ -6,35 +6,33 @@ from app.neo4j_utilities import get_godot_path, get_attestations
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/user/<name>')
+@app.route('/user/<name>/')
 def user_greeting(name):
     return render_template('user.html', title='Welcome', user=name)
 
 
-@app.route('/browse')
 @app.route('/browse/')
 def browse():
+    # browse_data = get_browse_data()
     return render_template('browse.html', title='Browse Data', browse_text='Browse Data')
 
 
-@app.route('/contact')
 @app.route('/contact/')
 def contact():
     return render_template('contact.html', title='Contact')
 
 
-@app.route('/about')
 @app.route('/about/')
 def about():
     return render_template('about.html', title='About GODOT', about_text='About GODOT')
 
 
-@app.route('/id/<godot_uri>')
+@app.route('/id/<godot_uri>/')
 def display_godot_uri(godot_uri):
     # get data/path and attestation links for this GODOT URI
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
@@ -42,7 +40,7 @@ def display_godot_uri(godot_uri):
     return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
 
 
-@app.route('/convert/roman_consuls', methods=['GET', 'POST'])
+@app.route('/convert/roman_consuls/', methods=['GET', 'POST'])
 def roman_consuls():
     form = RomanConsularDating()
     if form.consulship.data is not None:
@@ -63,7 +61,7 @@ def roman_consuls():
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
 
 
-@app.route('/cyrenaica/years', methods=['GET', 'POST'])
+@app.route('/cyrenaica/years/', methods=['GET', 'POST'])
 def cyrenaica_years():
     form = CyrenaicaYears()
     if form.validate_on_submit():
@@ -71,7 +69,7 @@ def cyrenaica_years():
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():

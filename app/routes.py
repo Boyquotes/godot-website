@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect
 from app import app
 from app.forms import LoginForm, RomanConsularDating, CyrenaicaYears
 from app.convert import Convert_roman_calendar
-from app.neo4j_utilities import get_session, get_godot_path, get_attestations
+from app.neo4j_utilities import get_godot_path, get_attestations
 
 
 @app.route('/')

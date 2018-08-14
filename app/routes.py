@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect
+from flask_simplelogin import SimpleLogin, get_username, login_required
 from app import app
-from app.forms import LoginForm, RomanConsularDating, CyrenaicaYears
+from app.forms import RomanConsularDating, CyrenaicaYears
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data
 
@@ -9,11 +10,6 @@ from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_dat
 @app.route('/index/')
 def index():
     return render_template('index.html')
-
-
-@app.route('/user/<name>/')
-def user_greeting(name):
-    return render_template('user.html', title='Welcome', user=name)
 
 
 @app.route('/browse/')
@@ -62,22 +58,12 @@ def roman_consuls():
 
 
 @app.route('/cyrenaica/years/', methods=['GET', 'POST'])
+@login_required
 def cyrenaica_years():
     form = CyrenaicaYears()
     if form.validate_on_submit():
         return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating')
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
-
-
-@app.route('/login/', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
-        # return redirect('/index')
-        return render_template('user.html', title='Home', user=form.username.data)
-    return render_template('login.html', title='Sign In', form=form)
 
 
 @app.errorhandler(404)

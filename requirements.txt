@@ -2,6 +2,7 @@ click==6.7
 dominate==2.3.1
 Flask==1.0.2
 Flask-Bootstrap==3.3.7.1
+flask-simplelogin==0.0.6
 Flask-WTF==0.14.2
 itsdangerous==0.24
 Jinja2==2.10

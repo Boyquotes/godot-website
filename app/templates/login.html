@@ -1,8 +1,17 @@
 {% extends "base.html" %}
-
+{% block messages %}
+   {{ super() }}
+   {% if form.errors %}
+     <ul class="alert alert-danger">
+       {% for field, errors in form.errors.items() %}
+         <li>{{ field }} {% for error in errors %}{{ error }}{% endfor %}</li>
+       {% endfor %}
+     </ul>
+   {% endif %}
+{% endblock %}
 {% block app_content %}
-    <h1>Sign In</h1>
-    <form action="" method="post">
+    <h1>Login</h1>
+    <form action="{{ url_for('simplelogin.login') }}" method="post">
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }}<br>
@@ -12,7 +21,7 @@
             {{ form.password.label }}<br>
             {{ form.password(size=32) }}
         </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit(class='btn btn-godot btn-sm') }}</p>
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <input type="submit" value="Submit" class="btn btn-godot btn-sm">
     </form>
 {% endblock %}

@@ -36,6 +36,9 @@
                             <li><a href="#">Egyptian Calendar - Roman Emperors</a></li>
                         </ul>
                     </li>
+                    {% if get_username() == "roueche" %}
+                        <li><a href="/cyrenaica/years">Cyrenaica</a></li>
+                    {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/contact">Contact</a></li>

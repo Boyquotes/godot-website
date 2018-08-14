@@ -26,7 +26,7 @@ def get_browse_data():
                         godot = v.split("/")
                         entry_dict['godot_uri'] = godot[-1]
                     if k == 'type' and label != 'GODOT':
-                        if v != 'number' and v != 'reign' and v != 'mont' and v != 'day':
+                        if v != 'number' and v != 'reign' and v != 'mont' and v != 'day' and v != 'consulship':
                             path_str += "%s " % v
                     if k == 'value':
                         path_str += " %s " % v

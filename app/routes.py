@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect
 from app import app
 from app.forms import LoginForm, RomanConsularDating, CyrenaicaYears
 from app.convert import Convert_roman_calendar
-from app.neo4j_utilities import get_godot_path, get_attestations
+from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data
 
 
 @app.route('/')
@@ -18,8 +18,8 @@ def user_greeting(name):
 
 @app.route('/browse/')
 def browse():
-    # browse_data = get_browse_data()
-    return render_template('browse.html', title='Browse Data', browse_text='Browse Data')
+    browse_data = get_browse_data()
+    return render_template('browse.html', title='Browse Data', browse_data=browse_data)
 
 
 @app.route('/contact/')

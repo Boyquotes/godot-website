@@ -1,2 +1,7 @@
 {% extends "base.html" %}
-{% block app_content %}<h1>{{ browse_text }}</h1>{% endblock %}
+{% block app_content %}
+<h1>Browse Data</h1>
+    {% for entry in browse_data %}
+    <p><a href="/id/{{ entry.godot_uri }}">https://godot.date/id/{{ entry.godot_uri }}</a> <br />{{ entry.path_str }}</p>
+{% endfor %}
+{% endblock %}

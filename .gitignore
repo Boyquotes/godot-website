@@ -106,3 +106,4 @@ venv.bak/
 # various
 .DS_Store
 app/__pycache__/
+.idea

@@ -1,18 +1,20 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, URL, NumberRange
+from wtforms import StringField, IntegerField, SelectField, SubmitField
+from wtforms.validators import DataRequired, URL, NumberRange, Optional
 
 
 class CyrenaicaYears(FlaskForm):
     year_reference_system = SelectField('Year Reference System:',
-                                        choices=[('Actian Era', 'Actian Era'),
+                                        choices=[('', ''),
+                                                 ('Year of Unknown System', 'Year of Unknown System'),
+                                                 ('Actian Era Year', 'Actian Era Year'),
                                                  ('Regnal Year', 'Regnal Year (Roman Emperor)'),
                                                  ('Eponymous Apollo Priest', 'Eponymous Apollo Priest'),
                                                  ])
-    year = IntegerField('Year (Regnal or Actian Era):', validators=[
-                        NumberRange(min=1, message='minimum value = 1')])
+    year = IntegerField('Year:', validators=[
+                        Optional(), NumberRange(min=1, message='minimum value = 1')])
     apollo_priests_cyrenaica = SelectField('Apollo Priest Cyrenaica',
-                                           choices=[('unknown', 'unknown'),
+                                           choices=[('', ''),
                                                     ('https://godot.date/id/9piiTw6eaVqycL99bxNzi2',
                                                      'Διονύσιος Σότα (-19/-18)'),
                                                     ('https://godot.date/id/5H5gZigQeHgNXSJRkgde97',
@@ -182,6 +184,66 @@ class CyrenaicaYears(FlaskForm):
                                                     ('https://godot.date/id/Gtn3iaQcPvfMaTLgShw46e',
                                                      'Ῥουτὶλιος (begin of 2. century AD)'),
                                                     ])
+    roman_emperors = SelectField('Roman Emperor:',
+                                           choices=[('', ''),
+                                                    ('Augustus','Augustus'),
+                                                    ('Tiberius', 'Tiberius'),
+                                                    ('Caligula', 'Caligula'),
+                                                    ('Claudius', 'Claudius'),
+                                                    ('Nero', 'Nero'),
+                                                    ('Galba', 'Galba'),
+                                                    ('Otho', 'Otho'),
+                                                    ('Vitellius', 'Vitellius'),
+                                                    ('Vespasian', 'Vespasian'),
+                                                    ('Titus', 'Titus'),
+                                                    ('Domitian', 'Domitian'),
+                                                    ('Nerva', 'Nerva'),
+                                                    ('Trajan', 'Trajan'),
+                                                    ('Hadrian', 'Hadrian'),
+                                                    ('Antoninus Pius', 'Antoninus Pius'),
+                                                    ('Marc Aurel', 'Marc Aurel'),
+                                                    ('Commodus', 'Commodus'),
+                                                    ('Pertinax', 'Pertinax'),
+                                                    ('Pescennius Niger', 'Pescennius Niger'),
+                                                    ('Septimius Severus', 'Septimius Severus'),
+                                                    ('Caracalla', 'Caracalla'),
+                                                    ('Macrinus', 'Macrinus'),
+                                                    ('Elagabal', 'Elagabal'),
+                                                    ('Severus Alexander', 'Severus Alexander'),
+                                                    ('Maximinus Thrax', 'Maximinus Thrax'),
+                                                    ('Gordian', 'Gordian'),
+                                                    ('Phillippus Arabs', 'Phillippus Arabs'),
+                                                    ('Decius', 'Decius'),
+                                                    ('Gallus / Volusian', 'Gallus / Volusian'),
+                                                    ('Aemilian', 'Aemilian'),
+                                                    ('Valerian', 'Valerian'),
+                                                    ('Macrianus / Quietus', 'Macrianus / Quietus'),
+                                                    ('Gallienus', 'Gallienus'),
+                                                    ('Claudius Gothicus', 'Claudius Gothicus'),
+                                                    ('Aurelian', 'Aurelian'),
+                                                    ('Tacitus', 'Tacitus'),
+                                                    ('Probus', 'Probus'),
+                                                    ('Carus / Carinus', 'Carus / Carinus'),
+                                                    ('Diocletian', 'Diocletian'),
+                                                    ])
+    egyptian_calendar_months = SelectField('Months (Egyptian):',
+                                        choices=[('', ''),
+                                                 ('Thot', 'Thot'),
+                                                 ('Phaophi', 'Phaophi'),
+                                                 ('Hathyr', 'Hathyr'),
+                                                 ('Choiak', 'Choiak'),
+                                                 ('Tybi', 'Tybi'),
+                                                 ('Mecheir', 'Mecheir'),
+                                                 ('Phamenoth', 'Phamenoth'),
+                                                 ('Pharmuthi', 'Pharmuthi'),
+                                                 ('Pachons', 'Pachons'),
+                                                 ('Payni', 'Payni'),
+                                                 ('Epeiph', 'Epeiph'),
+                                                 ('Mesore', 'Mesore'),
+                                                 ('epagomenal days','epagomenal days'),
+                                                 ])
+    day = IntegerField('Day:', validators=[
+        Optional(), NumberRange(min=1, max=30, message='value between 1 and 30')])
     attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     reset = SubmitField('Reset...')
@@ -229,7 +291,7 @@ class RomanConsularDating(FlaskForm):
                                  (16, 'a.d. XVI'),
                                  (17, 'a.d. XVII'),
                                  (18, 'a.d. XVIII'),
-                                 (19, 'a.d. XIX')
+                                 (19, 'a.d. XIX'),
                              ])
     reset = SubmitField('Reset...')
     submit = SubmitField('Convert...')

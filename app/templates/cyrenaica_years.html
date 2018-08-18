@@ -9,14 +9,29 @@
             {{ form.year_reference_system.label }}<br>
             {{ form.year_reference_system(style='width:10em;') }}
         </p>
-        <p>
+        <p style="padding-left:2em">
             {{ form.apollo_priests_cyrenaica.label }}<br>
             {{ form.apollo_priests_cyrenaica(style='width:30em;') }}
         </p>
-        <p>
+        <p style="padding-left:2em">
+            {{ form.roman_emperors.label }}<br>
+            {{ form.roman_emperors(style='width:30em;') }}
+        </p>
+        <p style="padding-left:2em">
             {{ form.year.label }}<br>
             {{ form.year(size=10) }}
             {% for error in form.year.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.egyptian_calendar_months.label }}<br>
+            {{ form.egyptian_calendar_months(style='width:10em;') }}
+        </p>
+        <p>
+            {{ form.day.label }}<br>
+            {{ form.day(size=10) }}
+            {% for error in form.day.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>

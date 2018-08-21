@@ -8,10 +8,18 @@ body {
   margin-bottom: 60px;
   font-family: 'Roboto',sans-serif;
   font-weight: 100;
+  color: #777;
 }
 h1 {
     font-size: 2.5em;
     font-family: 'Merriweather',sans-serif;
+    color: #777;
+}
+h2 {
+    color:#777;
+}
+h3 {
+    color:#777;
 }
 a {
     color: #aa2222;
@@ -42,7 +50,7 @@ a:hover, a:focus {
 .text-muted {
     margin: 20px 0;
     text-align: center;
-    color: #333;
+    color: #777;
 }
 .btn-sm {
     width: 10em;
@@ -59,7 +67,7 @@ a:hover, a:focus {
     margin-left: 2em;
 }
 .btn:hover, .btn:focus, .btn.focus {
-    color: #333;
+    color: #777;
     text-decoration: none;
 }
 .initial{

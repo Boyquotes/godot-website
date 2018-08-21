@@ -6,6 +6,8 @@
 {{super()}}
     <link href="{{url_for('static', filename='bootstrap.min.css')}}" rel="stylesheet">
     <link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
     <link href="{{url_for('static', filename='mystyle.css')}}" rel="stylesheet"> {% endblock %}
 
 {% block title %}{% if title %}GODOT - {{ title }} {% else %}GODOT{% endif %}{% endblock %}

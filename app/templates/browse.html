@@ -1,7 +1,58 @@
 {% extends "base.html" %}
 {% block app_content %}
 <h1>Browse Data</h1>
-    {% for entry in browse_data %}
-    <p><a href="/id/{{ entry.godot_uri }}">https://godot.date/id/{{ entry.godot_uri }}</a> <br />{{ entry.path_str }}</p>
+<p>Filter by Year Reference System:</p>
+<p style="margin-bottom:2em">
+    {% for y in list_of_yrs %}
+        {% if yrs == y %}
+            <span style="margin-left:1em;color:#4a4">✓</span> <a href="/browse/{{ y }}" style="font-weight:1000">{{ y }}</a><br />
+        {% else %}
+            <a href="/browse/{{ y }}" style="margin-left:2em">{{ y }}</a><br />
+        {% endif %}
+    {% endfor %}
+</p>
+
+
+{% for entry in browse_data %}
+<p>{{ loop.index + page | int * 20 -20 }}. <a href="/id/{{ entry.godot_uri }}">https://godot.date/id/{{ entry.godot_uri }}</a> <br />{{ entry.path_str }}</p>
 {% endfor %}
+
+
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+
+    <li class="page-item">
+      {% if page|int >= 2 %}
+        <a class="page-link" href="/browse/{{yrs}}/{{page|int - 1}}" tabindex="-1">Previous</a>
+      {% else %}
+        <a class="page-link" href="/browse/{{yrs}}/1" tabindex="-1">Previous</a>
+      {% endif %}
+    </li>
+
+    {% for hit in range((total_hits / 20)|int) %}
+      {% if (hit + 1)|int == page|int %}
+        <li class="page-item disabled"><a class="page-link" href="/browse/{{yrs}}/{{ hit + 1 }}">{{ hit + 1 }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/browse/{{yrs}}/{{ hit + 1 }}">{{ hit + 1 }}</a></li>
+      {% endif %}
+    {% endfor%}
+
+    {% if (total_hits % 20) != 0  %}
+      {% if ((total_hits / 20)|int + 1)|int == page|int %}
+        <li class="page-item disabled"><a class="page-link" href="/browse/{{yrs}}/{{ (total_hits / 20)|int + 1 }}">{{ (total_hits / 20)|int + 1  }}</a></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="/browse/{{yrs}}/{{ (total_hits / 20)|int + 1 }}">{{ (total_hits / 20)|int + 1  }}</a></li>
+      {% endif %}
+    {% endif %}
+
+    <li class="page-item">
+      {% if page|int <= (total_hits / 20)|int  %}
+        <a class="page-link" href="/browse/{{yrs}}/{{ page|int + 1 }}">Next</a>
+      {% else %}
+        <a class="page-link " href="/browse/{{yrs}}/{{ page }}">Next</a>
+      {% endif %}
+    </li>
+  </ul>
+</nav>
 {% endblock %}

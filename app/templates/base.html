@@ -48,7 +48,7 @@
                     {% if get_username() == "roueche" or get_username() == "grieshaber" %}
                         <li><a href="/cyrenaica/years">Cyrenaica</a></li>
                     {% endif %}
-                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="{{ url_for('contact') }}">Contact</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if is_logged_in() %}

@@ -17,7 +17,11 @@
         <p><strong>{{ path.label }}</strong>:<br />
         {% for key, value in path.items() %}
             {% if key != 'label' %}
-                <strong>{{ key }}</strong>: {{ value }}<br />
+                {% if key == 'uri' %}
+                    <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
+                {% else %}
+                    <strong>{{ key }}</strong>: {{ value }}<br />
+                {% endif %}
             {% endif %}
         {% endfor %}
         </p>
@@ -27,4 +31,5 @@
     {% for att in attestations %}
     <p><a href="{{ att.uri }}">{{ att.title }}</a></p>
     {% endfor%}
+<p>&nbsp;</p>
 {% endblock %}

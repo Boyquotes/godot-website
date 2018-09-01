@@ -6,7 +6,7 @@ from wtforms.validators import DataRequired, URL, NumberRange, Optional
 class CyrenaicaYears(FlaskForm):
     year_reference_system = SelectField('Year Reference System:',
                                         choices=[('None', 'None'),
-                                                 ('unknown', 'Year of Unknown System'),
+                                                 ('Unknown', 'Year of Unknown System'),
                                                  ('Era: Actian', 'Actian Era Year'),
                                                  ('Regnal: Roman Emperors', 'Regnal Year (Roman Emperor)'),
                                                  ('Eponymous Officials: Apollo Priest (Cyrenaica)', 'Eponymous Apollo Priest'),

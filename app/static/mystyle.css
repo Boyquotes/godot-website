@@ -219,14 +219,10 @@ a.ui-button:active,
 @media (min-width: 1020px) {
     .navbar-inverse {
         height: 250px;
-
-        /*background-image: url('/static/godot-logo.jpg'), url('/static/fasti.png');
-        background-position: right top, top left;
-        background-repeat: no-repeat, repeat-x;
-        background-size: 160px, 1024px;*/
-
-        background-image: url('/static/fasti.png');
-
+        background-image: url('/static/godot-logo.png'), url('/static/fasti.png');
+        background-position: right 30px top , top left 100px;
+        background-repeat: no-repeat, no-repeat;
+        background-size: 180px, 1024px;
     }
     .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form {
         background-color: transparent;
@@ -268,7 +264,7 @@ a.ui-button:active,
         margin-right:5em;
     }
     .navbar-inverse {
-        background-color: #ffffff;
+        background-color: #ddd;
     }
     .navbar-inverse .container {
         margin-left: 0;

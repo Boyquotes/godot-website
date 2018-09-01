@@ -81,10 +81,11 @@ def cyrenaica_years():
         day = form.day.data
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
+        title = form.title.data
         godot_uri = write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri,
-                                         date_string)
-
-        return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating', yrs=yrs,
+                                         date_string, title).split("/")[-1]
+        if godot_uri is not None:
+            return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating', yrs=yrs,
                                apollo_priest=apollo_priest, roman_emperor=roman_emperor, year=year, month=month,
                                day=day, attestation_uri=attestation_uri, date_string=date_string, godot_uri=godot_uri)
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)

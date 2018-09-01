@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, URL, NumberRange, Optional
 
 class CyrenaicaYears(FlaskForm):
     year_reference_system = SelectField('Year Reference System:',
-                                        choices=[('', ''),
+                                        choices=[('None', 'None'),
                                                  ('unknown', 'Year of Unknown System'),
                                                  ('Era: Actian', 'Actian Era Year'),
                                                  ('Regnal: Roman Emperors', 'Regnal Year (Roman Emperor)'),
@@ -186,7 +186,7 @@ class CyrenaicaYears(FlaskForm):
                                                     ])
     roman_emperors = SelectField('Roman Emperor:',
                                            choices=[('', ''),
-                                                    ('Augustus','Augustus'),
+                                                    ('Augustus', 'Augustus'),
                                                     ('Tiberius', 'Tiberius'),
                                                     ('Caligula', 'Caligula'),
                                                     ('Claudius', 'Claudius'),
@@ -227,7 +227,7 @@ class CyrenaicaYears(FlaskForm):
                                                     ('Diocletian', 'Diocletian'),
                                                     ])
     egyptian_calendar_months = SelectField('Months (Egyptian):',
-                                        choices=[('', ''),
+                                        choices=[('None', 'None'),
                                                  ('Thot', 'Thot'),
                                                  ('Phaophi', 'Phaophi'),
                                                  ('Hathyr', 'Hathyr'),
@@ -246,6 +246,7 @@ class CyrenaicaYears(FlaskForm):
         Optional(), NumberRange(min=1, max=30, message='value between 1 and 30')])
     attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
     date_string = StringField('Date String:', validators=[DataRequired()])
+    title = StringField('Title:', validators=[DataRequired()])
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 

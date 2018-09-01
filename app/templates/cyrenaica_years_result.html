@@ -12,7 +12,18 @@
     {% endwith %}
     <h1>Cyrenaica Year Dating Result</h1>
 
-
+    <p>GODOT URI for:</p>
+    <ul>
+        <li><span style="font-weight:1000">Year Reference System</span>: {{ yrs }}</li>
+        <li><span style="font-weight:1000">Apollo Priest Cyrenaica</span>: {{ apollo_priest }}</li>
+        <li><span style="font-weight:1000">Roman Emperor</span>: {{ roman_emperor }}</li>
+        <li><span style="font-weight:1000">Month (Egyptian)</span>: {{ month }}</li>
+        <li><span style="font-weight:1000">Day</span>: {{ day }}</li>
+        <li><span style="font-weight:1000">Attestation URI</span>: <a href="{{ attestation_uri }}">{{ attestation_uri }}</a></li>
+        <li><span style="font-weight:1000">Title</span>: {{ title }}</li>
+        <li><span style="font-weight:1000">Date String</span>: {{ date_string }}</li>
+    </ul>
+    <p><a href="/id/{{ godot_uri }}">https://godot.date/id/{{ godot_uri }}</a></p>
 
     <p><a href="/cyrenaica/years">add new date & attestation...</a></p>
 {% endblock %}

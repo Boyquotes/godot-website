@@ -1,5 +1,6 @@
 from app import app
 from neo4j.v1 import GraphDatabase, basic_auth
+import shortuuid
 
 
 def get_browse_data(yrs, page):
@@ -18,7 +19,6 @@ def get_browse_data(yrs, page):
     else:
         query = "match (t:Timeline), (g:GODOT), p = shortestPath((t)-[*..15]->(g)) return p order by g skip %s limit %s" % (
             page, limit)
-    print(query)
     results = query_neo4j_db(query)
     browse_array = []
     for path in results:
@@ -50,11 +50,7 @@ def get_browse_data_number_of_results(yrs):
     results = query_neo4j_db(query)
     for record in results:
         total_hits = record["p"]
-    print(total_hits)
     return total_hits
-
-
-
 
 
 def get_godot_path(godot_uri):
@@ -147,15 +143,15 @@ def get_list_of_yrs():
     returns list of yrs in the GODOT graph
     :return: list of yrs
     """
-    query = "match (yrs:YearReferenceSystem) return yrs.type as yrs"
+    query = "match (yrs:YearReferenceSystem) return yrs.type as yrs order by yrs"
     results = query_neo4j_db(query)
-    yrs = ['all']
+    yrs = ['All']
     for record in results:
         yrs.append(record["yrs"])
     return yrs
 
 
-def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri, date_string):
+def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri, date_string, title):
     """
     adds path for cyrenaica dates according to cyrenaica web form
     :param yrs:
@@ -166,34 +162,68 @@ def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, at
     :param day:
     :param attestation_uri:
     :param date_string:
+    :param title:
     :return:
     """
 
     if (yrs == "" and month == "" and day == "") or (attestation_uri == "" or date_string == ""):
         return None
 
-    if yrs != "":
-        # write path from Timeline node to yrs (including year)
-        cypher_cyr = ""
+    if yrs == "None" and (month is not None or day is not None):
+        if day is None:
+            # only month specified
+            cypher_query = """
+            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'None'})-[:hasCalendarType]->(ct:CalendarType 
+              {type:'Egyptian Calendar'})-[:hasCalendarPartial]->(cp_month:CalendarPartial {type:'month', value:'%s'}),
+              (cp_month)-->(g_month:GODOT)
+            MERGE (g_month)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
+            RETURN g_month.uri as g
+            """ % (month, attestation_uri, title, date_string)
+        else:
+            # both month and day specified
+            godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+            cypher_query = """
+            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'None'})-[:hasCalendarType]->(ct:CalendarType 
+              {type:'Egyptian Calendar'})-[:hasCalendarPartial]->(cp_month:CalendarPartial {type:'month', value:'%s'})
+            MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type:'day', value:'%s'})
+            MERGE (cp_day)-[:hasGodotUri]->(g_day:GODOT)
+              ON CREATE SET g_day.uri='%s'
+            MERGE (g_day)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
+            RETURN g_day.uri as g
+            """ % (month, day, godot_uri, attestation_uri, title, date_string)
 
-        if yrs != "Eponymous Officials: Apollo Priest (Cyrenaica)":
-            cypher_cyr = """
-           MATCH (root:Timeline)
-           MERGE (root)-[:hasYearReckoningSystem]->(yrs:YearReferenceSystem {type:'%s'})
-           """ % yrs
-        if yrs == "Regnal: Roman Emperors":
-            cypher_cyr += """
-           MERGE (yrs)-[:hasCalendarPartial]->(:CalendarPartial {type:'reign', value:'%s'})
-           """ % roman_emperor
-
-        # add year number
-        # MERGE(yrs) - [: hasCalendarPartial]->(cp1:CalendarPartial {type:'year', value:13})
-
-        # add month/day if specified
-
-
+    elif yrs == "Eponymous Officials: Apollo Priest (Cyrenaica)":
+        cypher_query = """
+        MATCH (root:Timeline)
+        MERGE (root)-[:hasYearReckoningSystem]->(yrs:YearReferenceSystem {type:'Eponymous officials: Apollo Priest (Cyrenaica)'})
+        MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {value:'%s'})
+        """ % apollo_priest
+        prev_node = "cp1"
+    elif yrs == "Regnal: Roman Emperors":
+        cypher_query = """
+        MATCH (root:Timeline)
+        MERGE (root)-[:hasYearReckoningSystem]->(yrs:YearReferenceSystem {type:'Regnal: Roman Emperors'})
+        MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type:'reign', value:'%s'})
+        """ % roman_emperor
+        prev_node = "cp1"
+        if year != "":
+            cypher_query += """
+            MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'year', value:'%s'})
+            """ % year
+            prev_node = "cp2"
+    elif yrs == "Era: Actian":
+        cypher_query = """
+        MATCH (root:Timeline)
+        MERGE (root)-[:hasYearReckoningSystem]->(yrs:YearReferenceSystem {type:'Era: Actian'})
+        MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type:'year', value:'%s'})
+        """ % year
+        prev_node = "cp1"
     else:
-        # only month/day given, no yrs
-        pass
+        print("Fehler")
+        return None
+    results = query_neo4j_db(cypher_query)
+    g = None
+    for record in results:
+        g = record["g"]
+    return g
 
-    print(cypher_cyr)

@@ -179,7 +179,6 @@ def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, at
         cypher_query = _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day, attestation_uri, title, date_string)
     else:
         return None
-    print(cypher_query)
     results = query_neo4j_db(cypher_query)
     g = None
     for record in results:
@@ -338,9 +337,10 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
     if month == "None" and day is None:
         # only apollo priest given, no month/day
         cypher_query = """
-        MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials: Apollo Priest (Cyrenaica)'})
-        MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'name', value: '%s'})
-        MERGE (cp)-[:hasGodotUri]->(g:GODOT)
+        MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials'})
+        MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type:'subtype', value:'Apollo Priest (Cyrenaica)'})
+        MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
+        MERGE (cp2)-[:hasGodotUri]->(g:GODOT)
           ON CREATE SET g.uri='%s'
         MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
         RETURN g.uri as g 
@@ -349,9 +349,10 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
         if day is None:
             # only apollo priest & month specified
             cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials: Apollo Priest (Cyrenaica)'})
-                MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'name', value: '%s'})
-                MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials'})
+                MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type:'subtype', value:'Apollo Priest (Cyrenaica)'})
+                MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
+                MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasGodotUri]->(g:GODOT)
                   ON CREATE SET g.uri='%s'
@@ -361,9 +362,10 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
         else:
             # year, month & day specified
             cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials: Apollo Priest (Cyrenaica)'})
-                MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'name', value: '%s'})
-                MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Eponymous officials'})
+                MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type:'subtype', value:'Apollo Priest (Cyrenaica)'})
+                MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
+                MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
                 MERGE (cp_day)-[:hasGodotUri]->(g:GODOT)
@@ -381,7 +383,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
         if year is not None:
             # only year specified, no month/day
             cypher_query = """
-            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
             MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
             MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'year', value: '%s'})
@@ -393,7 +395,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
         else:
             # only name of Roman Emperor specified, no year/month/day
             cypher_query = """
-            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+            MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
             MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
             MERGE (cp2)-[:hasGodotUri]->(g:GODOT)
@@ -408,7 +410,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             if year is not None:
                 # year, month specified, no day given
                 cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
                 MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
@@ -422,7 +424,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             else:
                 # month is specified, no year or day
                 cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
                 MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
@@ -437,7 +439,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             if year is not None:
                 # year, month, day specified
                 cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
                 MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'year', value: '%s'})
@@ -452,7 +454,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             else:
                 # month, day specified, no year given
                 cypher_query = """
-                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal'})
+                MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Regnal Years'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'subtype', value: 'Roman Emperors'})
                 MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})

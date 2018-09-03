@@ -13,7 +13,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/browse', defaults={'yrs': 'all', 'page': 1})
+@app.route('/browse', defaults={'yrs': 'All', 'page': 1})
 @app.route('/browse/<yrs>', defaults={'page': 1})
 @app.route('/browse/<yrs>/<page>')
 def browse(yrs, page):

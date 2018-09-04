@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block app_content %}
 <h1>Browse Data</h1>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <p>Filter by Year Reference System:</p>
 <p style="margin-bottom:2em">
     {% for y in list_of_yrs %}

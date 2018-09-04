@@ -25,6 +25,7 @@ def browse(yrs, page):
     else:
         return render_template('503.html'), 503
 
+
 @app.route('/contact')
 def contact():
     number_of_nodes = get_number_of_nodes()
@@ -74,7 +75,7 @@ def roman_consuls():
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
 
 
-@app.route('/cyrenaica/years', methods=['GET', 'POST'])
+@app.route('/cyrenaica/single_year', methods=['GET', 'POST'])
 @login_required
 def cyrenaica_years():
     form = CyrenaicaYears()

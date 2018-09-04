@@ -44,13 +44,13 @@ def get_browse_data(yrs, page):
 
 
 def get_browse_data_number_of_results(yrs):
-    if yrs != 'all':
+    if yrs != 'All':
         query = "match (yrs:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs)-[*..15]->(g)) return count(p) as p" % (yrs)
     else:
         query = "match (t:Timeline), (g:GODOT), p = shortestPath((t)-[*..15]->(g)) return count(p) as p"
     results = query_neo4j_db(query)
     total_hits = 0
-    if results is not None:
+    if results:
         for record in results:
             total_hits = record["p"]
     return total_hits

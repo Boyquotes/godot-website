@@ -21,24 +21,25 @@ def get_browse_data(yrs, page):
             page, limit)
     results = query_neo4j_db(query)
     browse_array = []
-    for path in results:
-        entry_dict = {}
-        path_str = ""
-        nodes = path["p"].nodes
-        for n in nodes:
-            if list(n.labels)[0] != 'Timeline':
-                label = list(n.labels)[0]
-                for k, v in n.items():
-                    if label == "GODOT" and k == 'uri':
-                        # get GODOT ID only
-                        entry_dict['godot_uri'] = v.split("/")[-1]
-                    if k == 'type' and label != 'GODOT':
-                        if v != 'number' and v != 'reign' and v != 'mont' and v != 'day' and v != 'consulship':
-                            path_str += "%s " % v
-                    if k == 'value':
-                        path_str += " %s " % v
-        entry_dict['path_str'] = path_str
-        browse_array.append(entry_dict)
+    if results is not None:
+        for path in results:
+            entry_dict = {}
+            path_str = ""
+            nodes = path["p"].nodes
+            for n in nodes:
+                if list(n.labels)[0] != 'Timeline':
+                    label = list(n.labels)[0]
+                    for k, v in n.items():
+                        if label == "GODOT" and k == 'uri':
+                            # get GODOT ID only
+                            entry_dict['godot_uri'] = v.split("/")[-1]
+                        if k == 'type' and label != 'GODOT':
+                            if v != 'number' and v != 'reign' and v != 'mont' and v != 'day' and v != 'consulship':
+                                path_str += "%s " % v
+                        if k == 'value':
+                            path_str += " %s " % v
+            entry_dict['path_str'] = path_str
+            browse_array.append(entry_dict)
     return browse_array
 
 
@@ -48,8 +49,10 @@ def get_browse_data_number_of_results(yrs):
     else:
         query = "match (t:Timeline), (g:GODOT), p = shortestPath((t)-[*..15]->(g)) return count(p) as p"
     results = query_neo4j_db(query)
-    for record in results:
-        total_hits = record["p"]
+    total_hits = 0
+    if results is not None:
+        for record in results:
+            total_hits = record["p"]
     return total_hits
 
 
@@ -62,14 +65,15 @@ def get_godot_path(godot_uri):
     query = "match (t:Timeline),(g:GODOT {uri:'%s'}),p = ((t)-[*..15]->(g)) return p" % godot_uri
     results = query_neo4j_db(query)
     paths = []
-    for record in results:
-        nodes = record["p"].nodes
-        for n in nodes:
-            if list(n.labels)[0] != 'Timeline' and list(n.labels)[0] != 'GODOT':
-                n_dict = {'label': list(n.labels)[0]}
-                for k, v in n.items():
-                    n_dict[k] = str(v)
-                paths.append(n_dict)
+    if results:
+        for record in results:
+            nodes = record["p"].nodes
+            for n in nodes:
+                if list(n.labels)[0] != 'Timeline' and list(n.labels)[0] != 'GODOT':
+                    n_dict = {'label': list(n.labels)[0]}
+                    for k, v in n.items():
+                        n_dict[k] = str(v)
+                    paths.append(n_dict)
     return paths
 
 
@@ -82,8 +86,9 @@ def get_attestations(godot_uri):
     query = "match (g:GODOT {uri:'%s'})--(a:Attestation) return a" % godot_uri
     results = query_neo4j_db(query)
     att = []
-    for record in results:
-        att.append({k: v for (k, v) in record["a"].items()})
+    if results:
+        for record in results:
+            att.append({k: v for (k, v) in record["a"].items()})
     return att
 
 
@@ -93,13 +98,27 @@ def query_neo4j_db(query):
     :param query: string of cypher query
     :return: result dictionary
     """
+    driver = get_neo4j_driver()
+    if driver:
+        with driver.session() as session:
+            res = session.run(query)
+            session.close()
+            return res
+    else:
+        return None
+
+
+def get_neo4j_driver():
+    """
+    gets Neo4j Driver instance
+    :return: neo4j driver
+    """
     uri = "bolt://localhost:7687"
-    driver = GraphDatabase.driver(uri, auth=basic_auth(
-        app.config['NEO4J_USER'], app.config['NEO4J_PASSWORD']))
-    session = driver.session()
-    res = session.run(query)
-    session.close()
-    return res
+    try:
+        return GraphDatabase.driver(uri, auth=basic_auth(
+            app.config['NEO4J_USER'], app.config['NEO4J_PASSWORD']))
+    except:
+        return None
 
 
 def get_number_of_nodes():
@@ -109,8 +128,10 @@ def get_number_of_nodes():
     """
     query = "MATCH (n) RETURN count(*) as n"
     results = query_neo4j_db(query)
-    for record in results:
-        n = record["n"]
+    n = 0
+    if results:
+        for record in results:
+            n = record["n"]
     return n
 
 
@@ -121,8 +142,10 @@ def get_number_of_relations():
     """
     query = "MATCH (n)-[r]->() RETURN COUNT(r) as n"
     results = query_neo4j_db(query)
-    for record in results:
-        n = record["n"]
+    n = 0
+    if results:
+        for record in results:
+            n = record["n"]
     return n
 
 
@@ -133,8 +156,10 @@ def get_number_of_godot_uris():
     """
     query = "MATCH (n:GODOT) RETURN count(*) as n"
     results = query_neo4j_db(query)
-    for record in results:
-        n = record["n"]
+    n = 0
+    if results:
+        for record in results:
+            n = record["n"]
     return n
 
 
@@ -146,8 +171,9 @@ def get_list_of_yrs():
     query = "match (yrs:YearReferenceSystem) return yrs.type as yrs order by yrs"
     results = query_neo4j_db(query)
     yrs = ['All']
-    for record in results:
-        yrs.append(record["yrs"])
+    if results:
+        for record in results:
+            yrs.append(record["yrs"])
     return yrs
 
 
@@ -181,8 +207,9 @@ def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, at
         return None
     results = query_neo4j_db(cypher_query)
     g = None
-    for record in results:
-        g = record["g"]
+    if results:
+        for record in results:
+            g = record["g"]
     return g
 
 

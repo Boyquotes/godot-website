@@ -20,8 +20,10 @@ def browse(yrs, page):
     browse_data = get_browse_data(yrs, page)
     list_of_yrs = get_list_of_yrs()
     total_hits = get_browse_data_number_of_results(yrs)
-    return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs, yrs=yrs, page=page, total_hits=total_hits)
-
+    if browse_data:
+        return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs, yrs=yrs, page=page, total_hits=total_hits)
+    else:
+        return render_template('503.html'), 503
 
 @app.route('/contact')
 def contact():
@@ -41,8 +43,12 @@ def about():
 def display_godot_uri(godot_uri):
     # get data/path and attestation links for this GODOT URI
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    print(paths)
     attestations = get_attestations("https://godot.date/id/" + godot_uri)
-    return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
+    if paths:
+        return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
+    else:
+        return render_template('503.html'), 503
 
 
 @app.route('/convert/roman_consuls', methods=['GET', 'POST'])
@@ -84,10 +90,12 @@ def cyrenaica_years():
         date_title = form.title.data
         godot_uri = write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri,
                                          date_string, date_title)
-        if godot_uri is not None:
+        if godot_uri:
             return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating', yrs=yrs,
                                apollo_priest=apollo_priest, roman_emperor=roman_emperor, year=year, month=month,
                                day=day, attestation_uri=attestation_uri, date_string=date_string, date_title=date_title, godot_uri=godot_uri.split("/")[-1])
+        else:
+            return render_template('503.html'), 503
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
 
 

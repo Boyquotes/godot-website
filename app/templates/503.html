@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Service Unavailable</h1>
+    <p><span style="color:#f00">No Database Connection!</span></p>
+    <p><a href="{{ url_for('index') }}">Back</a></p>
+{% endblock %}

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, SubmitField
-from wtforms.validators import DataRequired, URL, NumberRange, Optional
+from wtforms.validators import DataRequired, URL, Optional, Regexp
 
 
 class CyrenaicaYears(FlaskForm):
@@ -11,8 +11,8 @@ class CyrenaicaYears(FlaskForm):
                                                  ('Eponymous Officials: Apollo Priest (Cyrenaica)', 'Eponymous Apollo Priest'),
                                                  ('Regnal: Roman Emperors', 'Regnal Year (Roman Emperor)'),
                                                  ])
-    year = IntegerField('Year:', validators=[
-                        Optional(), NumberRange(min=1, message='minimum value = 1')])
+    year = StringField('Year:', validators=[
+                        Optional(), Regexp('^[0-9_]*$')])
     apollo_priests_cyrenaica = SelectField('Apollo Priest Cyrenaica',
                                            choices=[('', ''),
                                                     ('Διονύσιος Σότα (-19/-18)',
@@ -242,8 +242,8 @@ class CyrenaicaYears(FlaskForm):
                                                  ('Mesore', 'Mesore'),
                                                  ('epagomenal days','epagomenal days'),
                                                  ])
-    day = IntegerField('Day:', validators=[
-        Optional(), NumberRange(min=1, max=30, message='value between 1 and 30')])
+    day = StringField('Day:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
     attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     title = StringField('Title:', validators=[DataRequired()])

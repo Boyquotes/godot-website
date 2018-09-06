@@ -6,9 +6,9 @@ def is_valid_user(user):
     """
     password_hash = ""
     try:
-        password_hash = os.environ["GODOT_USER_" + user['username'].upper()]
+        password_hash = os.environ["GODOT_USER_" + user['username'].upper().strip()]
+        return check_password_hash(password_hash, user['password'])
     except:
         return False
-    return check_password_hash(password_hash, user['password'])
 
 

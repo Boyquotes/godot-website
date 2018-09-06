@@ -6,7 +6,7 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
-  font-family: 'Roboto',sans-serif;
+  font-family: 'Ubuntu',sans-serif;
   font-weight: 100;
   font-size: 1.5em;
   color: #333;
@@ -24,7 +24,7 @@ h2 {
 }
 h3 {
     margin-top: 1.2em;
-    font-family: 'Merriweather',sans-serif;
+    font-family: 'Ubuntu',sans-serif;
     font-size: 1.2em;
 }
 a {

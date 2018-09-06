@@ -14,8 +14,7 @@ class CyrenaicaYears(FlaskForm):
     year = StringField('Year:', validators=[
                         Optional(), Regexp('^[0-9_]*$')])
     apollo_priests_cyrenaica = SelectField('Apollo Priest Cyrenaica',
-                                           choices=[('', ''),
-                                                    ('Διονύσιος Σότα (-19/-18)',
+                                           choices=[('Διονύσιος Σότα (-19/-18)',
                                                      'Διονύσιος Σότα (-19/-18)'),
                                                     ('Φίλισκος Φιλίσκου φύσει δὲ Εὐφάνευς (-17/-16)',
                                                      'Φίλισκος Φιλίσκου φύσει δὲ Εὐφάνευς (-17/-16)'),
@@ -185,8 +184,7 @@ class CyrenaicaYears(FlaskForm):
                                                      'Ῥουτὶλιος (begin of 2. century AD)'),
                                                     ])
     roman_emperors = SelectField('Roman Emperor:',
-                                           choices=[('', ''),
-                                                    ('Augustus', 'Augustus'),
+                                           choices=[('Augustus', 'Augustus'),
                                                     ('Tiberius', 'Tiberius'),
                                                     ('Caligula', 'Caligula'),
                                                     ('Claudius', 'Claudius'),

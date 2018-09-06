@@ -176,12 +176,14 @@ def get_list_of_yrs():
     returns list of yrs in the GODOT graph
     :return: list of yrs
     """
-    query = "match (yrs1:YearReferenceSystem)-->(yrs2:YearReferenceSystem) return distinct yrs1.type as yrs, yrs2.type as yrs_sub order by yrs"
+    query = "match (t:Timeline)--(yrs1:YearReferenceSystem) optional match (yrs1)--(yrs2:YearReferenceSystem) return yrs1, yrs2"
     results = query_neo4j_db(query)
     yrs = ['All']
     if results:
         for record in results:
-            label = record["yrs"] + " - " + record["yrs_sub"]
+            label = record["yrs1"]["type"]
+            if record["yrs2"]:
+                label += " - " + record["yrs2"]["type"]
             yrs.append(label)
     return yrs
 
@@ -200,13 +202,13 @@ def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, at
     :param title:
     :return: GODOT URI (string) or None
     """
-    if (yrs == "" and month == "" and day is None) or (attestation_uri == "" or date_string == ""):
+    if (yrs == "" and year == "" and month == "" and day is None) or (attestation_uri == "" or date_string == ""):
         return None
-    if yrs == "None" and day is not None:
+    if yrs == "None":
         cypher_query = _create_cypher_yrs_none(month, day, attestation_uri, title, date_string)
-    elif yrs == "Unknown" and year is not None:
+    elif yrs == "Unknown" and year != "":
         cypher_query = _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_string)
-    elif yrs == "Era: Actian" and year is not None:
+    elif yrs == "Era: Actian" and year != "":
         cypher_query = _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_string)
     elif yrs == "Eponymous Officials: Apollo Priest (Cyrenaica)":
         cypher_query = _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri, title, date_string)
@@ -233,7 +235,7 @@ def _create_cypher_yrs_none(month, day, attestation_uri, title, date_string):
     :return: cypher query string
     """
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
-    if day is None:
+    if day == "":
         # only month specified
         cypher_query = """
         MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'None'})-[:hasCalendarType]->(ct:CalendarType 
@@ -248,7 +250,7 @@ def _create_cypher_yrs_none(month, day, attestation_uri, title, date_string):
         MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'None'})-[:hasCalendarType]->(ct:CalendarType 
           {type:'Egyptian Calendar'})-[:hasCalendarPartial]->(cp_month:CalendarPartial {type:'month', value:'%s'})
         MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type:'day', value:'%s'})
-        MERGE (cp_day)-[:hasGodotUri]->(g_day:GODOT)
+        MERGE (cp_day)-[:hasGodotUri]->(g_day:GODOT {type:'standard'})
           ON CREATE SET g_day.uri='%s'
         MERGE (g_day)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
         RETURN g_day.uri as g
@@ -268,25 +270,25 @@ def _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_st
     :return: cypher query string
     """
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
-    if month == "None" and day is None:
+    if month == "None" and day == "":
         # only year given
         cypher_query = """
         MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Unknown'})
         MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
-        MERGE (cp)-[:hasGodotUri]->(g:GODOT)
+        MERGE (cp)-[:hasGodotUri]->(g:GODOT {type:'standard'})
           ON CREATE SET g.uri='%s'
         MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
         RETURN g.uri as g 
         """ % (year, godot_uri, attestation_uri, title, date_string)
     else:
-        if day is None:
+        if day == "":
             # only month specified
             cypher_query = """
             MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'Unknown'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
             MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
             MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
-            MERGE (cp_month)-[:hasGodotUri]->(g:GODOT)
+            MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
             MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
             RETURN g.uri as g 
@@ -299,7 +301,7 @@ def _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_st
             MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
             MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
             MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
-            MERGE (cp_day)-[:hasGodotUri]->(g:GODOT)
+            MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
             MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
             RETURN g.uri as g 
@@ -319,25 +321,25 @@ def _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_str
     :return: cypher query string
     """
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
-    if month == "None" and day is None:
+    if month == "None" and day == "":
         # only actian year given, no month/day
         cypher_query = """
             MATCH (root:Timeline)--(:YearReferenceSystem {type: 'Era'})--(yrs:YearReferenceSystem {type:'Actian'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
-            MERGE (cp)-[:hasGodotUri]->(g:GODOT)
+            MERGE (cp)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
             MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
             RETURN g.uri as g 
             """ % (year, godot_uri, attestation_uri, title, date_string)
     else:
-        if day is None:
+        if day == "":
             # only year & month specified
             cypher_query = """
                 MATCH (root:Timeline)--(:YearReferenceSystem {type: 'Era'})--(yrs:YearReferenceSystem {type:'Actian'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
                 MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
-                MERGE (cp_month)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 
@@ -350,7 +352,7 @@ def _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_str
                 MERGE (cp)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
-                MERGE (cp_day)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 
@@ -370,25 +372,25 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
     :return:
     """
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
-    if month == "None" and day is None:
+    if month == "None" and day == "":
         # only apollo priest given, no month/day
         cypher_query = """
         MATCH (root:Timeline)--(YearReferenceSystem {type: 'Eponymous officials'})--(yrs:YearReferenceSystem {type: 'Apollo Priest (Cyrenaica)'})
         MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
-        MERGE (cp1)-[:hasGodotUri]->(g:GODOT)
+        MERGE (cp1)-[:hasGodotUri]->(g:GODOT {type:'standard'})
           ON CREATE SET g.uri='%s'
         MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
         RETURN g.uri as g 
         """ % (apollo_priest, godot_uri, attestation_uri, title, date_string)
     else:
-        if day is None:
+        if day == "":
             # only apollo priest & month specified
             cypher_query = """
                 MATCH (root:Timeline)--(YearReferenceSystem {type: 'Eponymous officials'})--(yrs:YearReferenceSystem {type: 'Apollo Priest (Cyrenaica)'})
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp1)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
-                MERGE (cp_month)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 
@@ -411,15 +413,15 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
 
 def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day, attestation_uri, title, date_string):
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
-    if month == "None" and day is None:
+    if month == "None" and day == "":
         # only Roman Emperor given, no month/day
-        if year is not None:
+        if year != "":
             # only year specified, no month/day
             cypher_query = """
             MATCH (root:Timeline)--(YearReferenceSystem {type: 'Regnal Years'})--(yrs:YearReferenceSystem {type:'Roman Emperors'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
             MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'year', value: '%s'})
-            MERGE (cp2)-[:hasGodotUri]->(g:GODOT)
+            MERGE (cp2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
             MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
             RETURN g.uri as g 
@@ -436,9 +438,9 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             """ % (roman_emperor, godot_uri, attestation_uri, title, date_string)
     else:
         #
-        if day is None:
+        if day == "":
             # only month specified, no day
-            if year is not None:
+            if year != "":
                 # year, month specified, no day given
                 cypher_query = """
                 MATCH (root:Timeline)--(YearReferenceSystem {type: 'Regnal Years'})--(yrs:YearReferenceSystem {type:'Roman Emperors'})
@@ -446,7 +448,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp1)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'year', value: '%s'})
                 MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'month', value: '%s'})
-                MERGE (cp3)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 
@@ -465,7 +467,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 """ % (roman_emperor, month, godot_uri, attestation_uri, title, date_string)
         else:
             # month and day specified
-            if year is not None:
+            if year != "":
                 # year, month, day specified
                 cypher_query = """
                 MATCH (root:Timeline)--(YearReferenceSystem {type: 'Regnal Years'})--(yrs:YearReferenceSystem {type:'Roman Emperors'})
@@ -474,7 +476,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp2)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp3)-[:hasCalendarPartial]->(cp4:CalendarPartial {type: 'day', value: '%s'})
-                MERGE (cp4)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 
@@ -487,7 +489,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp1)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'day', value: '%s'})
-                MERGE (cp3)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
                 RETURN g.uri as g 

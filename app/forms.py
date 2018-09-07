@@ -238,7 +238,7 @@ class CyrenaicaYears(FlaskForm):
                                                  ('Payni', 'Payni'),
                                                  ('Epeiph', 'Epeiph'),
                                                  ('Mesore', 'Mesore'),
-                                                 ('epagomenal days','epagomenal days'),
+                                                 ('Epagomenal Days', 'Epagomenal Days'),
                                                  ])
     day = StringField('Day:', validators=[
         Optional(), Regexp('^[0-9_]*$')])

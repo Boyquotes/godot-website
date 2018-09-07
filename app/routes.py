@@ -20,10 +20,8 @@ def browse(yrs, page):
     browse_data = get_browse_data(yrs, page)
     list_of_yrs = get_list_of_yrs()
     total_hits = get_browse_data_number_of_results(yrs)
-    if browse_data:
-        return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs, yrs=yrs, page=page, total_hits=total_hits)
-    else:
-        return render_template('503.html'), 503
+    return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
+                           yrs=yrs, page=page, total_hits=total_hits)
 
 
 @app.route('/contact')

@@ -11,25 +11,47 @@
         {% endif %}
     {% endwith %}
     <h1>GODOT Detail View</h1>
-    <p>https://godot.date/id/{{ id }}</p>
+    <h3 style="margin-bottom: 2em;"><div id="godot_uri">https://godot.date/id/{{ id }}</div></h3>
+        <div class="g_tooltip">
+            <button class="btn btn-godot-reset btn-sm" style="margin-left:0; width:200px; margin-top:-3em;" onclick="copy2clipboard()" id="copy_button">
+                Copy URI to clipboard
+            </button>
+        </div>
     <h3>Calendar System</h3>
-    {% for path in paths %}
+    {%- for path in paths %}
         <p><strong>{{ path.label }}</strong>:<br />
-        {% for key, value in path.items() %}
-            {% if key != 'label' %}
-                {% if key == 'uri' %}
+        {%- for key, value in path.items() %}
+            {%- if key != 'label' %}
+                {%- if key == 'uri' %}
                     <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
-                {% else %}
+                {%- else %}
                     <strong>{{ key }}</strong>: {{ value }}<br />
-                {% endif %}
-            {% endif %}
-        {% endfor %}
+                {%- endif %}
+            {%- endif %}
+        {%- endfor %}
         </p>
-    {% endfor %}
+    {%- endfor %}
 
     <h3>Attestations</h3>
     {% for att in attestations %}
     <p><a href="{{ att.uri }}">{{ att.title }}</a></p>
     {% endfor%}
-<p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <script>
+        function copy2clipboard() {
+            let textarea = document.createElement('textarea')
+            textarea.id = 't'
+            textarea.style.height = 0
+            document.body.appendChild(textarea)
+            textarea.value = document.getElementById("godot_uri").innerText
+            let selector = document.querySelector('#t')
+            selector.select()
+            document.execCommand('copy')
+            document.body.removeChild(textarea)
+            document.getElementById("copy_button").innerText = "Copied!"
+            setTimeout(function() {
+                document.getElementById("copy_button").innerText = "Copy URI to clipboard"
+            }, 1000);
+        }
+    </script>
 {% endblock %}

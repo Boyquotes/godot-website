@@ -9,7 +9,8 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 app.config['NEO4J_USER'] = os.environ['NEO4J_USER']
 app.config['NEO4J_PASSWORD'] = os.environ['NEO4J_PASSWORD']
-
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
 
 SimpleLogin(app, login_checker=users.is_valid_user)
 bootstrap = Bootstrap(app)

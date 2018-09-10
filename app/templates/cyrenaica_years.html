@@ -7,17 +7,17 @@
         {{ form.hidden_tag() }}
         <p>
             {{ form.year_reference_system.label }}<br>
-            {{ form.year_reference_system(style='width:15em;') }}
+            {{ form.year_reference_system(style='width:15em;', **{'onChange':'changeYrs()'}) }}
         </p>
-        <p style="padding-left:2em">
+        <p id="apollo_priest" style="display:none">
             {{ form.apollo_priests_cyrenaica.label }}<br>
             {{ form.apollo_priests_cyrenaica(style='width:30em;') }}
         </p>
-        <p style="padding-left:2em">
+        <p id="roman_emperor" style="display:none">
             {{ form.roman_emperors.label }}<br>
             {{ form.roman_emperors(style='width:30em;') }}
         </p>
-        <p style="padding-left:2em">
+        <p id="year_number" style="display:none">
             {{ form.year.label }}<br>
             {{ form.year(size=10) }}
             {% for error in form.year.errors %}
@@ -59,4 +59,32 @@
         <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
         <p>&nbsp;</p>
     </form>
+    <script>
+        function changeYrs(){
+            var e = document.getElementById("year_reference_system")
+            var value = e.options[e.selectedIndex].value;
+            var yrs = e.options[e.selectedIndex].text;
+            if (yrs == "Year of Unknown System"){
+                document.getElementById("year_number").style.display="block"
+                document.getElementById("apollo_priest").style.display="none"
+                document.getElementById("roman_emperor").style.display="none"
+            } else if (yrs == "Actian Era Year"){
+                document.getElementById("year_number").style.display="block"
+                document.getElementById("apollo_priest").style.display="none"
+                document.getElementById("roman_emperor").style.display="none"
+            } else if (yrs == "Eponymous Apollo Priest"){
+                document.getElementById("year_number").style.display="none"
+                document.getElementById("apollo_priest").style.display="block"
+                document.getElementById("roman_emperor").style.display="none"
+            } else if (yrs == "Regnal Year (Roman Emperor)"){
+                document.getElementById("year_number").style.display="block"
+                document.getElementById("apollo_priest").style.display="none"
+                document.getElementById("roman_emperor").style.display="block"
+            } if (yrs == "None"){
+                document.getElementById("year_number").style.display="none"
+                document.getElementById("apollo_priest").style.display="none"
+                document.getElementById("roman_emperor").style.display="none"
+            }
+        }
+    </script>
 {% endblock %}

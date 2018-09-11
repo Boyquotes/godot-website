@@ -1,10 +1,12 @@
-from flask import render_template, flash, redirect
-from flask_simplelogin import SimpleLogin, get_username, login_required
+from flask import render_template, request, jsonify
+from flask_simplelogin import login_required
 from app import app
 from app.forms import RomanConsularDating, CyrenaicaYears
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results
+import simplejson as json
+from app.openrefine_utils import search, get_openrefine_metadata
 
 
 @app.route('/')
@@ -46,7 +48,7 @@ def display_godot_uri(godot_uri):
     if paths:
         return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
     else:
-        return render_template('503.html'), 503
+        return render_template('404.html'), 404
 
 
 @app.route('/convert/roman_consuls', methods=['GET', 'POST'])
@@ -100,6 +102,45 @@ def cyrenaica_years():
                                apollo_priest=apollo_priest, roman_emperor=roman_emperor, year=year, month=month,
                                day=day, attestation_uri=attestation_uri, date_string=date_string, date_title=date_title, godot_uri=godot_uri.split("/")[-1])
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
+
+
+@app.route('/tools/openrefine')
+def tools_openrefine():
+    return render_template('tools_openrefine.html')
+
+
+@app.route('/tools/api')
+def tools_api():
+    return render_template('tools_api.html')
+
+
+def _jsonpify(obj):
+    try:
+        callback = request.args['callback']
+        response = app.make_response("%s(%s)" % (callback, json.dumps(obj)))
+        response.mimetype = "text/javascript"
+        return response
+    except KeyError:
+        return jsonify(obj)
+
+
+@app.route("/api/openrefine/reconcile", methods=['POST', 'GET'])
+def reconcile():
+    query = request.args.get('query')
+    queries = request.form.get('queries')
+    if query:
+        if query.startswith("{"):
+            query = json.loads(query)['query']
+        results = search(query)
+        return _jsonpify({"result": results})
+
+    if queries:
+        queries = json.loads(queries)
+        results = {}
+        for (key, query) in queries.items():
+            results[key] = {"result": app.search(query['query'])}
+        return _jsonpify(results)
+    return _jsonpify(get_openrefine_metadata())
 
 
 @app.errorhandler(404)

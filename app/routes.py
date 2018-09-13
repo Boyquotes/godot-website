@@ -1,10 +1,10 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
-    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation
+    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation, delete_attestation
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
 
@@ -65,6 +65,21 @@ def edit_attestation_data(godot_uri, node_id):
     attestation = get_attestation(node_id)
     if paths:
         return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
+    else:
+        return render_template('404.html'), 404
+
+
+@app.route('/id/<godot_uri>/<node_id>/delete', methods=['GET', 'POST'])
+@login_required
+def delete_attestation_node(godot_uri, node_id):
+    form = AttestationDelete()
+    if form.validate_on_submit():
+        if delete_attestation(node_id):
+            return redirect("/id/" + godot_uri)
+    paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    attestation = get_attestation(node_id)
+    if paths:
+        return render_template('delete_attestation_data.html', title='Delete Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
     else:
         return render_template('404.html'), 404
 

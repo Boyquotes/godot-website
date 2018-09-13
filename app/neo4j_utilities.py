@@ -518,3 +518,14 @@ def update_attestation(node_id, attestation_uri, title, date_string):
         return results
     else:
         None
+
+
+def delete_attestation(node_id):
+    query = "match (a:Attestation)-[r:hasAttestation]-(:GODOT) where id(a) = %s delete a, r" % node_id
+    print(query)
+    results = query_neo4j_db(query)
+    if results:
+        return results
+    else:
+        None
+

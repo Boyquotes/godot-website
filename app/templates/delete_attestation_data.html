@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>Delete Attestation Data</h1>
+    <h3 style="margin-bottom: 2em;"><div id="godot_uri">https://godot.date/id/{{ id }}</div></h3>
+    <h3>Calendar System</h3>
+    {%- for path in paths %}
+        <p><strong>{{ path.label }}</strong>:<br />
+        {%- for key, value in path.items() %}
+            {%- if key != 'label' %}
+                {%- if key == 'uri' %}
+                    <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
+                {%- else %}
+                    <strong>{{ key }}</strong>: {{ value }}<br />
+                {%- endif %}
+            {%- endif %}
+        {%- endfor %}
+        </p>
+    {%- endfor %}
+
+    <h3>Attestations</h3>
+    <p><a href="{{ attestations.uri }}">{{ attestations.title }}</a>:<br />{{ attestations.date_string }}</p>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }}</p>
+    </form>
+    <p>&nbsp;</p>
+
+{% endblock %}

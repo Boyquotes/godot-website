@@ -257,6 +257,10 @@ class AttestationUpdate(FlaskForm):
     submit = SubmitField('Submit...')
 
 
+class AttestationDelete(FlaskForm):
+    submit = SubmitField('Delete...')
+
+
 class RomanConsularDating(FlaskForm):
     consulship = StringField('Consulship:', validators=[DataRequired()])
     day_ref = SelectField('Kalends/Nones/Ides:',

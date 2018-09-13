@@ -33,9 +33,14 @@
     {%- endfor %}
 
     <h3>Attestations</h3>
-    {% for att in attestations %}
-    <p><a href="{{ att.uri }}">{{ att.title }}</a></p>
-    {% endfor%}
+    {%- for att in attestations %}
+    {%- if get_username() == "roueche" or get_username() == "grieshaber" %}
+    <p><a href="{{ att.uri }}">{{ att.title }}</a>: {{ att.date_string }} <a href="/id/{{ id }}/{{ att.node_id }}/edit">edit</a></p>
+    {%- else %}
+    <p><a href="{{ att.uri }}">{{ att.title }}</a>: {{ att.date_string }}</p>
+    {%- endif %}
+
+    {%- endfor%}
     <p>&nbsp;</p>
     <script>
         function copy2clipboard() {

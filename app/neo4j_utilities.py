@@ -91,12 +91,16 @@ def get_attestations(godot_uri):
     :param godot_uri: string/uri of GODOT ID
     :return: list of dictionaries
     """
-    query = "match (g:GODOT {uri:'%s'})--(a:Attestation) return a" % godot_uri
+    query = "match (g:GODOT {uri:'%s'})--(a:Attestation) return a, id(a) as b" % godot_uri
     results = query_neo4j_db(query)
     att = []
     if results:
         for record in results:
-            att.append({k: v for (k, v) in record["a"].items()})
+            tmp_dict = {}
+            tmp_dict.update({'node_id': record['b']})
+            for (k, v) in record["a"].items():
+                tmp_dict[k] = v
+            att.append(tmp_dict)
     return att
 
 
@@ -495,3 +499,22 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 RETURN g.uri as g 
                 """ % (roman_emperor, month, day, godot_uri, attestation_uri, title, date_string)
     return cypher_query
+
+
+def get_attestation(node_id):
+    query = "match (a:Attestation) where id(a) = %s return a" % node_id
+    results = query_neo4j_db(query)
+    for record in results:
+        tmp_dict = {}
+        for (k, v) in record["a"].items():
+            tmp_dict[k] = v
+    return tmp_dict
+
+
+def update_attestation(node_id, attestation_uri, title, date_string):
+    query = "match (a:Attestation) where id(a) = %s set a.date_string='%s', a.title = '%s', a.uri = '%s'" % (node_id, date_string, title, attestation_uri)
+    results = query_neo4j_db(query)
+    if results:
+        return results
+    else:
+        None

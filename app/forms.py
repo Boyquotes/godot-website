@@ -249,6 +249,14 @@ class CyrenaicaYears(FlaskForm):
     submit = SubmitField('Submit...')
 
 
+class AttestationUpdate(FlaskForm):
+    attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
+    date_string = StringField('Date String:', validators=[DataRequired()])
+    title = StringField('Title:', validators=[DataRequired()])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+
+
 class RomanConsularDating(FlaskForm):
     consulship = StringField('Consulship:', validators=[DataRequired()])
     day_ref = SelectField('Kalends/Nones/Ides:',

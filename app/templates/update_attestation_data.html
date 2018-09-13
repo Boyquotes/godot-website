@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>Update Attestation Data</h1>
+    <h3 style="margin-bottom: 2em;"><div id="godot_uri">https://godot.date/id/{{ id }}</div></h3>
+    <h3>Calendar System</h3>
+    {%- for path in paths %}
+        <p><strong>{{ path.label }}</strong>:<br />
+        {%- for key, value in path.items() %}
+            {%- if key != 'label' %}
+                {%- if key == 'uri' %}
+                    <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
+                {%- else %}
+                    <strong>{{ key }}</strong>: {{ value }}<br />
+                {%- endif %}
+            {%- endif %}
+        {%- endfor %}
+        </p>
+    {%- endfor %}
+
+    <h3>Attestations</h3>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.attestation_uri.label }}<br>
+            {{ form.attestation_uri(value=attestations.uri, size=50, style='width:30em;') }}
+            {% for error in form.attestation_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title(value=attestations.title, size=50, style='width:30em;') }}
+            {% for error in form.title.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.date_string.label }}<br>
+            {{ form.date_string(value=attestations.date_string, size=50, style="margin-bottom:1.5em; width:30em") }}
+            {% for error in form.date_string.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+    <p>&nbsp;</p>
+
+{% endblock %}

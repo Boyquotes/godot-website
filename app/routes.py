@@ -1,10 +1,10 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
-    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results
+    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
 
@@ -47,6 +47,24 @@ def display_godot_uri(godot_uri):
     attestations = get_attestations("https://godot.date/id/" + godot_uri)
     if paths:
         return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
+    else:
+        return render_template('404.html'), 404
+
+
+@app.route('/id/<godot_uri>/<node_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_attestation_data(godot_uri, node_id):
+    form = AttestationUpdate()
+    if form.validate_on_submit():
+        attestation_uri = form.attestation_uri.data
+        title = form.title.data
+        date_string = form.date_string.data
+        if update_attestation(node_id, attestation_uri, title, date_string):
+            return redirect("/id/" + godot_uri)
+    paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    attestation = get_attestation(node_id)
+    if paths:
+        return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
     else:
         return render_template('404.html'), 404
 
@@ -133,7 +151,6 @@ def reconcile():
             query = json.loads(query)['query']
         results = search(query)
         return _jsonpify({"result": results})
-
     if queries:
         queries = json.loads(queries)
         results = {}

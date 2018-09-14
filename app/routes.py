@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation, delete_attestation
@@ -105,6 +105,33 @@ def roman_consuls():
                                day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data,
                                result=result_string)
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
+
+
+@app.route('/cyrenaica/roman_imperial_titulature', methods=['GET', 'POST'])
+@login_required
+def cyrenaica_roman_emperor_titulature():
+    form = CyrenaicaRomanImperialTitulature()
+    if form.validate_on_submit():
+        roman_emperor = form.roman_emperors.data
+        consul_number = form.consul_number.data
+        trib_pot_number = form.trib_pot_number.data
+        imperator_number = form.imperator_number.data
+        victory_titles = form.victory_titles.data
+        attestation_uri = form.attestation_uri.data
+        date_string = form.date_string.data
+        date_title = form.title.data
+        return render_template('cyrenaica_emperors_result.html',
+                               title='Cyrenaica Roman Imperial Titulature',
+                               attestation_uri=attestation_uri,
+                               date_string=date_string,
+                               date_title=date_title,
+                               roman_emperor=roman_emperor,
+                               consul_number=consul_number,
+                               trib_pot_number=trib_pot_number,
+                               imperator_number=imperator_number,
+                               victory_titles=victory_titles,
+                               form=form)
+    return render_template('cyrenaica_emperors.html', title='Cyrenaica Roman Imperial Titulature', form=form)
 
 
 @app.route('/cyrenaica/single_year', methods=['GET', 'POST'])

@@ -1,6 +1,46 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField
+from wtforms import StringField, IntegerField, SelectField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired, Optional, Regexp
+
+roman_emperors_list = [('unknown', 'unknown'), ('Augustus', 'Augustus'),
+                                          ('Tiberius', 'Tiberius'),
+                                          ('Caligula', 'Caligula'),
+                                          ('Claudius', 'Claudius'),
+                                          ('Nero', 'Nero'),
+                                          ('Galba', 'Galba'),
+                                          ('Otho', 'Otho'),
+                                          ('Vitellius', 'Vitellius'),
+                                          ('Vespasian', 'Vespasian'),
+                                          ('Titus', 'Titus'),
+                                          ('Domitian', 'Domitian'),
+                                          ('Nerva', 'Nerva'),
+                                          ('Trajan', 'Trajan'),
+                                          ('Hadrian', 'Hadrian'),
+                                          ('Antoninus Pius', 'Antoninus Pius'),
+                                          ('Marc Aurel', 'Marc Aurel'),
+                                          ('Commodus', 'Commodus'),
+                                          ('Pertinax', 'Pertinax'),
+                                          ('Pescennius Niger', 'Pescennius Niger'),
+                                          ('Septimius Severus', 'Septimius Severus'),
+                                          ('Caracalla', 'Caracalla'),
+                                          ('Macrinus', 'Macrinus'),
+                                          ('Elagabal', 'Elagabal'),
+                                          ('Severus Alexander', 'Severus Alexander'),
+                                          ('Maximinus Thrax', 'Maximinus Thrax'),
+                                          ('Gordian', 'Gordian'),
+                                          ('Phillippus Arabs', 'Phillippus Arabs'),
+                                          ('Decius', 'Decius'),
+                                          ('Gallus / Volusian', 'Gallus / Volusian'),
+                                          ('Aemilian', 'Aemilian'),
+                                          ('Valerian', 'Valerian'),
+                                          ('Macrianus / Quietus', 'Macrianus / Quietus'),
+                                          ('Gallienus', 'Gallienus'),
+                                          ('Claudius Gothicus', 'Claudius Gothicus'),
+                                          ('Aurelian', 'Aurelian'),
+                                          ('Tacitus', 'Tacitus'),
+                                          ('Probus', 'Probus'),
+                                          ('Carus / Carinus', 'Carus / Carinus'),
+                                          ('Diocletian', 'Diocletian')]
 
 
 class CyrenaicaYears(FlaskForm):
@@ -100,46 +140,7 @@ class CyrenaicaYears(FlaskForm):
                                                 ('Φλάμμας','Φλάμμας'),
                                                     ])
     roman_emperors = SelectField('Roman Emperor:',
-                                           choices=[('Augustus', 'Augustus'),
-                                                    ('Tiberius', 'Tiberius'),
-                                                    ('Caligula', 'Caligula'),
-                                                    ('Claudius', 'Claudius'),
-                                                    ('Nero', 'Nero'),
-                                                    ('Galba', 'Galba'),
-                                                    ('Otho', 'Otho'),
-                                                    ('Vitellius', 'Vitellius'),
-                                                    ('Vespasian', 'Vespasian'),
-                                                    ('Titus', 'Titus'),
-                                                    ('Domitian', 'Domitian'),
-                                                    ('Nerva', 'Nerva'),
-                                                    ('Trajan', 'Trajan'),
-                                                    ('Hadrian', 'Hadrian'),
-                                                    ('Antoninus Pius', 'Antoninus Pius'),
-                                                    ('Marc Aurel', 'Marc Aurel'),
-                                                    ('Commodus', 'Commodus'),
-                                                    ('Pertinax', 'Pertinax'),
-                                                    ('Pescennius Niger', 'Pescennius Niger'),
-                                                    ('Septimius Severus', 'Septimius Severus'),
-                                                    ('Caracalla', 'Caracalla'),
-                                                    ('Macrinus', 'Macrinus'),
-                                                    ('Elagabal', 'Elagabal'),
-                                                    ('Severus Alexander', 'Severus Alexander'),
-                                                    ('Maximinus Thrax', 'Maximinus Thrax'),
-                                                    ('Gordian', 'Gordian'),
-                                                    ('Phillippus Arabs', 'Phillippus Arabs'),
-                                                    ('Decius', 'Decius'),
-                                                    ('Gallus / Volusian', 'Gallus / Volusian'),
-                                                    ('Aemilian', 'Aemilian'),
-                                                    ('Valerian', 'Valerian'),
-                                                    ('Macrianus / Quietus', 'Macrianus / Quietus'),
-                                                    ('Gallienus', 'Gallienus'),
-                                                    ('Claudius Gothicus', 'Claudius Gothicus'),
-                                                    ('Aurelian', 'Aurelian'),
-                                                    ('Tacitus', 'Tacitus'),
-                                                    ('Probus', 'Probus'),
-                                                    ('Carus / Carinus', 'Carus / Carinus'),
-                                                    ('Diocletian', 'Diocletian'),
-                                                    ])
+                                           choices=roman_emperors_list)
     egyptian_calendar_months = SelectField('Months (Egyptian):',
                                         choices=[('None', 'None'),
                                                  ('Thot', 'Thot'),
@@ -222,3 +223,68 @@ class RomanConsularDating(FlaskForm):
                              ])
     reset = SubmitField('Reset...')
     submit = SubmitField('Convert...')
+
+
+class CyrenaicaRomanImperialTitulature(FlaskForm):
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+    attestation_uri = StringField('Attestation URI:', validators=[DataRequired()])
+    date_string = StringField('Date String:', validators=[DataRequired()])
+    title = StringField('Title:', validators=[DataRequired()])
+    roman_emperors = SelectField('Roman Emperor:',
+                                 choices=roman_emperors_list)
+    egyptian_calendar_months = SelectField('Months (Egyptian):',
+                                           choices=[('None', 'None'),
+                                                    ('Thot', 'Thot'),
+                                                    ('Phaophi', 'Phaophi'),
+                                                    ('Hathyr', 'Hathyr'),
+                                                    ('Choiak', 'Choiak'),
+                                                    ('Tybi', 'Tybi'),
+                                                    ('Mecheir', 'Mecheir'),
+                                                    ('Phamenoth', 'Phamenoth'),
+                                                    ('Pharmuthi', 'Pharmuthi'),
+                                                    ('Pachons', 'Pachons'),
+                                                    ('Payni', 'Payni'),
+                                                    ('Epeiph', 'Epeiph'),
+                                                    ('Mesore', 'Mesore'),
+                                                    ('Epagomenal Days', 'Epagomenal Days'),
+                                                    ])
+    day = StringField('Day:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    consul_number = StringField('Consul Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    trib_pot_number = StringField('Trib Pot Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    imperator_number = StringField('Imperator Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    victory_titles = SelectMultipleField('Victory Titles:',
+                                           choices=[('None', 'None'),
+                                                    ('Adiabenicus', 'Adiabenicus'),
+                                                    ('Arabicus', 'Arabicus'),
+                                                    ('Armeniacus', 'Armeniacus'),
+                                                    ('Britannicus', 'Britannicus'),
+                                                    ('Britannicus max.', 'Britannicus max.'),
+                                                    ('Carpicus max.', 'Carpicus max.'),
+                                                    ('Dacicus', 'Dacicus'),
+                                                    ('Dacicus max.', 'Dacicus max.'),
+                                                    ('Germanicus', 'Germanicus'),
+                                                    ('Germanicus max.', 'Germanicus max.'),
+                                                    ('Gothicus', 'Gothicus'),
+                                                    ('Gothicus max.', 'Gothicus max.'),
+                                                    ('Medicus', 'Medicus'),
+                                                    ('Palmyrenicus max.', 'Palmyrenicus max.'),
+                                                    ('Parthicus', 'Parthicus'),
+                                                    ('Parthicus max.', 'Parthicus max.'),
+                                                    ('Persicus max.', 'Persicus max.'),
+                                                    ('Samarticus', 'Samarticus'),
+                                                    ('Samarticus max.', 'Samarticus max.'),
+                                                    ])
+
+
+
+
+
+
+
+
+

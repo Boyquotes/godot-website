@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>Cyrenaica: Roman Imperial Titulature &ndash; Result</h1>
+    <p>GODOT URI for:</p>
+    <ul>
+        <li><span style="font-weight:1000">Roman Emperor</span>: {{ roman_emperor }}</li>
+        <li><span style="font-weight:1000">Consul Number</span>: {{ consul_number }}</li>
+        <li><span style="font-weight:1000">Trib. Pot. Number</span>: {{ trib_pot_number }}</li>
+        <li><span style="font-weight:1000">Imperator Number</span>: {{ imperator_number }}</li>
+        <li><span style="font-weight:1000">Victory Titles</span>:
+            {%- for title in victory_titles %}
+                {{ title }}
+            {%- endfor %}
+        </li>
+        <li><span style="font-weight:1000">Attestation URI</span>: <a href="{{ attestation_uri }}">{{ attestation_uri }}</a></li>
+        <li><span style="font-weight:1000">Title</span>: {{ date_title }}</li>
+        <li><span style="font-weight:1000">Date String</span>: {{ date_string }}</li>
+    </ul>
+    <p style="margin-top:2em"><a href="/cyrenaica/roman_imperial_titulature">Add new date & attestation...</a></p>
+{% endblock %}

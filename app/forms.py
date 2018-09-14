@@ -158,7 +158,7 @@ class CyrenaicaYears(FlaskForm):
                                                  ])
     day = StringField('Day:', validators=[
         Optional(), Regexp('^[0-9_]*$')])
-    attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
+    attestation_uri = StringField('Attestation URI:', validators=[DataRequired()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     title = StringField('Title:', validators=[DataRequired()])
     reset = SubmitField('Reset...')

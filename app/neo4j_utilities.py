@@ -504,8 +504,8 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
 def get_attestation(node_id):
     query = "match (a:Attestation) where id(a) = %s return a" % node_id
     results = query_neo4j_db(query)
+    tmp_dict = {}
     for record in results:
-        tmp_dict = {}
         for (k, v) in record["a"].items():
             tmp_dict[k] = v
     return tmp_dict

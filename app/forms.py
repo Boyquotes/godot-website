@@ -258,7 +258,7 @@ class CyrenaicaRomanImperialTitulature(FlaskForm):
     imperator_number = StringField('Imperator Number:', validators=[
         Optional(), Regexp('^[0-9_]*$')])
     victory_titles = SelectMultipleField('Victory Titles:',
-                                           choices=[('None', 'None'),
+                                           choices=[
                                                     ('Adiabenicus', 'Adiabenicus'),
                                                     ('Arabicus', 'Arabicus'),
                                                     ('Armeniacus', 'Armeniacus'),

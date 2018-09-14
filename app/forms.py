@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, SubmitField
-from wtforms.validators import DataRequired, URL, Optional, Regexp
+from wtforms.validators import DataRequired, Optional, Regexp
 
 
 class CyrenaicaYears(FlaskForm):
@@ -166,7 +166,7 @@ class CyrenaicaYears(FlaskForm):
 
 
 class AttestationUpdate(FlaskForm):
-    attestation_uri = StringField('Attestation URI:', validators=[DataRequired(), URL()])
+    attestation_uri = StringField('Attestation URI:', validators=[DataRequired()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     title = StringField('Title:', validators=[DataRequired()])
     reset = SubmitField('Reset...')

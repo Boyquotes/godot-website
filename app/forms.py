@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField, SelectMultipleField
+from wtforms import StringField, IntegerField, SelectField, SubmitField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired, Optional, Regexp
 
 roman_emperors_list = [('unknown', 'unknown'), ('Augustus', 'Augustus'),
@@ -303,6 +303,7 @@ class CyrenaicaRomanImperialTitulature(FlaskForm):
         Optional(), Regexp('^[0-9_]*$')])
     consul_number = StringField('Consul Number:', validators=[
         Optional(), Regexp('^[0-9_]*$')])
+    consul_designatus = BooleanField('consul designatus')
     trib_pot_number = StringField('Trib Pot Number:', validators=[
         Optional(), Regexp('^[0-9_]*$')])
     imperator_number = StringField('Imperator Number:', validators=[

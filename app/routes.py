@@ -114,6 +114,7 @@ def cyrenaica_roman_emperor_titulature():
     if form.validate_on_submit():
         roman_emperor = form.roman_emperors.data
         consul_number = form.consul_number.data
+        consul_designatus = form.consul_designatus.data
         trib_pot_number = form.trib_pot_number.data
         imperator_number = form.imperator_number.data
         victory_titles = form.victory_titles.data
@@ -127,6 +128,7 @@ def cyrenaica_roman_emperor_titulature():
                                date_title=date_title,
                                roman_emperor=roman_emperor,
                                consul_number=consul_number,
+                               consul_designatus=consul_designatus,
                                trib_pot_number=trib_pot_number,
                                imperator_number=imperator_number,
                                victory_titles=victory_titles,

@@ -11,7 +11,7 @@
         </p>
         <p>
             {{ form.consul_number.label }}<br>
-            {{ form.consul_number(size=10) }}
+            {{ form.consul_number(size=10) }} {{ form.consul_designatus(style='margin-left:1em') }} {{ form.consul_designatus.label }}
             {% for error in form.consul_number.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

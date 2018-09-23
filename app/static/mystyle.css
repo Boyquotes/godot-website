@@ -230,7 +230,7 @@ img {
 @media (min-width: 1050px) {
     .navbar-inverse {
         height: 250px;
-        background-image: url('/static/godot-logo.png'), url('/static/fasti.png');
+        background-image: url('/static/godot-logo.svg'), url('/static/fasti.png');
         background-position: right 30px top , top left 100px;
         background-repeat: no-repeat, no-repeat;
         background-size: 180px, 1024px;

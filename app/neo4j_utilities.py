@@ -206,6 +206,8 @@ def write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, at
     :param title:
     :return: GODOT URI (string) or None
     """
+    date_string = date_string.replace("'","\\'")
+    title = title.replace("'", "\\'")
     if (yrs == "" and year == "" and month == "" and day is None) or (attestation_uri == "" or date_string == ""):
         return None
     if yrs == "None":

@@ -518,16 +518,228 @@ def update_attestation(node_id, attestation_uri, title, date_string):
     results = query_neo4j_db(query)
     if results:
         return results
-    else:
-        None
 
 
 def delete_attestation(node_id):
     query = "match (a:Attestation)-[r:hasAttestation]-(:GODOT) where id(a) = %s delete a, r" % node_id
-    print(query)
     results = query_neo4j_db(query)
     if results:
         return results
-    else:
-        None
 
+
+def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles, attestation_uri,
+                                         date_string, date_title):
+    godot_uri_consul_number = ""
+    godot_uri_trib_pot_number = ""
+    godot_uri_imperator_number = ""
+    godot_uri_vitory_titles = ""
+    target_godot_uris = []
+    if consul_number != "":
+        target_godot_uris.append(_get_godot_uri_consul_number(roman_emperor, consul_number, consul_designatus))
+    if trib_pot_number != "":
+        target_godot_uris.append(_get_godot_uri_trib_pot_number(roman_emperor, trib_pot_number))
+    if imperator_number != "":
+        target_godot_uris.append(_get_godot_uri_imperator_number(roman_emperor, imperator_number))
+    if victory_titles:
+        target_godot_uris.append(_get_godot_uri_victory_titles(roman_emperor, victory_titles))
+
+    # now we have all godot uris that needs to be connected by a synchron godot uri
+    godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+    cnt = 1
+    query = "match (g:GODOT {type:'synchron'}) ,"
+    for g_uri in target_godot_uris:
+        query += "(g)-[:hasGodotUri]->(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
+        cnt += 1
+    # remove trailing comma
+    query = query[:-1]
+    query += "where size( (g)-[:hasGodotUri]->() ) = %s return g.uri as g" % len(target_godot_uris)
+    results = query_neo4j_db(query)
+    g_synchron_uri = None
+    for record in results:
+        g_synchron_uri = record["g"]
+    if not g_synchron_uri:
+        godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+        q_match = ""
+        q_merge = ""
+        query = """
+        create(g: GODOT {uri: '%s', type: 'synchron'})
+        with g
+        """ % godot_uri
+        cnt = 1
+        for g_uri in target_godot_uris:
+            q_match += "match (g%s: GODOT {uri: '%s'})\n" % (cnt, g_uri)
+            q_merge += "merge (g)-[:hasGodotUri]->(g%s)\n" % (cnt)
+            cnt += 1
+        query += q_match + q_merge + " return g.uri as g"
+        results = query_neo4j_db(query)
+        if results:
+            for record in results:
+                g_synchron_uri = record["g"]
+    # add attestation info to g_synchron_uri node
+    query = """
+    match (g_synchron:GODOT {uri:'%s'})
+    with g_synchron
+    merge (g_synchron)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
+    """ % (g_synchron_uri, attestation_uri, date_title, date_string)
+    results = query_neo4j_db(query)
+    return g_synchron_uri
+
+
+def _get_godot_uri_consul_number(roman_emperor, consul_number, consul_designatus):
+    consulship_type = "cos."
+    if consul_designatus:
+        consulship_type = "cos. design."
+    godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+    query = """
+    MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
+    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Consulates'})
+    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {type:'number', value:'%s'}) 
+    MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+                  ON CREATE SET g.uri='%s' 
+    RETURN g.uri as g
+    """ % (roman_emperor, consulship_type, consul_number, godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
+
+
+def _get_godot_uri_trib_pot_number(roman_emperor, trib_pot_number):
+    godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+    query = """
+    MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
+    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Tribunicia Potestas'})
+    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+                  ON CREATE SET g.uri='%s' 
+    RETURN g.uri as g
+    """ % (roman_emperor, trib_pot_number, godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
+
+
+def _get_godot_uri_imperator_number(roman_emperor, acc_number):
+    godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+    query = """
+    MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
+    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Acclamations'})
+    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+                  ON CREATE SET g.uri='%s' 
+    RETURN g.uri as g
+    """ % (roman_emperor, acc_number, godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
+
+
+def _get_godot_uri_victory_titles(roman_emperor, victory_titles):
+    # if only one victory titles is chosen, return standard GODOT URI
+    # otherwise create new synchron GODOT node
+    if len(victory_titles) == 1:
+        return _get_standard_godot_uri_victory_title(roman_emperor, victory_titles)
+    else:
+        return _get_synchron_godot_uri_victory_titles(roman_emperor, victory_titles)
+
+
+def _get_standard_godot_uri_victory_title(roman_emperor, victory_titles):
+    godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+    title = victory_titles[0]
+    title_label = ""
+    title_nr = ""
+    for token in title.split():
+        if token.isdigit():
+            title_nr = token
+        else:
+            title_label += token + " "
+    title_label = title_label.strip()
+    query = """
+    MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
+    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Victory Titles'})
+    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {value:'%s', type:'number'})
+    MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+               ON CREATE SET g.uri='%s' 
+    RETURN g.uri as g
+    """ % (roman_emperor, title_label, title_nr, godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            return record["g"]
+
+
+def _get_synchron_godot_uri_victory_titles(roman_emperor, victory_titles):
+    godot_uris_victory_titles = _get_godot_uris_victory_titles(roman_emperor, victory_titles)
+    # find synchron type GODOT node for all GODOT URIs in list godot_uris_victory_titles
+    # create if it not exists
+    cnt = 1
+    query = "match (g:GODOT {type:'synchron'}) ,"
+    for g_uri in godot_uris_victory_titles:
+        query += "(g)-->(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
+        cnt += 1
+    # remove trailing comma
+    query = query[:-1]
+    query += "where size( (g)-->() ) = %s return g.uri as g" % len(godot_uris_victory_titles)
+    print("_get_synchron_godot_uri_victory_titles: " + query)
+
+    results = query_neo4j_db(query)
+    g_synchron_uri = None
+    for record in results:
+        g_synchron_uri = record["g"]
+    print("g_synchron_uri: " + str(g_synchron_uri))
+    if not g_synchron_uri:
+        godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+        q_match = ""
+        q_merge = ""
+        query = """
+        create(g: GODOT {uri: '%s', type: 'synchron'})
+        with g
+        """ % godot_uri
+        cnt = 1
+        for g_uri in godot_uris_victory_titles:
+            q_match += "match (g%s: GODOT {uri: '%s'})\n" % (cnt, g_uri)
+            q_merge += "merge (g)-[:hasGodotUri]->(g%s)\n" % (cnt)
+            cnt += 1
+        query += q_match + q_merge + " return g.uri as g"
+        results = query_neo4j_db(query)
+        if results:
+            for record in results:
+                return record["g"]
+    else:
+        return g_synchron_uri
+
+
+def _get_godot_uris_victory_titles(roman_emperor, victory_titles):
+    godot_uris_victory_titles = []
+    for title in victory_titles:
+        godot_uri = "https://godot.date/id/" + shortuuid.uuid()
+        title_label = ""
+        title_nr = ""
+        for token in title.split():
+            if token.isdigit():
+                title_nr = token
+            else:
+                title_label += token + " "
+        title_label = title_label.strip()
+        query = """
+        MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
+        MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Victory Titles'})
+        MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+        MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {value:'%s', type:'number'})
+        MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+                      ON CREATE SET g.uri='%s' 
+        RETURN g.uri as g
+        """ % (roman_emperor, title_label, title_nr, godot_uri)
+        results = query_neo4j_db(query)
+        if results:
+            for record in results:
+                godot_uris_victory_titles.append(record["g"])
+
+    return godot_uris_victory_titles

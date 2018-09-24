@@ -4,7 +4,7 @@ from app import app
 from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature
 from app.convert import Convert_roman_calendar
 from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
-    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation, delete_attestation
+    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation, delete_attestation, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
 
@@ -121,6 +121,11 @@ def cyrenaica_roman_emperor_titulature():
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
         date_title = form.title.data
+
+
+
+        godot_uri = write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles, attestation_uri,
+                                         date_string, date_title)
         return render_template('cyrenaica_emperors_result.html',
                                title='Cyrenaica Roman Imperial Titulature',
                                attestation_uri=attestation_uri,
@@ -132,6 +137,7 @@ def cyrenaica_roman_emperor_titulature():
                                trib_pot_number=trib_pot_number,
                                imperator_number=imperator_number,
                                victory_titles=victory_titles,
+                               godot_uri=godot_uri,
                                form=form)
     return render_template('cyrenaica_emperors.html', title='Cyrenaica Roman Imperial Titulature', form=form)
 

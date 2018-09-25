@@ -18,8 +18,15 @@
             </button>
         </div>
     <h3>Calendar System</h3>
+    <ol>
     {%- for path in paths %}
-        <p><strong>{{ path.label }}</strong>:<br />
+
+        {%- if path.label == 'YearReferenceSystem' %}
+        <li>{{ path.label }}</li>
+        {%- else %}
+            <p><strong>{{ path.label }}</strong>:<br />
+        {%- endif %}
+
         {%- for key, value in path.items() %}
             {%- if key != 'label' %}
                 {%- if key == 'uri' %}
@@ -30,8 +37,9 @@
             {%- endif %}
         {%- endfor %}
         </p>
-    {%- endfor %}
 
+    {%- endfor %}
+    </ol>
     <h3>Attestations</h3>
     {%- for att in attestations %}
     {%- if get_username() == "roueche" or get_username() == "grieshaber" %}

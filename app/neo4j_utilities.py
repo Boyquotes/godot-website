@@ -548,7 +548,7 @@ def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul
     cnt = 1
     query = "match (g:GODOT {type:'synchron'}) ,"
     for g_uri in target_godot_uris:
-        query += "(g)-[:hasGodotUri]->(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
+        query += "(g)<-[:hasGodotUri]-(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
         cnt += 1
     # remove trailing comma
     query = query[:-1]
@@ -568,7 +568,7 @@ def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul
         cnt = 1
         for g_uri in target_godot_uris:
             q_match += "match (g%s: GODOT {uri: '%s'})\n" % (cnt, g_uri)
-            q_merge += "merge (g)-[:hasGodotUri]->(g%s)\n" % (cnt)
+            q_merge += "merge (g)<-[:hasGodotUri]-(g%s)\n" % (cnt)
             cnt += 1
         query += q_match + q_merge + " return g.uri as g"
         results = query_neo4j_db(query)
@@ -592,9 +592,9 @@ def _get_godot_uri_consul_number(roman_emperor, consul_number, consul_designatus
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
     query = """
     MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
-    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Consulates'})
-    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
-    MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {type:'number', value:'%s'}) 
+    MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'Imperial Consulates'})
+    MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasCalendarPartial]->(cp4:CalendarPartial {type:'number', value:'%s'}) 
     MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s' 
     RETURN g.uri as g
@@ -610,8 +610,8 @@ def _get_godot_uri_trib_pot_number(roman_emperor, trib_pot_number):
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
     query = """
     MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
-    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Tribunicia Potestas'})
-    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'Tribunicia Potestas'})
+    MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {value:'%s'})
     MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s' 
     RETURN g.uri as g
@@ -627,8 +627,8 @@ def _get_godot_uri_imperator_number(roman_emperor, acc_number):
     godot_uri = "https://godot.date/id/" + shortuuid.uuid()
     query = """
     MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
-    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Acclamations'})
-    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'Imperial Acclamations'})
+    MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {value:'%s'})
     MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s' 
     RETURN g.uri as g
@@ -662,9 +662,9 @@ def _get_standard_godot_uri_victory_title(roman_emperor, victory_titles):
     title_label = title_label.strip()
     query = """
     MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
-    MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Victory Titles'})
-    MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
-    MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {value:'%s', type:'number'})
+    MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'Imperial Victory Titles'})
+    MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {value:'%s'})
+    MERGE (cp3)-[:hasCalendarPartial]->(cp4:CalendarPartial {value:'%s', type:'number'})
     MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                ON CREATE SET g.uri='%s' 
     RETURN g.uri as g
@@ -682,12 +682,11 @@ def _get_synchron_godot_uri_victory_titles(roman_emperor, victory_titles):
     cnt = 1
     query = "match (g:GODOT {type:'synchron'}) ,"
     for g_uri in godot_uris_victory_titles:
-        query += "(g)-->(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
+        query += "(g)<-[:hasGodotUri]-(g%s:GODOT {uri:'%s'})," % (cnt, g_uri)
         cnt += 1
     # remove trailing comma
     query = query[:-1]
     query += "where size( (g)-->() ) = %s return g.uri as g" % len(godot_uris_victory_titles)
-    print("_get_synchron_godot_uri_victory_titles: " + query)
 
     results = query_neo4j_db(query)
     g_synchron_uri = None
@@ -705,7 +704,7 @@ def _get_synchron_godot_uri_victory_titles(roman_emperor, victory_titles):
         cnt = 1
         for g_uri in godot_uris_victory_titles:
             q_match += "match (g%s: GODOT {uri: '%s'})\n" % (cnt, g_uri)
-            q_merge += "merge (g)-[:hasGodotUri]->(g%s)\n" % (cnt)
+            q_merge += "merge (g)<-[:hasGodotUri]-(g%s)\n" % (cnt)
             cnt += 1
         query += q_match + q_merge + " return g.uri as g"
         results = query_neo4j_db(query)
@@ -730,9 +729,9 @@ def _get_godot_uris_victory_titles(roman_emperor, victory_titles):
         title_label = title_label.strip()
         query = """
         MATCH (yrs:YearReferenceSystem {type: 'Titulature of Roman Emperors'})-[:hasCalendarPartial]->(cp1:CalendarPartial {value: '%s'})
-        MERGE (cp1)-[:hasCalendarPartial]-(cp2:CalendarPartial {type:'Imperial Victory Titles'})
-        MERGE (cp2)-[:hasCalendarPartial]-(cp3:CalendarPartial {value:'%s'})
-        MERGE (cp3)-[:hasCalendarPartial]-(cp4:CalendarPartial {value:'%s', type:'number'})
+        MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type:'Imperial Victory Titles'})
+        MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {value:'%s'})
+        MERGE (cp3)-[:hasCalendarPartial]->(cp4:CalendarPartial {value:'%s', type:'number'})
         MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                       ON CREATE SET g.uri='%s' 
         RETURN g.uri as g

@@ -38,7 +38,7 @@ def get_browse_data(yrs, page):
                             # get GODOT ID only
                             entry_dict['godot_uri'] = v.split("/")[-1]
                         if k == 'type' and label != 'GODOT':
-                            if v != 'number' and v != 'reign' and v != 'mont' and v != 'day' and v != 'consulship':
+                            if v != 'number' and v != 'reign' and v != 'month' and v != 'day' and v != 'consulship':
                                 path_str += "%s " % v
                         if k == 'value':
                             path_str += " %s " % v
@@ -552,7 +552,7 @@ def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul
         cnt += 1
     # remove trailing comma
     query = query[:-1]
-    query += "where size( (g)-[:hasGodotUri]->() ) = %s return g.uri as g" % len(target_godot_uris)
+    query += "where size( (g)-[:hasGodotUri]-() ) = %s return g.uri as g" % len(target_godot_uris)
     results = query_neo4j_db(query)
     g_synchron_uri = None
     for record in results:
@@ -692,7 +692,6 @@ def _get_synchron_godot_uri_victory_titles(roman_emperor, victory_titles):
     g_synchron_uri = None
     for record in results:
         g_synchron_uri = record["g"]
-    print("g_synchron_uri: " + str(g_synchron_uri))
     if not g_synchron_uri:
         godot_uri = "https://godot.date/id/" + shortuuid.uuid()
         q_match = ""

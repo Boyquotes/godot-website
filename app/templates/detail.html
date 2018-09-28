@@ -20,23 +20,23 @@
     <h3>Calendar System</h3>
     <ol>
     {%- for path in paths %}
-
         {%- if path.label == 'YearReferenceSystem' %}
-        <li>{{ path.label }}</li>
+            <li>{{ path.label }}</li>
         {%- else %}
             <p><strong>{{ path.label }}</strong>:<br />
         {%- endif %}
-
         {%- for key, value in path.items() %}
             {%- if key != 'label' %}
-                {%- if key == 'uri' %}
+                {%- if key == 'type' and value != 'name' and value != 'number' and value != 'standard' %}
+                    <strong>{{ key }}</strong>: {{ value }}<br />
+                {%- elif key == 'uri' %}
                     <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
-                {%- else %}
+                {%- elif key != 'type' %}
                     <strong>{{ key }}</strong>: {{ value }}<br />
                 {%- endif %}
             {%- endif %}
         {%- endfor %}
-        </p>
+            </p>
 
     {%- endfor %}
     </ol>

@@ -77,7 +77,8 @@ def get_godot_path(godot_uri):
         for record in results:
             nodes = record["p"].nodes
             for n in nodes:
-                if list(n.labels)[0] != 'Timeline' and list(n.labels)[0] != 'GODOT':
+                #if list(n.labels)[0] != 'Timeline' and list(n.labels)[0] != 'GODOT':
+                if list(n.labels)[0] != 'Timeline':
                     n_dict = {'label': list(n.labels)[0]}
                     for k, v in n.items():
                         n_dict[k] = str(v)

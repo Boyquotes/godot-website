@@ -42,8 +42,17 @@ def about():
 
 @app.route('/id/<godot_uri>')
 def display_godot_uri(godot_uri):
-    # get data/path and attestation links for this GODOT URI
+    # get data/path and attestation links for this GODOT URI as list of dicts
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    # some info needn't be displayed on detail view page
+    path_list = []
+    for p_dict in paths:
+        if p_dict['label'] == 'GODOT' and p_dict['type'] == 'synchron':
+            continue
+        else:
+            path_list.append(p_dict)
+
+    paths = path_list
     attestations = get_attestations("https://godot.date/id/" + godot_uri)
     if paths:
         return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
@@ -62,6 +71,15 @@ def edit_attestation_data(godot_uri, node_id):
         if update_attestation(node_id, attestation_uri, title, date_string):
             return redirect("/id/" + godot_uri)
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    # some info needn't be displayed on detail view page
+    path_list = []
+    for p_dict in paths:
+        if p_dict['label'] == 'GODOT' and p_dict['type'] == 'synchron':
+            continue
+        else:
+            path_list.append(p_dict)
+
+    paths = path_list
     attestation = get_attestation(node_id)
     if paths:
         return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
@@ -77,6 +95,15 @@ def delete_attestation_node(godot_uri, node_id):
         if delete_attestation(node_id):
             return redirect("/id/" + godot_uri)
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
+    # some info needn't be displayed on detail view page
+    path_list = []
+    for p_dict in paths:
+        if p_dict['label'] == 'GODOT' and p_dict['type'] == 'synchron':
+            continue
+        else:
+            path_list.append(p_dict)
+
+    paths = path_list
     attestation = get_attestation(node_id)
     if paths:
         return render_template('delete_attestation_data.html', title='Delete Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
@@ -137,7 +164,7 @@ def cyrenaica_roman_emperor_titulature():
                                trib_pot_number=trib_pot_number,
                                imperator_number=imperator_number,
                                victory_titles=victory_titles,
-                               godot_uri=godot_uri,
+                               godot_uri=godot_uri.split("/")[-1],
                                form=form)
     return render_template('cyrenaica_emperors.html', title='Cyrenaica Roman Imperial Titulature', form=form)
 

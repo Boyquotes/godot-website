@@ -3,8 +3,10 @@ from flask_simplelogin import login_required
 from app import app
 from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature
 from app.convert import Convert_roman_calendar
-from app.neo4j_utilities import get_godot_path, get_attestations, get_browse_data, write_cyrenaica_path, \
-    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, get_attestation, update_attestation, delete_attestation, write_cyrenaica_emperor_titulature_path
+from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
+    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
+    get_attestation, update_attestation, delete_attestation
+from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
 
@@ -183,8 +185,8 @@ def cyrenaica_years():
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
         date_title = form.title.data
-        godot_uri = write_cyrenaica_path(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri,
-                                         date_string, date_title)
+        godot_uri = write_cyrenaica_single_year(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri,
+                                                date_string, date_title)
         if yrs == "Eponymous Officials: Apollo Priest (Cyrenaica)":
             roman_emperor = ""
         elif yrs == "Regnal: Roman Emperors":

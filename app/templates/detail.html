@@ -17,29 +17,46 @@
                 Copy URI to clipboard
             </button>
         </div>
-    <h3>Calendar System</h3>
-    <ol>
+    <h3>Calendar Date Information</h3>
+    <ul>
     {%- for path in paths %}
         {%- if path.label == 'YearReferenceSystem' %}
-            <li>{{ path.label }}</li>
-        {%- else %}
-            <p><strong>{{ path.label }}</strong>:<br />
-        {%- endif %}
-        {%- for key, value in path.items() %}
-            {%- if key != 'label' %}
-                {%- if key == 'type' and value != 'name' and value != 'number' and value != 'standard' %}
-                    <strong>{{ key }}</strong>: {{ value }}<br />
-                {%- elif key == 'uri' %}
-                    <strong>{{ key }}</strong>: <a href="{{ value }}">{{ value }}</a><br />
-                {%- elif key != 'type' %}
-                    <strong>{{ key }}</strong>: {{ value }}<br />
+            {%- for key, value in path.items() %}
+                {%- if key == 'type' %}
+                    <li>{{ value }}</li>
                 {%- endif %}
-            {%- endif %}
-        {%- endfor %}
-            </p>
+            {%- endfor %}
 
+        {%- elif path.label == 'CalendarPartial' %}
+            {%- for key, value in path.items() %}
+                {%- if key != 'label' %}
+                    {%- if key == 'type' %}
+                        {{ value }}:
+                    {%- elif key == 'uri' %}
+                        <a href="{{ value }}">{{ value }}</a><br />
+                    {%- else %}
+                        {{ value }}<br/>
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor %}
+        {%- elif path.label == 'GODOT' %}
+            GODOT Information:
+            <ul>
+            {%- for key, value in path.items() %}
+                {%- if key != 'type' and key != 'label' and value != '' %}
+                    {%- if key == 'uri' %}
+                        <li>GODOT {{ key.upper() }}: <a href="{{ value }}">{{ value }}</a></li>
+                    {%- elif key == 'not_before' or key == 'not_after' %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {% else %}
+                        <li>{{ key }}: {{ value }}</li>
+                    {%- endif %}
+                {%- endif %}
+            {%- endfor %}
+            </ul>
+        {%- endif %}
     {%- endfor %}
-    </ol>
+    </ul>
     <h3>Attestations</h3>
     {%- for att in attestations %}
     {%- if get_username() == "roueche" or get_username() == "grieshaber" %}

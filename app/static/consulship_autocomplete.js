@@ -7,10 +7,11 @@ $(function() {
                   q = q + terms[index] + "* AND label:*";
               }
               q = q.slice(0, -12)
+              console.log(q)
               $.ajax({
               url: "http://185.233.105.176:8983/solr/roman_consuls/select",
               data: {
-                  q: "label:"+q,
+                  q: "label:"+q+" AND year:[-30 TO *]",
                   fl: "label,godot_uri",
                   wt: 'json',
                   rows: 20

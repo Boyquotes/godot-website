@@ -7,7 +7,6 @@ $(function() {
                   q = q + terms[index] + "* AND label:*";
               }
               q = q.slice(0, -12)
-              console.log(q)
               $.ajax({
               url: "http://185.233.105.176:8983/solr/roman_consuls/select",
               data: {

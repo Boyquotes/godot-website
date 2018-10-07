@@ -233,6 +233,7 @@ class SearchRomanConsulate(FlaskForm):
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 
+
 class EgyptianCalendarLatePeriod(FlaskForm):
     late_period_pharaos = SelectField('Reign:',
                                       choices=[('1','Psametik I, years 1-55'),
@@ -259,6 +260,125 @@ class EgyptianCalendarLatePeriod(FlaskForm):
                                                ('22', 'Arses, years 1-2'),
                                                ('23', 'Darius III, years 1-6'),
                                                ('24', 'Khababash, years 1-3'),
+                                               ])
+    egyptian_calendar_months = SelectField('Months (Egyptian):',
+                                           choices=[('0', 'None'),
+                                                    ('1', 'Thot'),
+                                                    ('2', 'Phaophi'),
+                                                    ('3', 'Hathyr'),
+                                                    ('4', 'Choiak'),
+                                                    ('5', 'Tybi'),
+                                                    ('6', 'Mecheir'),
+                                                    ('7', 'Phamenoth'),
+                                                    ('8', 'Pharmuthi'),
+                                                    ('9', 'Pachons'),
+                                                    ('10', 'Payni'),
+                                                    ('11', 'Epeiph'),
+                                                    ('12', 'Mesore'),
+                                                    ('13', 'Epagomenal Days'),
+                                                    ])
+    day = StringField('Day:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    year = IntegerField('Year:', validators=[
+        DataRequired()])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+
+
+class EgyptianCalendarPtolemies(FlaskForm):
+    ptolemaic_pharaos = SelectField('Reign:',
+                                      choices=[('1','Alexander III (the Great), years 1-9'),
+                                               ('2', 'Philip Arrhidaeus, years 1-8'),
+                                               ('3', 'Alexander IV, years 1-13'),
+                                               ('4', 'Ptolemy I Soter, years 1-21'),
+                                               ('5', 'Ptolemy II Philadelphus, years 1-39'),
+                                               ('6', 'Ptolemy III Euergetes, years 1-26'),
+                                               ('7', 'Ptolemy IV Philopator, years 1-18'),
+                                               ('8', 'Ptolemy V Epiphanes, years 1-25'),
+                                               ('9', 'Ptolemy VI Philometor, years 1-12'),
+                                               ('10', 'Ptolemy VI Philometor, Ptolemy VIII (Euergetes II), Cleopatra II, years 1-7 / 12-18'),
+                                               ('11', 'Ptolemy VIII (Euergetes II) alone, year 7'),
+                                               ('12', 'Ptolemy VI Philometor and Cleopatra II restored, years 18-36'),
+                                               ('13', 'Ptolemy VII Neos Philopator, year 1'),
+                                               ('14', 'Ptolemy VIII Euergetes II restored, years 25-54'),
+                                               ('15', 'Cleopatra III and Ptolemy IX Soter II (Lathyros), years 1-11'),
+                                               ('16', 'Cleopatra III and Ptolemy X Alexander I, years 11-17'),
+                                               ('17', 'Ptolemy X Alexander I and Cleopatra III, years 8-14'),
+                                               ('18', 'Ptolemy X Alexander I and Cleopatra Berenice, years 14-27'),
+                                               ('19', 'Ptolemy IX Soter II (Lathyros) restored, years 30-37'),
+                                               ('20', 'Cleopatra Berenice (afterwards with Ptolemy XI Alexander II), year 1'),
+                                               ('21', 'Ptolemy XII Neos Dionysos (Auletes), years 1-24'),
+                                               ('22', 'Berenice IV (at first with Cleopatra Tryphaena), years 1-2'),
+                                               ('23', 'Berenice IV and Archelaus, years 2-3'),
+                                               ('24', 'Archelaus and Berenice IV, years 1-2'),
+                                               ('25', 'Ptolemy XII Neos Dionysos (Auletes) restored, years 26-30'),
+                                               ('26', 'Cleopatra VII Philopator, years 1-22'),
+                                               ])
+    egyptian_calendar_months = SelectField('Months (Egyptian):',
+                                           choices=[('0', 'None'),
+                                                    ('1', 'Thot'),
+                                                    ('2', 'Phaophi'),
+                                                    ('3', 'Hathyr'),
+                                                    ('4', 'Choiak'),
+                                                    ('5', 'Tybi'),
+                                                    ('6', 'Mecheir'),
+                                                    ('7', 'Phamenoth'),
+                                                    ('8', 'Pharmuthi'),
+                                                    ('9', 'Pachons'),
+                                                    ('10', 'Payni'),
+                                                    ('11', 'Epeiph'),
+                                                    ('12', 'Mesore'),
+                                                    ('13', 'Epagomenal Days'),
+                                                    ])
+    day = StringField('Day:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    year = IntegerField('Year:', validators=[
+        DataRequired()])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+
+
+class EgyptianCalendarRomanEmperors(FlaskForm):
+    roman_emperors = SelectField('Reign:',
+                                      choices=[ ('1', 'Augustus, years 1-43'),
+                                                ('2', 'Tiberius, years 1-23'),
+                                                ('3', 'Caligula, years 1-5'),
+                                                ('4', 'Claudius, years 1-15'),
+                                                ('5', 'Nero, years 1-14'),
+                                                ('6', 'Galba, years 1-2'),
+                                                ('7', 'Otho, year 1'),
+                                                ('8', 'Vitellius, years 1-2'),
+                                                ('9', 'Vespasian, years 1-11'),
+                                                ('10', 'Titus, years 1-4'),
+                                                ('11', 'Domitian, years 1-16'),
+                                                ('12', 'Nerva, years 1-2'),
+                                                ('13', 'Traian, years 1-20'),
+                                                ('14', 'Hadrian, years 1-22'),
+                                                ('15', 'Antoninus Pius, years 1-24'),
+                                                ('16', 'Marc Aurel, years 1-20'),
+                                                ('17', 'Commodus, years 20-33'),
+                                                ('18', 'Pertinax, year 1'),
+                                                ('19', 'Pescennius Niger, years 1-2'),
+                                                ('20', 'Septimius Severus, years 1-19'),
+                                                ('21', 'Caracalla, years 19-25'),
+                                                ('22', 'Macrinus, years 1-2'),
+                                                ('23', 'Elagabal, years 1-5'),
+                                                ('24', 'Severus Alexander, years 1-14'),
+                                                ('25', 'Maximinus Thrax, years 1-4'),
+                                                ('26', 'Gordian, years 1-7'),
+                                                ('27', 'Phillipus Arabs, years 1-7'),
+                                                ('28', 'Decius, years 1-2'),
+                                                ('29', 'Gallus / Volusianus, years 1-3'),
+                                                ('30', 'Aemilian, years 1-2'),
+                                                ('31', 'Valerian / Gallienus, years 1-8'),
+                                                ('32', 'Macrianus / Quietus, years 1-2'),
+                                                ('33', 'Gallienus, years 9-16'),
+                                                ('34', 'Claudius Gothicus, years 1-2'),
+                                                ('35', 'Aurelian, years 1-7'),
+                                                ('36', 'Tacitus, year 1'),
+                                                ('37', 'Probus, years 1-7'),
+                                                ('38', 'Carus / Carinus, years 1-3'),
+                                                ('39', 'Diocletian, years 1 ff.'),
                                                ])
     egyptian_calendar_months = SelectField('Months (Egyptian):',
                                            choices=[('0', 'None'),

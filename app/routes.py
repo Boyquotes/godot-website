@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
@@ -148,9 +148,38 @@ def convert_egyptian_late_period():
         lp_date = EgyptianCalendarDate('latePeriod', reign, year, month, day)
         converted_date_json = lp_date.convert_to_julian()
         return render_template('convert_egyptian_late_period_result.html',
-                        reign=reign, year=year, month=month, day=day, response=converted_date_json#converted_date_json['egyptianDateString']
-                               )
+            reign=reign, year=year, month=month, day=day, response=converted_date_json)
     return render_template('convert_egyptian_late_period.html', form=form)
+
+
+@app.route('/convert/egyptian/ptolemies', methods=['GET', 'POST'])
+def convert_egyptian_ptolemies():
+    form = EgyptianCalendarPtolemies()
+    if form.validate_on_submit():
+        reign = form.ptolemaic_pharaos.data
+        year = form.year.data
+        month = form.egyptian_calendar_months.data
+        day = form.day.data
+        ptolemaic_date = EgyptianCalendarDate('ptolemies', reign, year, month, day)
+        converted_date_json = ptolemaic_date.convert_to_julian()
+        return render_template('convert_egyptian_ptolemies_result.html',
+            reign=reign, year=year, month=month, day=day, response=converted_date_json)
+    return render_template('convert_egyptian_ptolemies.html', form=form)
+
+
+@app.route('/convert/egyptian/roman_emperors', methods=['GET', 'POST'])
+def convert_egyptian_roman_emperors():
+    form = EgyptianCalendarRomanEmperors()
+    if form.validate_on_submit():
+        reign = form.roman_emperors.data
+        year = form.year.data
+        month = form.egyptian_calendar_months.data
+        day = form.day.data
+        roman_emperor_date = EgyptianCalendarDate('romanEmperors', reign, year, month, day)
+        converted_date_json = roman_emperor_date.convert_to_julian()
+        return render_template('convert_egyptian_roman_emperors_result.html',
+            reign=reign, year=year, month=month, day=day, response=converted_date_json)
+    return render_template('convert_egyptian_roman_emperors.html', form=form)
 
 
 @app.route('/cyrenaica/roman_imperial_titulature', methods=['GET', 'POST'])

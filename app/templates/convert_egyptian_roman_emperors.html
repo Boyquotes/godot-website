@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Egyptian Calendar Conversion (Late Period)</h1>
+    <h1>Egyptian Calendar Conversion (Roman Emprerors)</h1>
 
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p id="reign">
-            {{ form.late_period_pharaos.label }}<br>
-            {{ form.late_period_pharaos(style='width:30em;') }}
+            {{ form.roman_emperors.label }}<br>
+            {{ form.roman_emperors(style='width:30em;') }}
         </p>
         <p id="year">
             {{ form.year.label }}<br>

@@ -233,6 +233,56 @@ class SearchRomanConsulate(FlaskForm):
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 
+class EgyptianCalendarLatePeriod(FlaskForm):
+    late_period_pharaos = SelectField('Reign:',
+                                      choices=[('1','Psametik I, years 1-55'),
+                                               ('2', 'Necho, years 1-16'),
+                                               ('3', 'Psametik II, years 1-7'),
+                                               ('4', 'Apries, years 1-20'),
+                                               ('5', 'Amasis, years 1-45'),
+                                               ('6', 'Psametik III, years 1-2'),
+                                               ('7', 'Cambyses, years 1-4'),
+                                               ('8', 'Darius I, years 1-36'),
+                                               ('9', 'Xerxes I, years 1-21'),
+                                               ('10', 'Artaxerxes, years 1-42'),
+                                               ('11', 'Darius II, years 1-20'),
+                                               ('12', 'Artaxerxes II, years 1-4'),
+                                               ('13', 'Amyrtaeos, years 1-6'),
+                                               ('14', 'Nepherites I, years 1-7'),
+                                               ('15', 'Achoris, years 1-14'),
+                                               ('16', 'Psammuthis, year 1'),
+                                               ('17', 'Nepherites II, year 1'),
+                                               ('18', 'Nektanebo I, years 1-19'),
+                                               ('19', 'Theos, years 1-5'),
+                                               ('20', 'Nektanebo II, years 1-18'),
+                                               ('21', 'Artaxerxes III, years 1-6'),
+                                               ('22', 'Arses, years 1-2'),
+                                               ('23', 'Darius III, years 1-6'),
+                                               ('24', 'Khababash, years 1-3'),
+                                               ])
+    egyptian_calendar_months = SelectField('Months (Egyptian):',
+                                           choices=[('0', 'None'),
+                                                    ('1', 'Thot'),
+                                                    ('2', 'Phaophi'),
+                                                    ('3', 'Hathyr'),
+                                                    ('4', 'Choiak'),
+                                                    ('5', 'Tybi'),
+                                                    ('6', 'Mecheir'),
+                                                    ('7', 'Phamenoth'),
+                                                    ('8', 'Pharmuthi'),
+                                                    ('9', 'Pachons'),
+                                                    ('10', 'Payni'),
+                                                    ('11', 'Epeiph'),
+                                                    ('12', 'Mesore'),
+                                                    ('13', 'Epagomenal Days'),
+                                                    ])
+    day = StringField('Day:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    year = IntegerField('Year:', validators=[
+        DataRequired()])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+
 
 class RomanConsularDating(FlaskForm):
     consulship = StringField('Consulship:', validators=[DataRequired()])

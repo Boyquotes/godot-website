@@ -1,8 +1,9 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod
 from app.convert import Convert_roman_calendar
+from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
     get_attestation, update_attestation, delete_attestation, get_godot_node_properties
@@ -134,6 +135,22 @@ def roman_consuls():
                                day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data,
                                result=result_string)
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
+
+
+@app.route('/convert/egyptian/late_period', methods=['GET', 'POST'])
+def convert_egyptian_late_period():
+    form = EgyptianCalendarLatePeriod()
+    if form.validate_on_submit():
+        reign = form.late_period_pharaos.data
+        year = form.year.data
+        month = form.egyptian_calendar_months.data
+        day = form.day.data
+        lp_date = EgyptianCalendarDate('latePeriod', reign, year, month, day)
+        converted_date_json = lp_date.convert_to_julian()
+        return render_template('convert_egyptian_late_period_result.html',
+                        reign=reign, year=year, month=month, day=day, response=converted_date_json#converted_date_json['egyptianDateString']
+                               )
+    return render_template('convert_egyptian_late_period.html', form=form)
 
 
 @app.route('/cyrenaica/roman_imperial_titulature', methods=['GET', 'POST'])

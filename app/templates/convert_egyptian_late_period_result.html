@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>Egyptian Calendar Conversion (Late Period) &ndash; Result</h1>
+
+
+    {%- if response['dateJulian'] == 'day' %}
+        <p><b>{{ response['egyptianDateString'] }}</b>:</p>
+        <p>{{ response['dateJulian'] }} (Julian)<br />{{ response['dateGregorian'] }} (Gregorian)</p>
+    {%- else %}
+        <p><b>Date Range Start</b>: {{ response['dateRangeStart']['egyptianDateString'] }}</p>
+        <p>{{ response['dateRangeStart']['dateJulian'] }} (Julian)<br />{{ response['dateRangeEnd']['dateGregorian'] }} (Gregorian)</p>
+<p><b>Date Range End</b>: {{ response['dateRangeEnd']['egyptianDateString'] }}</p>
+        <p>{{ response['dateRangeEnd']['dateJulian'] }} (Julian)<br />{{ response['dateRangeEnd']['dateGregorian'] }} (Gregorian)</p>
+    {%- endif %}
+
+    <p style="margin-top:2em"><a href="/convert/egyptian/late_period">Another date conversion...</a></p>
+{% endblock %}

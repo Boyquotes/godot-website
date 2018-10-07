@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Egyptian Calendar Conversion – Late Period</h1>
+
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p id="reign">
+            {{ form.late_period_pharaos.label }}<br>
+            {{ form.late_period_pharaos(style='width:30em;') }}
+        </p>
+        <p id="year">
+            {{ form.year.label }}<br>
+            {{ form.year(size=10) }}
+            {% for error in form.year.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.egyptian_calendar_months.label }}<br>
+            {{ form.egyptian_calendar_months(style='width:15em;') }}
+        </p>
+        <p>
+            {{ form.day.label }}<br>
+            {{ form.day(size=10) }}
+            {% for error in form.day.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+{% endblock %}

@@ -228,6 +228,12 @@ class AttestationDelete(FlaskForm):
     submit = SubmitField('Delete...')
 
 
+class SearchRomanConsulate(FlaskForm):
+    consulship = StringField('Consulship:', validators=[DataRequired()])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+
+
 class RomanConsularDating(FlaskForm):
     consulship = StringField('Consulship:', validators=[DataRequired()])
     day_ref = SelectField('Kalends/Nones/Ides:',

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Search Roman Consulate</h1>
+    <h4>(509 BC &ndash; 534 AD)</h4>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.consulship.label }}<br>
+            {{ form.consulship(size=40, id="autosearch") }}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+{% endblock %}
+{% block scripts %}
+{{ super() }}
+    <script src="{{url_for('static', filename='consulship_search_autocomplete.js')}}"></script>
+{% endblock %}

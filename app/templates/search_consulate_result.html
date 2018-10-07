@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+        <h1>Search Roman Consulate: Result</h1>
+        <p>{{ consulate }}<br /> <a href="{{godot_uri}}">{{ godot_uri }}</a>
+        </p>
+        <p><b>Properties</b>: </p>
+        <ul>
+        {%- for prop in property_dict %}
+            {%- if prop != 'uri' and prop != 'type' %}
+            <li>{{ prop }}: {{ property_dict[prop] }}</li>
+            {%- endif %}
+        {%- endfor %}
+        </ul>
+        <p><b>Attestations</b>:</p>
+        {%- for att in attestations %}
+            {%- if get_username() == "roueche" or get_username() == "grieshaber" %}
+            <p style="margin-bottom:2em"><a href="{{ att.uri }}">{{ att.title }}</a><a href="/id/{{ id }}/{{ att.node_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a> &nbsp; <a href="/id/{{ id }}/{{ att.node_id }}/delete" class="btn btn-godot-reset btn-xs">delete</a><br />{{ att.date_string }}</p>
+            {%- else %}
+            <p><a href="{{ att.uri }}">{{ att.title }}</a>:<br />{{ att.date_string }}</p>
+            {%- endif %}
+        {%- endfor%}
+
+        <p style="margin-top:2em"><a href="/tools/search/consulate">Search another consulate...</a></p>
+{% endblock %}

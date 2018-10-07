@@ -43,6 +43,9 @@
                         <ul class="dropdown-menu">
                             <li><a href="{{ url_for('tools_openrefine') }}">OpenRefine Reconciliation Service</a></li>
                             <li><a href="{{ url_for('tools_api') }}">GODOT API</a></li>
+                            {% if get_username() == "roueche" or get_username() == "grieshaber" %}
+                            <li><a href="{{ url_for('tools_search_consulate') }}">Search for Roman Consulate</a></li>
+                            {% endif %}
                         </ul>
                     </li>
                     {% if get_username() == "roueche" or get_username() == "grieshaber" %}
@@ -94,5 +97,4 @@
 {% block scripts %}
 {{ super() }}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="{{url_for('static', filename='consulship_autocomplete.js')}}"></script>
 {% endblock %}

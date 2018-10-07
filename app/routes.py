@@ -1,11 +1,11 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate
 from app.convert import Convert_roman_calendar
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
-    get_attestation, update_attestation, delete_attestation
+    get_attestation, update_attestation, delete_attestation, get_godot_node_properties
 from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
@@ -150,9 +150,6 @@ def cyrenaica_roman_emperor_titulature():
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
         date_title = form.title.data
-
-
-
         godot_uri = write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles, attestation_uri,
                                          date_string, date_title)
         return render_template('cyrenaica_emperors_result.html',
@@ -209,6 +206,19 @@ def tools_openrefine():
 @app.route('/tools/api')
 def tools_api():
     return render_template('tools_api.html')
+
+
+@app.route('/tools/search/consulate', methods=['GET', 'POST'])
+def tools_search_consulate():
+    form = SearchRomanConsulate()
+    if form.validate_on_submit():
+        if "|" in form.consulship.data:
+            godot_uri = form.consulship.data.split('|')[1].strip()
+            consulate = form.consulship.data.split('|')[0].strip()
+            attestations = get_attestations(godot_uri)
+            property_dict = get_godot_node_properties(godot_uri)
+            return render_template('search_consulate_result.html', attestations=attestations, consulate=consulate, godot_uri=godot_uri, property_dict=property_dict, form=form)
+    return render_template('search_consulate.html', form=form)
 
 
 def _jsonpify(obj):

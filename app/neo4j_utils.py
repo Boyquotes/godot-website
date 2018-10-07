@@ -85,6 +85,24 @@ def get_godot_path(godot_uri):
     return paths
 
 
+def get_godot_node_properties(godot_uri):
+    """
+    returns dict of all node properties
+    :param godot_uri: string (URI of GODOT node)
+    :return: dict
+    """
+    query = "match (g:GODOT {uri:'%s'}) return g as g" % godot_uri
+    results = query_neo4j_db(query)
+    node_props_dict = {}
+    if results:
+        for record in results:
+            from pprint import pprint
+            pprint(record)
+            for k, v in record['g'].items():
+                node_props_dict[k] = v
+    return node_props_dict
+
+
 def get_attestations(godot_uri):
     """
     returns all attestations for specified GODOT node

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block app_content %}
+<h1>{{ data_text }}</h1>
+<p>The <a href="https://edh-www.adw.uni-heidelberg.de">Epigraphic Database Heidelberg</a> contains the texts of ca.
+    77.000 Latin and bilingual (i.e. Latin-Greek)
+    inscriptions of the Roman Empire, many of them dated either by Roman calendar system and consular dating or by Roman
+    Emperor titulature.</p>
+<p>For GODOT a first batch of more than 1.900 inscriptions have been annotated with GODOT URIS for Roman consular
+    datings.</p>
+<p>For this all Latin transcriptions have been searched for the string "consulibus" which denotes a Roman consular
+    dating (usually two Roman officials): "When X and Y have been Consuls...". This resulted in ca. 2.000 hits, which
+    were then upload into a Google Spreadsheet.</p>
+<p style="text-align:center"><img src="/static/edh_godot_spreadsheet.png"
+                                  style="border:1px solid #ccc;margin-top:1em;margin-bottom:1em;"/></p>
+<p>Using the <a href="/tools/search/consulate">Search for Roman Consulate</a> tool on the GODOT website, GODOT URIs have
+    been assigned to records, excluding some instances where the consuls' names have not been preserved completely enough
+    to make a decision about the consulate. In total ca. 80 percent of all records now have a GODOT URI.</p>
+<p>These GODOT URIs in the next step have been imported into the Epigraphic Database Heidelberg search index, and a
+    webpage created on which users can browse through Latin inscriptions by ancient Roman consulates, grouped by
+    century:</p>
+<p style="text-align:center"><img src="/static/edh_godot_uris.png"
+                                  style="border:1px solid #ccc;margin-top:1em;margin-bottom:1em;"/></p>
+
+<p style="margin-bottom:2em;">Excluded for the time being are consulates mentioned as part of the Roman emperor's
+    titulature (usually "consule" in
+    Latin transcription, sometimes followed by a number).</p>
+{% endblock %}

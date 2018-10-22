@@ -43,6 +43,16 @@ def about():
     return render_template('about.html', title='About GODOT', about_text='About GODOT')
 
 
+@app.route('/data/edh')
+def data_edh():
+    return render_template('data_edh.html', title='GODOT Data: Epigraphic Database Heidelberg', data_text='GODOT Data: Epigraphic Database Heidelberg')
+
+
+@app.route('/data')
+def data():
+    return render_template('data.html', title='GODOT Data', data_text='GODOT Data')
+
+
 @app.route('/id/<godot_uri>')
 def display_godot_uri(godot_uri):
     # get data/path and attestation links for this GODOT URI as list of dicts
@@ -255,12 +265,12 @@ def cyrenaica_years():
 
 @app.route('/tools/openrefine')
 def tools_openrefine():
-    return render_template('tools_openrefine.html')
+    return render_template('tools_openrefine.html', title="Tools: OpenRefine")
 
 
 @app.route('/tools/api')
 def tools_api():
-    return render_template('tools_api.html')
+    return render_template('tools_api.html', title="Tools: API")
 
 
 @app.route('/tools/search/consulate', methods=['GET', 'POST'])
@@ -273,7 +283,7 @@ def tools_search_consulate():
             attestations = get_attestations(godot_uri)
             property_dict = get_godot_node_properties(godot_uri)
             return render_template('search_consulate_result.html', attestations=attestations, consulate=consulate, godot_uri=godot_uri, property_dict=property_dict, form=form)
-    return render_template('search_consulate.html', form=form)
+    return render_template('search_consulate.html', title="Tools: Search Roman Consulate", form=form)
 
 
 def _jsonpify(obj):

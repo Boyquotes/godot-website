@@ -1,7 +1,7 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
@@ -128,13 +128,22 @@ def roman_consuls():
             form.day_number.data, form.day_ref.data, form.months.data, year)
         result_string = converted_date
         consulate = form.consulship.data
-        consul_label, godot_uri = form.consulship.data.split('|')
-        day_number_label = Convert_roman_calendar.get_day_number_label(form.day_number.data)
-        # return conversion result to template
-        return render_template('roman_consuls_result.html', title='Roman Consuls', consulship=consul_label,
-                               day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data,
-                               result=result_string)
+        if '|' in form.consulship.data:
+            consul_label, godot_uri = form.consulship.data.split('|')
+            day_number_label = Convert_roman_calendar.get_day_number_label(form.day_number.data)
+            # return conversion result to template
+            return render_template('roman_consuls_result.html', title='Roman Consuls', consulship=consul_label,
+                                   day_ref=form.day_ref.data, day_number=day_number_label, month=form.months.data,
+                                   result=result_string)
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
+
+
+@app.route('/convert/roman_emperors', methods=['GET', 'POST'])
+def roman_emperors():
+    form = RomanImperialDating()
+    if form.validate_on_submit():
+        pass
+    return render_template('roman_emperors.html', title='Roman Imperial Dating', form=form)
 
 
 @app.route('/convert/egyptian/late_period', methods=['GET', 'POST'])

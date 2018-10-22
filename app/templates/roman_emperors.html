@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <h1>Roman Calendar Conversion &ndash; Imperial Dating</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.roman_emperors.label }}<br>
+            {{ form.roman_emperors(style='width:30em;') }}
+        </p>
+        <p>
+            {{ form.consul_number.label }}<br>
+            {{ form.consul_number(size=10) }} {{ form.consul_designatus(style='margin-left:1em') }} {{ form.consul_designatus.label }}
+            {% for error in form.consul_number.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.trib_pot_number.label }}<br>
+            {{ form.trib_pot_number(size=10) }}
+            {% for error in form.trib_pot_number.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.imperator_number.label }}<br>
+            {{ form.imperator_number(size=10) }}
+            {% for error in form.imperator_number.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.victory_titles.label }}<br>
+            {{ form.victory_titles(size=10, style='width:30em;') }}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+{% endblock %}

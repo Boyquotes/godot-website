@@ -536,3 +536,69 @@ class CyrenaicaRomanImperialTitulature(FlaskForm):
                                              ('Sarmaticus max. 5', 'Sarmaticus max. 5'),
                                              ('Thebaicus max. 1', 'Thebaicus max.'),
                                          ])
+
+
+class RomanImperialDating(FlaskForm):
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+    roman_emperors = SelectField('Roman Emperor:',
+                                 choices=roman_emperors_list)
+    consul_number = StringField('Consul Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    consul_designatus = BooleanField('consul designatus')
+    trib_pot_number = StringField('Trib Pot Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    imperator_number = StringField('Imperator Number:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    victory_titles = SelectMultipleField('Victory Titles:',
+                                         choices=[
+                                             ('Adiabenicus 1', 'Adiabenicus'),
+                                             ('Adiabenicus max. 1', 'Adiabenicus max.'),
+                                             ('Aegyptiacus max. 1', 'Aegyptiacus max.'),
+                                             ('Alamannicus max. 1', 'Alamannicus max.'),
+                                             ('Arabicus 1', 'Arabicus'),
+                                             ('Arabicus max. 1', 'Arabicus max.'),
+                                             ('Armeniacus 1', 'Armeniacus'),
+                                             ('Armeniacus max. 1', 'Armeniacus max.'),
+                                             ('Britannicus 1', 'Britannicus'),
+                                             ('Britannicus max. 1', 'Britannicus max.'),
+                                             ('Britannicus max. 2', 'Britannicus max. 2'),
+                                             ('Carpicus max. 1', 'Carpicus max.'),
+                                             ('Carpicus max. 2', 'Carpicus max. 2'),
+                                             ('Carpicus max. 3', 'Carpicus max. 3'),
+                                             ('Carpicus max. 4', 'Carpicus max. 4'),
+                                             ('Carpicus max. 5', 'Carpicus max. 5'),
+                                             ('Carpicus max. 6', 'Carpicus max. 6'),
+                                             ('Dacicus 1', 'Dacicus'),
+                                             ('Dacicus max. 1', 'Dacicus max.'),
+                                             ('Francicus max. 1', 'Francicus max.'),
+                                             ('Germanicus 1', 'Germanicus'),
+                                             ('Germanicus max. 1', 'Germanicus max.'),
+                                             ('Germanicus max. 2', 'Germanicus max. 2'),
+                                             ('Germanicus max. 3', 'Germanicus max. 3'),
+                                             ('Germanicus max. 4', 'Germanicus max. 4'),
+                                             ('Germanicus max. 5', 'Germanicus max. 5'),
+                                             ('Germanicus max. 6', 'Germanicus max. 6'),
+                                             ('Germanicus max. 7', 'Germanicus max. 7'),
+                                             ('Gothicus 1', 'Gothicus'),
+                                             ('Gothicus max. 1', 'Gothicus max.'),
+                                             ('Gothicus max. 2', 'Gothicus max. 2'),
+                                             ('Medicus 1', 'Medicus'),
+                                             ('Medicus max. 1', 'Medicus max.'),
+                                             ('Palmyrenicus max. 1', 'Palmyrenicus max.'),
+                                             ('Parthicus 1', 'Parthicus'),
+                                             ('Parthicus max. 1', 'Parthicus max.'),
+                                             ('Parthicus Arabicus 1', 'Parthicus Arabicus'),
+                                             ('Parthicus Adiabenicus 1', 'Parthicus Adiabenicus'),
+                                             ('Persicus 1', 'Persicus'),
+                                             ('Persicus max. 1', 'Persicus max.'),
+                                             ('Persicus max. 2', 'Persicus max. 2'),
+                                             ('Persicus max. 3', 'Persicus max. 3'),
+                                             ('Sarmaticus 1', 'Sarmaticus'),
+                                             ('Sarmaticus max. 1', 'Sarmaticus max.'),
+                                             ('Sarmaticus max. 2', 'Sarmaticus max. 2'),
+                                             ('Sarmaticus max. 3', 'Sarmaticus max. 3'),
+                                             ('Sarmaticus max. 4', 'Sarmaticus max. 4'),
+                                             ('Sarmaticus max. 5', 'Sarmaticus max. 5'),
+                                             ('Thebaicus max. 1', 'Thebaicus max.'),
+                                         ])

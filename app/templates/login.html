@@ -15,7 +15,7 @@
         {{ form.hidden_tag() }}
         <p>
             {{ form.username.label }}<br>
-            {{ form.username(size=32) }}
+            {{ form.username(size=32, autofocus=autofocus) }}
         </p>
         <p>
             {{ form.password.label }}<br>

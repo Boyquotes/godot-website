@@ -220,10 +220,10 @@ def get_attestation(node_id):
     return tmp_dict
 
 
-def update_attestation(node_id, attestation_uri, title, date_string):
+def update_attestation(node_id, attestation_uri, title, date_string, date_category):
     title = _clean_string(title)
     date_string = _clean_string(date_string)
-    query = "match (a:Attestation) where id(a) = %s set a.date_string='%s', a.title = '%s', a.uri = '%s'" % (node_id, date_string, title, attestation_uri)
+    query = "match (a:Attestation) where id(a) = %s set a.date_string='%s', a.title = '%s', a.uri = '%s', a.date_category = '%s'" % (node_id, date_string, title, attestation_uri, date_category)
     results = query_neo4j_db(query)
     if results:
         return results

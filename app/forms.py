@@ -212,6 +212,17 @@ class CyrenaicaYears(FlaskForm):
     attestation_uri = StringField('Attestation URI:', validators=[DataRequired()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     title = StringField('Title:', validators=[DataRequired()])
+    date_category = SelectField('Date Category:',
+                                        choices=[('',''),
+                                                 ('Uncategorised', 'Uncategorised'),
+                                                 ('Date of Death', 'Date of Death'),
+                                                 ('Date of Birth', 'Date of Birth'),
+                                                 ('Date of Document', 'Date of Document'),
+                                                 ('Date of Recording', 'Date of Recording'),
+                                                 ('Date of action', 'Date of action'),
+                                                 ('Recurring Date of Action', 'Recurring Date of Action (Feasts, etc.)'),
+                                                 ('Roman Emperor Titulature', 'Roman Emperor Titulature'),
+                                                 ])
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 
@@ -220,6 +231,17 @@ class AttestationUpdate(FlaskForm):
     attestation_uri = StringField('Attestation URI:', validators=[DataRequired()])
     date_string = StringField('Date String:', validators=[DataRequired()])
     title = StringField('Title:', validators=[DataRequired()])
+    date_category = SelectField('Date Category:',
+                                choices=[('', ''),
+                                         ('Uncategorised', 'Uncategorised'),
+                                         ('Date of Death', 'Date of Death'),
+                                         ('Date of Birth', 'Date of Birth'),
+                                         ('Date of Document', 'Date of Document'),
+                                         ('Date of Recording', 'Date of Recording'),
+                                         ('Date of action', 'Date of action'),
+                                         ('Recurring Date of Action', 'Recurring Date of Action (Feasts, etc.)'),
+                                         ('Roman Emperor Titulature', 'Roman Emperor Titulature'),
+                                         ])
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 

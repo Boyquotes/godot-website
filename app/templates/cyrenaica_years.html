@@ -36,6 +36,10 @@
             {% endfor %}
         </p>
         <p>
+            {{ form.date_category.label }}<br>
+            {{ form.date_category(style='width:15em;') }}
+        </p>
+        <p>
             {{ form.attestation_uri.label }}<br>
             {{ form.attestation_uri(size=50, style='width:30em;') }}
             {% for error in form.attestation_uri.errors %}

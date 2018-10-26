@@ -40,6 +40,18 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
+            {{ form.date_category.label }}<br>
+            <select id="date_category" name="date_category" style="width:15em;">
+            {%- for cat in date_categories %}
+                {%- if cat == attestations.date_category %}
+                    <option value="{{ cat }}" selected="selected">{{cat}}</option>
+                {%- else %}
+                    <option value="{{ cat }}">{{cat}}</option>
+                {%- endif%}
+            {%- endfor%}
+            </select>
+        </p>
+        <p>
             {{ form.attestation_uri.label }}<br>
             {{ form.attestation_uri(value=attestations.uri, size=50, style='width:30em;') }}
             {% for error in form.attestation_uri.errors %}

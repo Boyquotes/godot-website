@@ -87,11 +87,15 @@ def display_godot_uri(godot_uri):
 @login_required
 def edit_attestation_data(godot_uri, node_id):
     form = AttestationUpdate()
+    date_category = form.date_category.data
+    date_categories = ['', 'Uncategorised', 'Date of Death', 'Date of Birth', 'Date of Document', 'Date of Recording', 'Date of action', 'Recurring Date of Action', 'Roman Emperor Titulature']
     if form.validate_on_submit():
         attestation_uri = form.attestation_uri.data
         title = form.title.data
         date_string = form.date_string.data
-        if update_attestation(node_id, attestation_uri, title, date_string):
+        date_category = form.date_category.data
+        print(date_category+"###")
+        if update_attestation(node_id, attestation_uri, title, date_string, date_category):
             return redirect("/id/" + godot_uri)
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
     # some info needn't be displayed on detail view page
@@ -104,8 +108,9 @@ def edit_attestation_data(godot_uri, node_id):
 
     paths = path_list
     attestation = get_attestation(node_id)
+    print(attestation)
     if paths:
-        return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, form=form)
+        return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, date_categories=date_categories, form=form)
     else:
         return render_template('404.html'), 404
 
@@ -222,11 +227,12 @@ def cyrenaica_roman_emperor_titulature():
         trib_pot_number = form.trib_pot_number.data
         imperator_number = form.imperator_number.data
         victory_titles = form.victory_titles.data
+        date_category = form.date_category.data
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
         date_title = form.title.data
         godot_uri = write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles, attestation_uri,
-                                         date_string, date_title)
+                                         date_string, date_title, date_category)
         return render_template('cyrenaica_emperors_result.html',
                                title='Cyrenaica Roman Imperial Titulature',
                                attestation_uri=attestation_uri,
@@ -239,6 +245,7 @@ def cyrenaica_roman_emperor_titulature():
                                imperator_number=imperator_number,
                                victory_titles=victory_titles,
                                godot_uri=godot_uri.split("/")[-1],
+                               date_category=date_category,
                                form=form)
     return render_template('cyrenaica_emperors.html', title='Cyrenaica Roman Imperial Titulature', form=form)
 
@@ -254,11 +261,12 @@ def cyrenaica_years():
         year = form.year.data
         month = form.egyptian_calendar_months.data
         day = form.day.data
+        date_category = form.date_category.data
         attestation_uri = form.attestation_uri.data
         date_string = form.date_string.data
         date_title = form.title.data
         godot_uri = write_cyrenaica_single_year(yrs, apollo_priest, roman_emperor, year, month, day, attestation_uri,
-                                                date_string, date_title)
+                                                date_string, date_title, date_category)
         if yrs == "Eponymous Officials: Apollo Priest (Cyrenaica)":
             roman_emperor = ""
         elif yrs == "Regnal: Roman Emperors":
@@ -269,7 +277,7 @@ def cyrenaica_years():
         if godot_uri:
             return render_template('cyrenaica_years_result.html', title='Cyrenaica Year Dating', yrs=yrs,
                                apollo_priest=apollo_priest, roman_emperor=roman_emperor, year=year, month=month,
-                               day=day, attestation_uri=attestation_uri, date_string=date_string, date_title=date_title, godot_uri=godot_uri.split("/")[-1])
+                               day=day, attestation_uri=attestation_uri, date_string=date_string, date_category=date_category, date_title=date_title, godot_uri=godot_uri.split("/")[-1])
     return render_template('cyrenaica_years.html', title='Cyrenaica Year Dating', form=form)
 
 

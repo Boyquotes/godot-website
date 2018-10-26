@@ -88,7 +88,7 @@ def display_godot_uri(godot_uri):
 def edit_attestation_data(godot_uri, node_id):
     form = AttestationUpdate()
     date_category = form.date_category.data
-    date_categories = ['', 'Uncategorised', 'Date of Death', 'Date of Birth', 'Date of Document', 'Date of Recording', 'Date of action', 'Recurring Date of Action', 'Roman Emperor Titulature']
+    date_categories = ['', 'Uncategorised', 'Date of Death', 'Date of Birth', 'Date of Document', 'Date of Recording', 'Date of Action', 'Recurring Date of Action', 'Roman Emperor Titulature']
     if form.validate_on_submit():
         attestation_uri = form.attestation_uri.data
         title = form.title.data

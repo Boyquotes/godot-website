@@ -327,7 +327,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
 
 
 def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles, attestation_uri,
-                                         date_string, date_title):
+                                         date_string, date_title, date_category):
     godot_uri_consul_number = ""
     godot_uri_trib_pot_number = ""
     godot_uri_imperator_number = ""
@@ -380,8 +380,8 @@ def write_cyrenaica_emperor_titulature_path(roman_emperor, consul_number, consul
     query = """
     match (g_synchron:GODOT {uri:'%s'})
     with g_synchron
-    merge (g_synchron)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s'})
-    """ % (g_synchron_uri, attestation_uri, date_title, date_string)
+    merge (g_synchron)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s'})
+    """ % (g_synchron_uri, attestation_uri, date_title, date_string, date_category)
     results = query_neo4j_db(query)
     return g_synchron_uri
 

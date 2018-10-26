@@ -48,6 +48,16 @@ def data_edh():
     return render_template('data_edh.html', title='GODOT Data: Epigraphic Database Heidelberg', data_text='GODOT Data: Epigraphic Database Heidelberg')
 
 
+@app.route('/data/tm')
+def data_tm():
+    return render_template('data_tm.html', title='GODOT Data: Trismegistos', data_text='GODOT Data: Trismegistos')
+
+
+@app.route('/data/ircyr')
+def data_ircyr():
+    return render_template('data_ircyr.html', title='GODOT Data: IRCyr', data_text='GODOT Data: IRCyr')
+
+
 @app.route('/data')
 def data():
     return render_template('data.html', title='GODOT Data', data_text='GODOT Data')

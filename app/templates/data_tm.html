@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block app_content %}
+<h1>{{ data_text }}</h1>
+<p>The Trismegistos database (<a href="https://www.trismegistos.org">https://www.trismegistos.org</a>) contains the
+    metadata for ca. 737.000 texts written in
+    Greek, Latin, Demotic, Coptic and other languages from the whole Roman empire and beyond. For the Greek and Latin
+    papyri and ostraca from Egypt we have a close collaboration with the Papyri.info platform (<a
+            href="http://www.papyri.info">http://www.papyri.info</a>)
+    that provides the full text of ca. 58.000 of these documents. This corpus of full texts contains 4.885.874 words,
+    that were each grammatically tagged by Alek Keersmaekers. Mark Depauw and Herbert Verreth provided further labels in
+    this Filemaker database for words such as 'day', 'month', 'year', 'hour', and for the names of months, kings,
+    emperors, consuls, eponymous priests, etc.</p>
+<p>As a test case the 2866 papyri and ostraca were selected that have been published in the BGU series. In these
+    documents all chronological indications were tagged with a no. (1) for dating formulas and references to specific
+    moments in time; no. (2) for years indicating the age of a person; no. (3) for chronological ranges ('from Thoth
+    till Mecheir'), more general indications ('the taxes for year 5') and general expressions ('today', 'now', 'next
+    year'). It is clear that the distinction between group (1) and (3) can sometimes be vague. Since GODOT is mostly
+    interested in group (1), groups (2) and (3) will not be further analysed for the moment.</p>
+<p style="text-align:center"><img src="/static/tm_cluster.png"
+                                  style="border:1px solid #ccc;margin-top:1em;margin-bottom:1em;"/></p>
+<p>Every group of consecutive words with the same tag forms a chronological cluster (e.g. 'in the year 9 of Septimius
+    Severus', 'on Thoth 28'). The words of these clusters are individually labelled as year, month, day, king, priest,
+    consul, indictio, era, or hour, so that it is possible to reconstruct the meta-structure of the dating formula (e.g.
+    'year 28, Mesore 4' = year / year / month / day). This detailed analysis will enable all kinds of queries for the
+    future user.</p>
+<p>Every king and consul mentioned in these dating formulas has been identified and linked to the existing TM database
+    of 'Eponyms' (3312 entries), that has been expanded when necessary. Every eponymous priest has been linked to his
+    corresponding TM Person id, which gathers all the attestations for that priest. These identifications make it in
+    many instances possible to exactly convert the chronological clusters to a specific date in our calendar.</p>
+<p style="text-align:center"><img src="/static/tm_eponyms.png"
+                                  style="border:1px solid #ccc;margin-top:1em;margin-bottom:1em;"/></p>
+<p>To model the information about months and days a new database was created. For every calendar system discussed in
+    Samuel, Greek and Roman chronology, 1972, fourteen cards were created, one for every of the (usually) twelve months,
+    one for the intercalary month and one for the uncertain cases, so that every month in every calendar gets a unique
+    identifier (2116 entries) (e.g. 'the 4th month of the Egyptian calendar'). In a second file every name for a month
+    or a day has been listed (523 entries) and linked to the different calendars where it occurs (e.g. the month name
+    Hyperberetaios occurs in 14 different calendars). Every month name in BGU has now received an identification that
+    ascribes it precisely to a certain calendar and its place within that calendar.</p>
+<p>It is our intention - in due time - to tag the remaining 55.000 texts from Papyri.info in the same way.</p>
+<p style="margin-bottom:2em;">Herbert Verreth<br />
+    Mark Depauw<br />
+    KU Leuven, 26.10.2018</p>
+{% endblock %}

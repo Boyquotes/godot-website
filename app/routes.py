@@ -332,6 +332,11 @@ def reconcile():
     return _jsonpify(get_openrefine_metadata())
 
 
+@app.route('/workshop')
+def workshop():
+    return render_template('workshop.html', title="Workshop")
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404

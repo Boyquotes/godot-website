@@ -10,7 +10,8 @@ from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
 from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
-
+from app.users import get_user_full_name
+from flask_simplelogin import get_username
 
 @app.route('/')
 @app.route('/index')
@@ -94,7 +95,6 @@ def edit_attestation_data(godot_uri, node_id):
         title = form.title.data
         date_string = form.date_string.data
         date_category = form.date_category.data
-        print(date_category+"###")
         if update_attestation(node_id, attestation_uri, title, date_string, date_category):
             return redirect("/id/" + godot_uri)
     paths = get_godot_path("https://godot.date/id/" + godot_uri)

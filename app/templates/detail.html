@@ -64,12 +64,17 @@
                 {%- if att.date_category and att.date_category[0] != "<" and att.date_category != "" %}
                     ({{ att.date_category }})
                 {%- endif %}
-                <a href="/id/{{ id }}/{{ att.node_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a> &nbsp; <a href="/id/{{ id }}/{{ att.node_id }}/delete" class="btn btn-godot-reset btn-xs">delete</a><br />{{ att.date_string }}
+                <a href="/id/{{ id }}/{{ att.node_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a> &nbsp; <a href="/id/{{ id }}/{{ att.node_id }}/delete" class="btn btn-godot-reset btn-xs">delete</a><br />{{ att.date_string }} <br />
+                {%- if att.username %} user: {{ att.username }} {%- endif %}
+                {%- if att.last_update %} (last update: {{ att.last_update }}){%- endif %}
             </p>
         {%- else %}
             <p><a href="{{ att.uri }}">{{ att.title }}</a> {%- if att.date_category and att.date_category[0] != "<" and att.date_category != "" %}
                     ({{ att.date_category }})
-                {%- endif %}:<br />{{ att.date_string }}</p>
+                {%- endif %}:<br />{{ att.date_string }}<br />
+                {%- if att.username %} user: {{ att.username }} {%- endif %}
+                {%- if att.last_update %} (last update: {{ att.last_update }}){%- endif %}
+            </p>
         {%- endif %}
     {%- endfor%}
     <p>&nbsp;</p>

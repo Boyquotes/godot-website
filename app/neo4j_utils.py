@@ -1,5 +1,6 @@
 from app import app
 from neo4j.v1 import GraphDatabase, basic_auth
+import shortuuid
 
 
 def get_browse_data(yrs, page):
@@ -14,7 +15,15 @@ def get_browse_data(yrs, page):
         page = 0
     if yrs != 'All':
         if "-" in yrs:
-            query = "match (yrs:YearReferenceSystem {type:'%s'})--(yrs2:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs2)-[*..15]->(g)) return p order by g skip %s limit %s" % (
+            if " of " in yrs:
+                # eponymous official of some place
+                # first get place
+                eponymous_title = yrs.split(" of ")[0].strip()
+                place_label = yrs.split(" of ")[1].strip()
+                query = "match (yrs:YearReferenceSystem {type:'%s'})--(yrs2:YearReferenceSystem {type:'%s', place_label: '%s'}), (g:GODOT), p = shortestPath((yrs2)-[*..15]->(g)) return p order by g skip %s limit %s" % (
+                    eponymous_title.split(" - ")[0], eponymous_title.split(" - ")[1], place_label, page, limit)
+            else:
+                query = "match (yrs:YearReferenceSystem {type:'%s'})--(yrs2:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs2)-[*..15]->(g)) return p order by g skip %s limit %s" % (
                 yrs.split(" - ")[0], yrs.split(" - ")[1], page, limit)
         else:
             query = "match (yrs:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs)-[*..15]->(g)) return p order by g skip %s limit %s" % (
@@ -198,14 +207,19 @@ def get_list_of_yrs():
     returns list of yrs in the GODOT graph
     :return: list of yrs
     """
-    query = "match (t:Timeline)--(yrs1:YearReferenceSystem) optional match (yrs1)--(yrs2:YearReferenceSystem) return yrs1, yrs2"
+    query = """match (t:Timeline)--(yrs1:YearReferenceSystem) 
+    optional match (yrs1)--(yrs2:YearReferenceSystem) return yrs1, yrs2"""
     results = query_neo4j_db(query)
     yrs = ['All']
     if results:
         for record in results:
             label = record["yrs1"]["type"]
             if record["yrs2"]:
-                label += " - " + record["yrs2"]["type"]
+                # add placename for eponymous officials
+                if record["yrs2"]["place_label"]:
+                    label += " - " + record["yrs2"]["type"] + " of " + record["yrs2"]["place_label"]
+                else:
+                    label += " - " + record["yrs2"]["type"]
             yrs.append(label)
     return yrs
 
@@ -234,6 +248,108 @@ def delete_attestation(node_id):
     results = query_neo4j_db(query)
     if results:
         return results
+
+
+def get_eponyms():
+    query = """
+    match (:YearReferenceSystem {type:'Eponymous officials'})-->(yrs:YearReferenceSystem)--(g:GODOT) 
+    where not yrs.pleiades_uri = ""
+    return yrs, g.uri as g
+    """
+    results = query_neo4j_db(query)
+    list_of_eponyms = []
+    for res in results:
+        tmp_dict = {}
+        tmp_dict.update({'godot_uri': str(res['g'].split("/")[-1])})
+        for (k, v) in res["yrs"].items():
+            tmp_dict[k] = v
+        list_of_eponyms.append(tmp_dict)
+    return list_of_eponyms
+
+
+def get_eponym_data(godot_id):
+    """
+    returns all data for this eponymous official
+    :param godot_id: string of GODOT ID
+    :return: dictionary
+    """
+    query = """
+    match (g:GODOT {uri:'https://godot.date/id/%s'})<--(yrs:YearReferenceSystem) return yrs
+    """ % godot_id
+    results = query_neo4j_db(query)
+    tmp_dict = {}
+    for res in results:
+        for (k, v) in res["yrs"].items():
+            tmp_dict[k] = v
+    return tmp_dict
+
+
+def get_individuals_for_eponym(godot_id):
+    """
+    returns list of all individuals for this eponymous official
+    :param godot_id: string of GODOT ID
+    :return: list of dictionaries
+    """
+    query = """
+    match (g:GODOT)--(cp:CalendarPartial)--(yrs:YearReferenceSystem)--(g2:GODOT {uri:'https://godot.date/id/%s'}) 
+    return g,cp
+    """ % godot_id
+    results = query_neo4j_db(query)
+    individuals_list = []
+    for res in results:
+        tmp_dict = {}
+        tmp_dict.update({'godot_uri': str(res['g']['uri'])})
+        for (k, v) in res["cp"].items():
+            tmp_dict[k] = v
+        individuals_list.append(tmp_dict)
+    return individuals_list
+
+
+def get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description):
+    """
+    creates/returns godot URI for eponymous office specified by combination of type/place_label/pleiades_uri
+    :param type:
+    :param place_label:
+    :param pleiades_uri:
+    :param wikidata_uri:
+    :param description:
+    :return: godot URI of office
+    """
+    godot_uri  = "https://godot.date/id/" + shortuuid.uuid()
+    query = """
+    match (yrs:YearReferenceSystem {type: 'Eponymous officials'})
+    merge (yrs)-[:hasYearReferenceSystem]->(yrs2:YearReferenceSystem {type:'%s', place_label:'%s', pleiades_uri:'%s', wikidata_uri:'%s', description:'%s'})
+    merge (yrs2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
+        ON CREATE SET g.uri='%s'
+    return g.uri as g
+    """ % (type, place_label, pleiades_uri, wikidata_uri, _clean_string(description), godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
+
+
+def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description):
+    """
+    updates data for eponymous office specified by combination of type/place_label/pleiades_uri
+    :param type:
+    :param place_label:
+    :param pleiades_uri:
+    :param wikidata_uri:
+    :param description:
+    :return: godot URI of office
+    """
+    query = """
+     match (yrs:YearReferenceSystem {type:'%s', place_label:'%s', pleiades_uri:'%s'})-[:hasGodotUri]->(g:GODOT)
+     set yrs.wikidata_uri = '%s', yrs.description = '%s'
+     return g.uri as g
+     """ % (type, place_label, pleiades_uri, wikidata_uri, _clean_string(description))
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
 
 
 def _clean_string(str):

@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField, SelectMultipleField, BooleanField
-from wtforms.validators import DataRequired, Optional, Regexp
+from wtforms import StringField, IntegerField, SelectField, SubmitField, SelectMultipleField, BooleanField, TextAreaField
+from wtforms.validators import DataRequired, Optional, Regexp, URL
+from app.neo4j_utils import get_eponyms
+
 
 roman_emperors_list = [('unknown', 'unknown'), ('Augustus', 'Augustus'),
                        ('Tiberius', 'Tiberius'),
@@ -635,3 +637,15 @@ class RomanImperialDating(FlaskForm):
                                              ('Sarmaticus max. 5', 'Sarmaticus max. 5'),
                                              ('Thebaicus max. 1', 'Thebaicus max.'),
                                          ])
+
+
+class EponymOffice(FlaskForm):
+    pleiades_uri = StringField('Pleiades URI:', validators=[URL(), DataRequired()])
+    wikidata_uri = StringField('Wikidata URI of Office:', validators=[URL()])
+    godot_uri = StringField('GODOT URI:')
+    place_label = StringField('Place Label:', validators=[DataRequired()])
+    type = StringField('Type of Office:', validators=[DataRequired()])
+    description = TextAreaField('Description of Office:')
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')
+

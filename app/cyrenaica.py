@@ -220,7 +220,7 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
                 MERGE (cp1)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
-                MERGE (cp_day)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
                 RETURN g.uri as g 
@@ -288,7 +288,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
                 MERGE (cp1)-[:hasCalendarType]->(ct:CalendarType {type: 'Egyptian Calendar'})
                 MERGE (ct)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'month', value: '%s'})
-                MERGE (cp2)-[:hasGodotUri]->(g:GODOT)
+                MERGE (cp2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
                 MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
                 RETURN g.uri as g 

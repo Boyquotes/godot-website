@@ -1,17 +1,18 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating, EponymOffice
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
-    get_attestation, update_attestation, delete_attestation, get_godot_node_properties
+    get_attestation, update_attestation, delete_attestation, get_godot_node_properties, get_eponyms, get_eponym_data, get_individuals_for_eponym, get_godot_uri_for_eponymous_office, update_godot_uri_for_eponymous_office
 from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
-from app.users import get_user_full_name
-from flask_simplelogin import get_username
+import requests
+import json
+
 
 @app.route('/')
 @app.route('/index')
@@ -75,7 +76,6 @@ def display_godot_uri(godot_uri):
             continue
         else:
             path_list.append(p_dict)
-
     paths = path_list
     attestations = get_attestations("https://godot.date/id/" + godot_uri)
     if paths:
@@ -105,10 +105,8 @@ def edit_attestation_data(godot_uri, node_id):
             continue
         else:
             path_list.append(p_dict)
-
     paths = path_list
     attestation = get_attestation(node_id)
-    print(attestation)
     if paths:
         return render_template('update_attestation_data.html', title='Edit Attestation Data', id=godot_uri, paths=paths, attestations=attestation, date_categories=date_categories, form=form)
     else:
@@ -332,6 +330,59 @@ def reconcile():
     return _jsonpify(get_openrefine_metadata())
 
 
+@app.route('/eponymous_office/add', methods=['GET', 'POST'])
+def eponymous_office_add():
+    form = EponymOffice()
+    if form.validate_on_submit():
+        description = form.description.data
+        wikidata_uri = form.wikidata_uri.data
+        pleiades_uri = form.pleiades_uri.data
+        place_label = form.place_label.data
+        type = form.type.data
+        godot_uri = get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description)
+        return render_template('eponymous_office_add_result.html', title="Add Eponymous Office Result",
+                               data_text="Add Eponymous Office Result", description=description, wikidata_uri=wikidata_uri, pleiades_uri=pleiades_uri, place_label=place_label, type=type, godot_uri=str(godot_uri.split("/")[-1]))
+    return render_template('eponymous_office_add.html', title="Add Eponymous Office", data_text="Add Eponymous Office", form=form)
+
+
+@app.route('/eponymous_office/<godot_id>/edit', methods=['GET', 'POST'])
+@login_required
+def eponyms_detailview_edit(godot_id):
+    form = EponymOffice()
+    eponym_data = get_eponym_data(godot_id)
+    if form.validate_on_submit():
+        description = form.description.data
+        wikidata_uri = form.wikidata_uri.data
+        pleiades_uri = form.pleiades_uri.data
+        godot_uri = form.godot_uri.data
+        place_label = form.place_label.data
+        type = form.type.data
+        godot_uri = update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description)
+        return render_template('eponymous_office_add_result.html', title="Edit Eponymous Office Result",
+                               data_text="Edit Eponymous Office Result", description=description,
+                               wikidata_uri=wikidata_uri, pleiades_uri=pleiades_uri, place_label=place_label, type=type,
+                               godot_uri=str(godot_uri.split("/")[-1]))
+    else:
+        return render_template('detail_eponym_edit.html', title="Edit Eponymous Office",
+                           data_text="Edit Eponymous Office", eponym_data=eponym_data, godot_id=godot_id, form=form)
+
+
+@app.route('/eponymous_office/<godot_id>')
+def eponyms_detailview(godot_id):
+    # show all information for this eponym
+    eponym_data = get_eponym_data(godot_id)
+    individuals_list = get_individuals_for_eponym(godot_id)
+    pleiades_info = _get_pleiades_info(eponym_data['pleiades_uri'])
+    return render_template('detail_eponym.html', title="Eponymous Office Detail View", data_text="Eponymous Office Detail View", eponym_data=eponym_data, individuals_list=individuals_list, pleiades_info=pleiades_info, godot_id=godot_id)
+
+
+@app.route('/eponymous_office')
+def eponyms_list():
+    # get all eponymous offices node information
+    eponyms_list = get_eponyms()
+    return render_template('eponyms_list.html', title="Eponyms", data_text="Eponyms", eponyms_list=eponyms_list)
+
+
 @app.route('/workshop')
 def workshop():
     return render_template('workshop.html', title="Workshop")
@@ -345,3 +396,29 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
+
+
+def _get_pleiades_info(pleiades_uri):
+    """
+    queries pleiades json for names & coordinates of place
+    :param pleiades_uri:
+    :return: dictionary
+    """
+    place_information_dict = {}
+    try:
+        r = requests.get(pleiades_uri+'/json')
+        names = r.json()['names']
+        names_list = []
+        for name in names:
+            if name['attested']:
+                names_list.append(name['attested'])
+            else:
+                names_list.append(name['romanized'])
+        features = r.json()['features']
+        # reverse order lat/lng vs. lng/lat
+        coordinates = features[0]['geometry']['coordinates'][::-1]
+        place_information_dict['names'] = names_list
+        place_information_dict['coordinates'] = coordinates
+        return place_information_dict
+    except:
+        return {'error':'Service not available'}

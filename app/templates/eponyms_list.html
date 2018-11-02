@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block app_content %}
+<h1>{{ data_text }}</h1>
+<ul>
+{%- for eponym in eponyms_list %}
+<li><a href="/eponymous_office/{{ eponym.godot_uri }}">{{ eponym.type }} of {{ eponym.place_label }}</a>
+    </li>
+
+{%- endfor%}
+</ul>
+<a href="/eponymous_office/add" class="btn btn-godot-reset btn-xs" style="margin-top:1em">add another office...</a>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block app_content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<h1>{{ data_text }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.type.label }}<br>
+            {{ form.type(size=50, style='width:30em;') }}
+            {% for error in form.type.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.place_label.label }}<br>
+            {{ form.place_label(size=50, style='width:30em;') }}
+            {% for error in form.place_label.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.pleiades_uri.label }}<br>
+            {{ form.pleiades_uri(size=50, style='width:30em;') }}
+            {% for error in form.pleiades_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.wikidata_uri.label }}<br>
+            {{ form.wikidata_uri(size=50, style='width:30em;') }}
+            {% for error in form.wikidata_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description(cols="70", rows="5") }}
+            {% for error in form.description.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+
+{% endblock %}

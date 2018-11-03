@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block app_content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<h1>{{ data_text }}</h1>
+<h3>{{ office_data['type'] }} of {{ office_data['place_label'] }}</h3>
+   <p>GODOT URI for:</p>
+    <ul>
+        <li><span style="font-weight:1000">Name</span>: {{ name }}</li>
+        <li><span style="font-weight:1000">Wikidata URI for office</span>: {{ wikidata_uri }}</li>
+        <li><span style="font-weight:1000">SNAP URI</span>: {{ snap_uri }}</li>
+        <li><span style="font-weight:1000">Not Before Year</span>: {{ not_before }}</li>
+        <li><span style="font-weight:1000">Not After Year</span>: {{ not_after }}</li>
+    </ul>
+    <p><a href="/eponymous_office/{{office_godot_uri}}/{{official_godot_uri}}"><span id="godot_uri">https://godot.date/eponymous_office/{{office_godot_uri}}/{{official_godot_uri}}</span></a></p>
+    <p>
+        <div class="g_tooltip">
+            <button class="btn btn-godot-reset btn-xs" style="margin-left:0; width:200px;" onclick="copy2clipboard()" id="copy_button">
+            Copy URI to clipboard
+            </button>
+        </div>
+    </p>
+    <p style="margin-top:2em"><a href="/eponymous_office">List of all offices</a></p>
+    <p><a href="/eponymous_office/{{office_godot_uri}}/add">Add another {{ office_data['type'] }} of {{ office_data['place_label'] }}</a></p>
+    <script>
+        function copy2clipboard() {
+            let textarea = document.createElement('textarea')
+            textarea.id = 't'
+            textarea.style.height = 0
+            document.body.appendChild(textarea)
+            textarea.value = document.getElementById("godot_uri").innerText
+            let selector = document.querySelector('#t')
+            selector.select()
+            document.execCommand('copy')
+            document.body.removeChild(textarea)
+            document.getElementById("copy_button").innerText = "Copied!"
+            setTimeout(function() {
+                document.getElementById("copy_button").innerText = "Copy URI to clipboard"
+            }, 1000);
+        }
+    </script>
+{% endblock %}

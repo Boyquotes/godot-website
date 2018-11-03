@@ -330,6 +330,66 @@ def get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata
     return g
 
 
+def get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after):
+    """
+    creates/returns GODOT URi for eponymou official
+    :param name:
+    :param wikidata_uri:
+    :param snap_uri:
+    :param not_before:
+    :param not_after:
+    :return: godot URI of official
+    """
+    godot_uri  = "https://godot.date/id/" + shortuuid.uuid()
+    query = """
+    match (g:GODOT {uri:'%s'})--(yrs:YearReferenceSystem)
+    merge (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type:'name', value:'%s', wikidata_uri:'%s', snap_uri:'%s', not_before:'%s', not_after:'%s'})
+    merge (cp)-[:hasGodotUri]->(g2:GODOT {type:'standard'})
+        on create set g2.uri = '%s'
+    return g2.uri as g
+    """ % (office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after, godot_uri)
+    results = query_neo4j_db(query)
+    if results:
+        for record in results:
+            g = record["g"]
+    return g
+
+
+def get_official_data(official_godot_id):
+    """
+    return dict with all properties of individual office holder
+    :param official_godot_uri:
+    :return: dictionary with official data
+    """
+    query = """
+    match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)
+    return cp
+    """ % official_godot_id
+    results = query_neo4j_db(query)
+    result_dict = {}
+    for record in results:
+        for (k, v) in record["cp"].items():
+            result_dict[k] = v
+    return result_dict
+
+def get_office_data_by_official_id(official_godot_id):
+    """
+    returns all eponymous data by individual official godot id holding this office
+    :param official_godot_id:
+    :return: dictionary
+    """
+    query = """
+    match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)--(yrs:YearReferenceSystem)
+    return yrs
+    """ % official_godot_id
+    results = query_neo4j_db(query)
+    result_dict = {}
+    for record in results:
+        for (k, v) in record["yrs"].items():
+            result_dict[k] = v
+    return result_dict
+
+
 def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description):
     """
     updates data for eponymous office specified by combination of type/place_label/pleiades_uri
@@ -350,6 +410,30 @@ def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikid
         for record in results:
             g = record["g"]
     return g
+
+
+def update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after):
+    """
+    updates data of official specified by godot_id
+    :param official_godot_id:
+    :param name:
+    :param wikidata_uri:
+    :param snap_uri:
+    :param not_before:
+    :param not_after:
+    :return: dict of updated offcial data
+    """
+    query = """
+    match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)
+	set cp.value = '%s', cp.wikidata_uri = '%s', cp.snap_uri = '%s', cp.not_before = '%s', cp.not_after = '%s'
+    return cp
+    """ % (official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after)
+    results = query_neo4j_db(query)
+    result_dict = {}
+    for record in results:
+        for (k, v) in record["cp"].items():
+            result_dict[k] = v
+    return result_dict
 
 
 def _clean_string(str):

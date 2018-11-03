@@ -641,7 +641,7 @@ class RomanImperialDating(FlaskForm):
 
 class EponymOffice(FlaskForm):
     pleiades_uri = StringField('Pleiades URI:', validators=[URL(), DataRequired()])
-    wikidata_uri = StringField('Wikidata URI of Office:', validators=[URL()])
+    wikidata_uri = StringField('Wikidata URI of Office:', validators=[Optional(), URL()])
     godot_uri = StringField('GODOT URI:')
     place_label = StringField('Place Label:', validators=[DataRequired()])
     type = StringField('Type of Office:', validators=[DataRequired()])
@@ -649,3 +649,16 @@ class EponymOffice(FlaskForm):
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
 
+
+class EponymOfficial(FlaskForm):
+    name = StringField('Name:', validators=[DataRequired()])
+    wikidata_uri = StringField('Wikidata URI of Official:', validators=[Optional(), URL()])
+    snap_uri = StringField('SNAP URI of Official:', validators=[Optional(), URL()])
+    office_godot_uri = StringField('Office GODOT URI:')
+    official_godot_uri = StringField('Official GODOT URI:')
+    not_before = StringField('Not Before Year:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    not_after = StringField('Not After Year:', validators=[
+        Optional(), Regexp('^[0-9_]*$')])
+    reset = SubmitField('Reset...')
+    submit = SubmitField('Submit...')

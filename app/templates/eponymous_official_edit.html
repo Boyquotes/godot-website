@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block app_content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<h1>{{ data_text }}</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <input type="hidden" id="godot_uri" name="godot_uri" value="{{official_godot_uri}}">
+        <h4 style="margin-bottom:1em">{{ office_data['type'] }} of {{ office_data['place_label'] }}</h4>
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(value=official_data['value'], size=50, style='width:30em;') }}
+            {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.wikidata_uri.label }}<br>
+            {{ form.wikidata_uri(value=official_data['wikidata_uri'], size=50, style='width:30em;') }}
+            {% for error in form.wikidata_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.snap_uri.label }}<br>
+            {{ form.snap_uri(value=official_data['snap_uri'], size=50, style='width:30em;') }}
+            {% for error in form.snap_uri.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.not_before.label }}<br>
+            {{ form.not_before(value=official_data['not_before'], size=50, style='width:30em;') }}
+            {% for error in form.not_before.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.not_after.label }}<br>
+            {{ form.not_after(value=official_data['not_after'], size=50, style='width:30em;') }}
+            {% for error in form.not_after.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        <p>&nbsp;</p>
+    </form>
+
+{% endblock %}

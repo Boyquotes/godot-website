@@ -1,12 +1,12 @@
 from flask import render_template, request, jsonify, redirect
 from flask_simplelogin import login_required
 from app import app
-from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating, EponymOffice
+from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating, EponymOffice, EponymOfficial
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
     get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
-    get_attestation, update_attestation, delete_attestation, get_godot_node_properties, get_eponyms, get_eponym_data, get_individuals_for_eponym, get_godot_uri_for_eponymous_office, update_godot_uri_for_eponymous_office
+    get_attestation, update_attestation, delete_attestation, get_godot_node_properties, get_eponyms, get_eponym_data, get_individuals_for_eponym, get_godot_uri_for_eponymous_office, update_godot_uri_for_eponymous_office, get_godot_uri_for_eponymous_official, get_official_data, get_office_data_by_official_id, update_eponymous_official_data
 from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
@@ -383,6 +383,52 @@ def eponyms_list():
     return render_template('eponyms_list.html', title="Eponyms", data_text="Eponyms", eponyms_list=eponyms_list)
 
 
+@app.route('/eponymous_office/<godot_id>/add', methods=['GET', 'POST'])
+def eponymous_official_add(godot_id):
+    form = EponymOfficial()
+    office_data = get_eponym_data(godot_id)
+    if form.validate_on_submit():
+        name = form.name.data
+        office_godot_uri = "https://godot.date/id/"+godot_id
+        wikidata_uri = form.wikidata_uri.data
+        snap_uri = form.snap_uri.data
+        not_before = form.not_before.data
+        not_after = form.not_after.data
+        official_godot_uri = get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after)
+        return render_template('eponymous_official_add_result.html', title="Add Eponymous Official Result",
+                               data_text="Add Eponymous Office Result", name=name, wikidata_uri=wikidata_uri, snap_uri=snap_uri, not_before=not_before, not_after=not_after, official_godot_uri=str(official_godot_uri.split("/")[-1]), office_godot_uri=str(office_godot_uri.split("/")[-1]), office_data=office_data)
+    return render_template('eponymous_official_add.html', title="Add Eponymous Official", data_text="Add Eponymous Official", form=form, godot_uri='https://godot.date/id/'+godot_id, office_data=office_data)
+
+
+@app.route('/eponymous_office/<office_godot_id>/<official_godot_id>/edit', methods=['GET', 'POST'])
+def eponymous_official_edit(office_godot_id, official_godot_id):
+    form = EponymOfficial()
+    official_data_dict = get_official_data(official_godot_id)
+    office_data = get_office_data_by_official_id(official_godot_id)
+    if form.validate_on_submit():
+        name = form.name.data
+        office_godot_uri = "https://godot.date/id/"+office_godot_id
+        wikidata_uri = form.wikidata_uri.data
+        snap_uri = form.snap_uri.data
+        not_before = form.not_before.data
+        not_after = form.not_after.data
+        official_data = update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after)
+        return render_template('eponymous_official_add_result.html', title="Edit Eponymous Official Result",
+                               data_text="Edit Eponymous Office Result", name=official_data['value'], wikidata_uri=official_data['wikidata_uri'], snap_uri=official_data['snap_uri'], not_before=official_data['not_before'], not_after=official_data['not_after'], official_godot_uri=official_godot_id, office_godot_uri=office_godot_id)
+    return render_template('eponymous_official_edit.html', title="Edit Eponymous Official", data_text="Edit Eponymous Official", form=form, official_godot_uri='https://godot.date/id/'+official_godot_id, official_data=official_data_dict, office_data=office_data)
+
+
+@app.route('/eponymous_office/<office_godot_id>/<official_godot_id>')
+def eponymous_official(office_godot_id, official_godot_id):
+    form = EponymOfficial()
+    official_data_dict = get_official_data(official_godot_id)
+    office_data = get_office_data_by_official_id(official_godot_id)
+    return render_template('eponymous_official_add_result.html', title="Eponymous Office Detail View",
+                           data_text="Eponymous Office Detail View", name=official_data_dict['value'],
+                           wikidata_uri=official_data_dict['wikidata_uri'], snap_uri=official_data_dict['snap_uri'],
+                           not_before=official_data_dict['not_before'], not_after=official_data_dict['not_after'],
+                           official_godot_uri=official_godot_id, office_godot_uri=office_godot_id, office_data=office_data)
+
 @app.route('/workshop')
 def workshop():
     return render_template('workshop.html', title="Workshop")
@@ -406,7 +452,7 @@ def _get_pleiades_info(pleiades_uri):
     """
     place_information_dict = {}
     try:
-        r = requests.get(pleiades_uri+'/json')
+        r = requests.get(pleiades_uri+'/json', timeout=2)
         names = r.json()['names']
         names_list = []
         for name in names:

@@ -70,8 +70,10 @@ def display_godot_uri(godot_uri):
     # get data/path and attestation links for this GODOT URI as list of dicts
     paths = get_godot_path("https://godot.date/id/" + godot_uri)
     # some info needn't be displayed on detail view page
+    date_dict = {}
     path_list = []
     for p_dict in paths:
+        print(p_dict)
         if p_dict['label'] == 'GODOT' and p_dict['type'] == 'synchron':
             continue
         else:
@@ -89,7 +91,7 @@ def display_godot_uri(godot_uri):
 def edit_attestation_data(godot_uri, node_id):
     form = AttestationUpdate()
     date_category = form.date_category.data
-    date_categories = ['', 'Uncategorised', 'Date of Death', 'Date of Birth', 'Date of Document', 'Date of Recording', 'Date of Action', 'Recurring Date of Action', 'Roman Emperor Titulature']
+    date_categories = ['', 'Uncategorised', 'Date of Death', 'Date of Birth', 'Date of Document', 'Date of Recording', 'Date of Action', 'Date of Office', 'Recurring Date of Action', 'Roman Emperor Titulature']
     if form.validate_on_submit():
         attestation_uri = form.attestation_uri.data
         title = form.title.data
@@ -423,8 +425,8 @@ def eponymous_official(office_godot_id, official_godot_id):
     form = EponymOfficial()
     official_data_dict = get_official_data(official_godot_id)
     office_data = get_office_data_by_official_id(official_godot_id)
-    return render_template('eponymous_official_add_result.html', title="Eponymous Office Detail View",
-                           data_text="Eponymous Office Detail View", name=official_data_dict['value'],
+    return render_template('eponymous_official_add_result.html', title="Eponymous Official Detail View",
+                           data_text="Eponymous Official Detail View", name=official_data_dict['value'],
                            wikidata_uri=official_data_dict['wikidata_uri'], snap_uri=official_data_dict['snap_uri'],
                            not_before=official_data_dict['not_before'], not_after=official_data_dict['not_after'],
                            official_godot_uri=official_godot_id, office_godot_uri=office_godot_id, office_data=office_data)
@@ -451,8 +453,9 @@ def _get_pleiades_info(pleiades_uri):
     :return: dictionary
     """
     place_information_dict = {}
+    print("huhu")
     try:
-        r = requests.get(pleiades_uri+'/json', timeout=2)
+        r = requests.get(pleiades_uri+'/json', timeout=4)
         names = r.json()['names']
         names_list = []
         for name in names:
@@ -460,9 +463,8 @@ def _get_pleiades_info(pleiades_uri):
                 names_list.append(name['attested'])
             else:
                 names_list.append(name['romanized'])
-        features = r.json()['features']
         # reverse order lat/lng vs. lng/lat
-        coordinates = features[0]['geometry']['coordinates'][::-1]
+        coordinates = r.json()['reprPoint'][::-1]
         place_information_dict['names'] = names_list
         place_information_dict['coordinates'] = coordinates
         return place_information_dict

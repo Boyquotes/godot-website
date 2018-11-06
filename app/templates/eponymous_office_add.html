@@ -13,21 +13,21 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
-            {{ form.type.label }}<br>
+            {{ form.type.label }}<span style="color:#aa2222">*</span><br>
             {{ form.type(size=50, style='width:30em;') }}
             {% for error in form.type.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
-            {{ form.place_label.label }}<br>
+            {{ form.place_label.label }}<span style="color:#aa2222">*</span><br>
             {{ form.place_label(size=50, style='width:30em;') }}
             {% for error in form.place_label.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>
-            {{ form.pleiades_uri.label }}<br>
+            {{ form.pleiades_uri.label }}<span style="color:#aa2222">*</span><br>
             {{ form.pleiades_uri(size=50, style='width:30em;') }}
             {% for error in form.pleiades_uri.errors %}
             <span style="color: red;">[{{ error }}]</span>

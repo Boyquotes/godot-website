@@ -15,7 +15,7 @@
         {{ form.hidden_tag() }}
         <input type="hidden" id="office_godot_uri" name="office_godot_uri" value="{{godot_uri}}">
         <p>
-            {{ form.name.label }}<br>
+            {{ form.name.label }}<span style="color:#aa2222">*</span><br>
             {{ form.name(size=50, style='width:30em;') }}
             {% for error in form.name.errors %}
             <span style="color: red;">[{{ error }}]</span>

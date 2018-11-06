@@ -222,6 +222,7 @@ class CyrenaicaYears(FlaskForm):
                                                  ('Date of Document', 'Date of Document'),
                                                  ('Date of Recording', 'Date of Recording'),
                                                  ('Date of Action', 'Date of Action'),
+                                                 ('Date of Office', 'Date of Office'),
                                                  ('Recurring Date of Action', 'Recurring Date of Action (Feasts, etc.)'),
                                                  ('Roman Emperor Titulature', 'Roman Emperor Titulature'),
                                                  ])
@@ -241,6 +242,7 @@ class AttestationUpdate(FlaskForm):
                                          ('Date of Document', 'Date of Document'),
                                          ('Date of Recording', 'Date of Recording'),
                                          ('Date of Action', 'Date of Action'),
+                                         ('Date of Office', 'Date of Office'),
                                          ('Recurring Date of Action', 'Recurring Date of Action (Feasts, etc.)'),
                                          ('Roman Emperor Titulature', 'Roman Emperor Titulature'),
                                          ])
@@ -489,6 +491,7 @@ class CyrenaicaRomanImperialTitulature(FlaskForm):
                                          ('Date of Document', 'Date of Document'),
                                          ('Date of Recording', 'Date of Recording'),
                                          ('Date of Action', 'Date of Action'),
+                                         ('Date of Office', 'Date of Office'),
                                          ('Recurring Date of Action', 'Recurring Date of Action (Feasts, etc.)'),
                                          ('Roman Emperor Titulature', 'Roman Emperor Titulature'),
                                          ])

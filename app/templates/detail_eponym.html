@@ -6,11 +6,14 @@
 <p>Wikidata URI for {{ eponym_data.type }}: <a href="{{ eponym_data.wikidata_uri }}">{{ eponym_data.wikidata_uri }}</a></p>
 <p>Pleiades URI for {{ eponym_data.place_label }}: <a href="{{ eponym_data.pleiades_uri }}">{{ eponym_data.pleiades_uri }}</a></p>
 <h3>Individuals</h3>
+<ul>
 {%- for individual in individuals_list%}
     <li>
-        {{ individual.value }}: {{ individual.godot_uri }}
+        {% set individual_godot_id = individual.godot_uri.split('/')[-1] %} {%- if get_username() == "roueche" or get_username() == "grieshaber" %}<a href="/eponymous_office/{{ godot_id }}/{{ individual_godot_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a>{%- endif %} {{ individual.value }}
     </li>
 {% endfor %}
+</ul>
+{%- if get_username() == "roueche" or get_username() == "grieshaber" %}<a href="/eponymous_office/{{ godot_id }}/add" class="btn btn-godot-reset btn-xs">add Official</a>{%- endif %}
 <h3>Related Content</h3>
 <div id="mapid" style="width: 600px; height: 400px; margin-bottom: 2em; margin-top:2em; border: 1px solid #ccc"></div>
 <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>

@@ -58,7 +58,7 @@ def _create_cypher_yrs_none(month, day, attestation_uri, title, date_string, dat
         MATCH (root:Timeline)--(yrs:YearReferenceSystem {type: 'None'})-[:hasCalendarType]->(ct:CalendarType 
           {type:'Egyptian Calendar'})-[:hasCalendarPartial]->(cp_month:CalendarPartial {type:'month', value:'%s'}),
           (cp_month)-->(g_month:GODOT)
-        MERGE (g_month)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+        MERGE (g_month)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
         RETURN g_month.uri as g
         """ % (month, attestation_uri, title, date_string, date_category, get_username())
     else:
@@ -69,7 +69,7 @@ def _create_cypher_yrs_none(month, day, attestation_uri, title, date_string, dat
         MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type:'day', value:'%s'})
         MERGE (cp_day)-[:hasGodotUri]->(g_day:GODOT {type:'standard'})
           ON CREATE SET g_day.uri='%s'
-        MERGE (g_day)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+        MERGE (g_day)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
         RETURN g_day.uri as g
         """ % (month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     return cypher_query
@@ -94,7 +94,7 @@ def _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_st
         MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
         MERGE (cp)-[:hasGodotUri]->(g:GODOT {type:'standard'})
           ON CREATE SET g.uri='%s'
-        MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: datetime()})
+        MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: date()})
         RETURN g.uri as g 
         """ % (year, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     else:
@@ -107,7 +107,7 @@ def _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_st
             MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
             MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
-            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: datetime()})
+            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: date()})
             RETURN g.uri as g 
             """ % (year, month, godot_uri, attestation_uri, title, date_string, date_category, get_username())
         else:
@@ -120,7 +120,7 @@ def _create_cypher_yrs_unknown(year, month, day, attestation_uri, title, date_st
             MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
             MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
-            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: datetime()})
+            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category:'%s', username: '%s', last_update: date()})
             RETURN g.uri as g 
             """ % (year, month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     return cypher_query
@@ -145,7 +145,7 @@ def _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_str
             MERGE (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type: 'year', value: '%s'})
             MERGE (cp)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
-            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
             RETURN g.uri as g 
             """ % (year, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     else:
@@ -158,7 +158,7 @@ def _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_str
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (year, month, godot_uri, attestation_uri, title, date_string, date_category, get_username())
         else:
@@ -171,7 +171,7 @@ def _create_cypher_yrs_actian(year, month, day, attestation_uri, title, date_str
                 MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
                 MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (year, month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     return cypher_query
@@ -196,7 +196,7 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
         MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
         MERGE (cp1)-[:hasGodotUri]->(g:GODOT {type:'standard'})
           ON CREATE SET g.uri='%s'
-        MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+        MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
         RETURN g.uri as g 
         """ % (apollo_priest, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     else:
@@ -209,7 +209,7 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
                 MERGE (ct)-[:hasCalendarPartial]->(cp_month:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp_month)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (apollo_priest, month, godot_uri, attestation_uri, title, date_string, date_category, get_username())
         else:
@@ -222,7 +222,7 @@ def _create_cypher_yrs_apollo_priest(apollo_priest, month, day, attestation_uri,
                 MERGE (cp_month)-[:hasCalendarPartial]->(cp_day:CalendarPartial {type: 'day', value: '%s'})
                 MERGE (cp_day)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (apollo_priest, month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     return cypher_query
@@ -251,7 +251,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             MERGE (cp1)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'year', value: '%s'})
             MERGE (cp2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
-            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
             RETURN g.uri as g 
             """ % (roman_emperor, year, godot_uri, attestation_uri, title, date_string, date_category, get_username())
         else:
@@ -259,9 +259,9 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
             cypher_query = """
             MATCH (root:Timeline)--(YearReferenceSystem {type: 'Regnal Years'})--(yrs:YearReferenceSystem {type:'Roman Emperors'})
             MERGE (yrs)-[:hasCalendarPartial]->(cp1:CalendarPartial {type: 'name', value: '%s'})
-            MERGE (cp1)-[:hasGodotUri]->(g:GODOT)
+            MERGE (cp1)-[:hasGodotUri]->(g:GODOT {type:'standard'})
               ON CREATE SET g.uri='%s'
-            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+            MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
             RETURN g.uri as g 
             """ % (roman_emperor, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     else:
@@ -278,7 +278,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (roman_emperor, year, month, godot_uri, attestation_uri, title, date_string, date_category, get_username())
             else:
@@ -290,7 +290,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (ct)-[:hasCalendarPartial]->(cp2:CalendarPartial {type: 'month', value: '%s'})
                 MERGE (cp2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (roman_emperor, month, godot_uri, attestation_uri, title, date_string, date_category, get_username())
         else:
@@ -306,7 +306,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp3)-[:hasCalendarPartial]->(cp4:CalendarPartial {type: 'day', value: '%s'})
                 MERGE (cp4)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (roman_emperor, year, month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
             else:
@@ -319,7 +319,7 @@ def _create_cypher_yrs_regnal_year_roman_emperor(roman_emperor, year, month, day
                 MERGE (cp2)-[:hasCalendarPartial]->(cp3:CalendarPartial {type: 'day', value: '%s'})
                 MERGE (cp3)-[:hasGodotUri]->(g:GODOT {type:'standard'})
                   ON CREATE SET g.uri='%s'
-                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: datetime()})
+                MERGE (g)-[:hasAttestation]->(att:Attestation {uri: '%s', title: '%s', date_string: '%s', date_category: '%s', username: '%s', last_update: date()})
                 RETURN g.uri as g 
                 """ % (roman_emperor, month, day, godot_uri, attestation_uri, title, date_string, date_category, get_username())
     return cypher_query

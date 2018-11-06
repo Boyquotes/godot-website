@@ -1,6 +1,7 @@
 from app import app
 from neo4j.v1 import GraphDatabase, basic_auth
 import shortuuid
+from flask_simplelogin import get_username
 
 
 def get_browse_data(yrs, page):
@@ -237,7 +238,11 @@ def get_attestation(node_id):
 def update_attestation(node_id, attestation_uri, title, date_string, date_category):
     title = _clean_string(title)
     date_string = _clean_string(date_string)
-    query = "match (a:Attestation) where id(a) = %s set a.date_string='%s', a.title = '%s', a.uri = '%s', a.date_category = '%s'" % (node_id, date_string, title, attestation_uri, date_category)
+    query = """
+    match (a:Attestation) 
+    where id(a) = %s 
+    set a.date_string='%s', a.title = '%s', a.uri = '%s', a.date_category = '%s', a.username = '%s', a.last_update = date()
+    """ % (node_id, date_string, title, attestation_uri, date_category, get_username())
     results = query_neo4j_db(query)
     if results:
         return results
@@ -322,7 +327,7 @@ def get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata
     merge (yrs2)-[:hasGodotUri]->(g:GODOT {type:'standard'})
         ON CREATE SET g.uri='%s'
     return g.uri as g
-    """ % (type, place_label, pleiades_uri, wikidata_uri, _clean_string(description), godot_uri)
+    """ % (_clean_string(type), _clean_string(place_label), pleiades_uri, wikidata_uri, _clean_string(description), godot_uri)
     results = query_neo4j_db(query)
     if results:
         for record in results:
@@ -347,7 +352,7 @@ def get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, s
     merge (cp)-[:hasGodotUri]->(g2:GODOT {type:'standard'})
         on create set g2.uri = '%s'
     return g2.uri as g
-    """ % (office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after, godot_uri)
+    """ % (office_godot_uri, _clean_string(name), wikidata_uri, snap_uri, _clean_string(not_before), _clean_string(not_after), godot_uri)
     results = query_neo4j_db(query)
     if results:
         for record in results:

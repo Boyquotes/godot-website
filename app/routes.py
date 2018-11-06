@@ -4,9 +4,7 @@ from app import app
 from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, AttestationDelete, CyrenaicaRomanImperialTitulature, SearchRomanConsulate, EgyptianCalendarLatePeriod, EgyptianCalendarPtolemies, EgyptianCalendarRomanEmperors, RomanImperialDating, EponymOffice, EponymOfficial
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
-from app.neo4j_utils import get_godot_path, get_attestations, get_browse_data, \
-    get_number_of_nodes, get_number_of_relations, get_number_of_godot_uris, get_list_of_yrs, get_browse_data_number_of_results, \
-    get_attestation, update_attestation, delete_attestation, get_godot_node_properties, get_eponyms, get_eponym_data, get_individuals_for_eponym, get_godot_uri_for_eponymous_office, update_godot_uri_for_eponymous_office, get_godot_uri_for_eponymous_official, get_official_data, get_office_data_by_official_id, update_eponymous_official_data
+from app.neo4j_utils import *
 from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
@@ -20,15 +18,30 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/browse', defaults={'yrs': 'All', 'page': 1})
-@app.route('/browse/<yrs>', defaults={'page': 1})
-@app.route('/browse/<yrs>/<page>')
-def browse(yrs, page):
-    browse_data = get_browse_data(yrs, page)
+@app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1})
+@app.route('/browse/<yrs>', defaults={'yrs2': 1})
+@app.route('/browse/<yrs>/<yrs2>')
+def browse(yrs, yrs2):
     list_of_yrs = get_list_of_yrs()
+    if yrs == "Regnal Years - Roman Emperors":
+        if yrs2 == 1:
+            # show list of emperors names
+            emperors_list = get_all_roman_emperors()
+            return render_template('browse_emperors.html', title='Browse Data', browse_data=emperors_list, list_of_yrs=list_of_yrs, yrs=yrs)
+        else:
+            # show all regnal years of specified emperor
+            emperors_list = get_all_roman_emperors()
+            regnal_years_list = get_regnal_years_for_emperor(yrs2)
+            return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list)
+
+    else:
+        pass
+    browse_data = get_browse_data(yrs, yrs2)
+
     total_hits = get_browse_data_number_of_results(yrs)
     return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
-                           yrs=yrs, page=page, total_hits=total_hits)
+                           yrs=yrs, page=yrs2, total_hits=total_hits)
 
 
 @app.route('/contact')
@@ -73,7 +86,6 @@ def display_godot_uri(godot_uri):
     date_dict = {}
     path_list = []
     for p_dict in paths:
-        print(p_dict)
         if p_dict['label'] == 'GODOT' and p_dict['type'] == 'synchron':
             continue
         else:

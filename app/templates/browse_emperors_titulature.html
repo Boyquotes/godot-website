@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block app_content %}
+      <h1>Browse Data</h1>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+        <p>Filter by Year Reference System:</p>
+        <p style="margin-bottom:2em">
+          {% for y in list_of_yrs %}
+            {% if yrs == y %}
+              <span style="margin-left:1em;color:#4a4">✓</span> <a href="/browse/{{ y }}" style="font-weight:1000">{{ y }}</a><br />
+            {% else %}
+              <a href="/browse/{{ y }}" style="margin-left:2em">{{ y }}</a><br />
+            {% endif %}
+          {% endfor %}
+        </p>
+    <h4>Roman Emperors <span style="font-size:smaller">(alphabetically)</span></h4>
+    <p style="margin-bottom:2em; margin-left: 2em">
+      {% for entry in browse_data %}
+        <span style="padding-right:10px"><a href="/browse/Titulature%20of%20Roman%20Emperors/{{ entry }}">{{ entry }}</a></span>
+      {% endfor %}
+      </p>
+  {% endblock %}

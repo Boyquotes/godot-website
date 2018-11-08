@@ -18,10 +18,11 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1})
-@app.route('/browse/<yrs>', defaults={'yrs2': 1})
-@app.route('/browse/<yrs>/<yrs2>')
-def browse(yrs, yrs2):
+@app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1, 'yrs3':''})
+@app.route('/browse/<yrs>', defaults={'yrs2': 1, 'yrs3':''})
+@app.route('/browse/<yrs>/<yrs2>', defaults={'yrs3':''})
+@app.route('/browse/<yrs>/<yrs2>/<yrs3>')
+def browse(yrs, yrs2, yrs3):
     list_of_yrs = get_list_of_yrs()
     if yrs == "Regnal Years - Roman Emperors":
         if yrs2 == 1:
@@ -34,14 +35,31 @@ def browse(yrs, yrs2):
             regnal_years_list = get_regnal_years_for_emperor(yrs2)
             return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
                                    list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list)
-
+    elif yrs == "Titulature of Roman Emperors":
+        if yrs2 == 1:
+            # show list of emperors names
+            emperors_list = get_all_roman_emperors()
+            return render_template('browse_emperors_titulature.html', title='Browse Data', browse_data=emperors_list, list_of_yrs=list_of_yrs, yrs=yrs)
+        elif yrs3 == '':
+            # show list of available titulature parts for specified emperor
+            emperors_list = get_all_roman_emperors()
+            emperor_titulature_list = get_titulature_list_for_emperor(yrs2)
+            return render_template('browse_emperors_titulature_list.html', title='Browse Data', browse_data=emperors_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, emperor_titulature_list=emperor_titulature_list)
+        else:
+            # show list entries of given titulature parts for specified emperor
+            emperors_list = get_all_roman_emperors()
+            emperor_titulature_list = get_titulature_list_for_emperor(yrs2)
+            emperor_titulature_list_entries = get_titulature_list_entries_for_emperor(yrs2, yrs3)
+            return render_template('browse_emperors_titulature_list_entries.html', title='Browse Data',
+                                   browse_data=emperors_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, yrs3=yrs3,
+                                   emperor_titulature_list=emperor_titulature_list, emperor_titulature_list_entries=emperor_titulature_list_entries)
     else:
-        pass
-    browse_data = get_browse_data(yrs, yrs2)
-
-    total_hits = get_browse_data_number_of_results(yrs)
-    return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
-                           yrs=yrs, page=yrs2, total_hits=total_hits)
+        browse_data = get_browse_data(yrs, yrs2)
+        total_hits = get_browse_data_number_of_results(yrs)
+        return render_template('browse.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
+                               yrs=yrs, page=yrs2, total_hits=total_hits)
 
 
 @app.route('/contact')

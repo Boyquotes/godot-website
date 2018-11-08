@@ -39,6 +39,42 @@ def get_regnal_years_for_emperor(yrs2):
     return year_list
 
 
+def get_titulature_list_for_emperor(yrs2):
+    """
+    returns list of titulature parts for specified emperor
+    :param yrs2:
+    :return:  list of dicts
+    """
+    query = """
+    match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'})-->(cp:CalendarPartial {value:'%s'})-->(cp_tit_type:CalendarPartial)
+    return cp_tit_type.value as tit_type
+    """ % yrs2
+    results = query_neo4j_db(query)
+    titulature_list = []
+    for res in results:
+        titulature_list.append(res['tit_type'])
+    return titulature_list
+
+
+def get_titulature_list_entries_for_emperor(yrs2, yrs3):
+    """
+    returns all entries for given titulature parts (trib.pot, etc.) of specified emperor
+    :param yrs2:
+    :param yrs3:
+    :return: list of dicts (keys: entry, godot_uri)
+    """
+    query = """
+    match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'})-->(cp:CalendarPartial {value:'%s'})-->(cp_tit_type:CalendarPartial {value:'%s'})--(cp_entries:CalendarPartial)--(g:GODOT)
+    return cp_entries as entry, g
+    order by toInteger(cp_entries.value) 
+    """ % (yrs2, yrs3)
+    results = query_neo4j_db(query)
+    titulature_entries_list = []
+    for res in results:
+        titulature_entries_list.append({'entry': res['entry']['value'], 'godot_uri':res['g']['uri']})
+    return titulature_entries_list
+
+
 def get_browse_data(yrs, page):
     """
     returns GODOT URIs and string of paths as a list of dictionaries

@@ -11,8 +11,14 @@
         {% endif %}
     {% endwith %}
         <h1>Search Roman Consulate: Result</h1>
-        <p>{{ consulate }}<br /> <a href="{{godot_uri}}">{{ godot_uri }}</a>
+        <p>{{ consulate }}<br /> <a href="{{godot_uri}}" id="godot_uri">{{ godot_uri }}</a>
+        <span class="g_tooltip">
+            <button class="btn btn-godot-reset btn-xs" style="margin-left:10px; width:200px; " onclick="copy2clipboard()" id="copy_button">
+                Copy URI to clipboard
+            </button>
+        </span>
         </p>
+
         <p><b>Properties</b>: </p>
         <ul>
         {%- for prop in property_dict %}
@@ -31,4 +37,21 @@
         {%- endfor%}
 
         <p style="margin-top:2em"><a href="/tools/search/consulate">Search another consulate...</a></p>
+    <script>
+        function copy2clipboard() {
+            let textarea = document.createElement('textarea')
+            textarea.id = 't'
+            textarea.style.height = 0
+            document.body.appendChild(textarea)
+            textarea.value = document.getElementById("godot_uri").innerText
+            let selector = document.querySelector('#t')
+            selector.select()
+            document.execCommand('copy')
+            document.body.removeChild(textarea)
+            document.getElementById("copy_button").innerText = "Copied!"
+            setTimeout(function() {
+                document.getElementById("copy_button").innerText = "Copy URI to clipboard"
+            }, 1000);
+        }
+    </script>
 {% endblock %}

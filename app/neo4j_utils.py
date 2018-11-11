@@ -112,6 +112,28 @@ def get_actian_era_entries():
     return actian_era_entries_list
 
 
+def get_consulate_entries(yrs, page):
+    """
+    return list of dicts (keys: consulate, godot_uri) of Roman consulates
+    :param yrs:
+    :param page:
+    :return: list of dicts (keys: consulate, godot_uri)
+    """
+    limit = 20
+    page = int(page) * 20 - 20
+    query = """
+    match (yrs1:YearReferenceSystem {type:'Roman Consulships'})--(cp_consulate:CalendarPartial)--(g:GODOT)
+    return cp_consulate.value as consulate, g.uri as godot_uri
+    order by toInteger(g.not_before)
+    skip %s limit %s
+    """ % (page, limit)
+    results = query_neo4j_db(query)
+    actian_era_entries_list = []
+    for res in results:
+        actian_era_entries_list.append({'consulate': res['consulate'], 'godot_uri': res['godot_uri'].split("/")[-1]})
+    return actian_era_entries_list
+
+
 def get_browse_data(yrs, page):
     """
     returns GODOT URIs and string of paths as a list of dictionaries

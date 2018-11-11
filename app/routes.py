@@ -41,6 +41,14 @@ def browse(yrs, yrs2, yrs3, yrs4):
         total_hits = get_browse_data_number_of_results(yrs)
         return render_template('browse_actian_era.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
                                yrs=yrs, page=yrs2, total_hits=total_hits)
+    elif yrs == "Eponymous officials - Roman Consulships":
+        browse_data = get_consulate_entries(yrs, yrs2)
+        total_hits = get_browse_data_number_of_results(yrs)
+        return render_template('browse_consulates.html', title='Browse Data', browse_data=browse_data,
+                               list_of_yrs=list_of_yrs,
+                               yrs=yrs, page=yrs2, total_hits=total_hits)
+
+
     elif yrs == "Titulature of Roman Emperors":
         if yrs2 == 1:
             # show list of emperors names

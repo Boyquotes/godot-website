@@ -36,6 +36,11 @@ def browse(yrs, yrs2, yrs3, yrs4):
             regnal_years_list = get_regnal_years_for_emperor(yrs2)
             return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
                                    list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list)
+    elif yrs == "Era - Actian":
+        browse_data = get_actian_era_entries()
+        total_hits = get_browse_data_number_of_results(yrs)
+        return render_template('browse_actian_era.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
+                               yrs=yrs, page=yrs2, total_hits=total_hits)
     elif yrs == "Titulature of Roman Emperors":
         if yrs2 == 1:
             # show list of emperors names

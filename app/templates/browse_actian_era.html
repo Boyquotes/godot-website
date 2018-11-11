@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block app_content %}
+      <h1>Browse Data</h1>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class=flashes>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+        <p>Filter by Year Reference System:</p>
+        <p style="margin-bottom:2em">
+          {% for y in list_of_yrs %}
+            {% if yrs == y %}
+              <span style="margin-left:1em;color:#4a4">✓</span> <a href="/browse/{{ y }}" style="font-weight:1000">{{ y }}</a><br />
+            {% else %}
+              <a href="/browse/{{ y }}" style="margin-left:2em">{{ y }}</a><br />
+            {% endif %}
+          {% endfor %}
+        </p>
+        <h4>Actian Era Entries</h4>
+      {% for entry in browse_data %}
+        <p style="margin-left: 2em"><a href="/id/{{entry['godot_uri']}}">Year {{ entry['year']}}</a></p>
+      {% endfor %}
+  {% endblock %}

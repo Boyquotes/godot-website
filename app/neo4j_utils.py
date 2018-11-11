@@ -95,6 +95,23 @@ def get_titulature_list_entries_for_emperor_last_level(yrs2, yrs3):
     return titulature_entries_list
 
 
+def get_actian_era_entries():
+    """
+    return list of dicts (keys: year, godot uri) of all Actian Era nodes
+    :return: list of dicts (keys: year, godot uri)
+    """
+    query = """
+    match (yrs1:YearReferenceSystem {type:'Era'})--(yrs2:YearReferenceSystem {type:'Actian'})--(cp_year:CalendarPartial)--(g:GODOT)
+    return cp_year.value as year, g.uri as godot_uri
+    order by toInteger(cp_year.value)
+    """
+    results = query_neo4j_db(query)
+    actian_era_entries_list = []
+    for res in results:
+        actian_era_entries_list.append({'year': res['year'], 'godot_uri': res['godot_uri'].split("/")[-1]})
+    return actian_era_entries_list
+
+
 def get_browse_data(yrs, page):
     """
     returns GODOT URIs and string of paths as a list of dictionaries

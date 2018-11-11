@@ -75,6 +75,26 @@ def get_titulature_list_entries_for_emperor(yrs2, yrs3):
     return titulature_entries_list
 
 
+def get_titulature_list_entries_for_emperor_last_level(yrs2, yrs3):
+    """
+    returns list of either imperial consulates or imperial victory titles
+    :param yrs2:
+    :param yrs3:
+    :param yrs4:
+    :return: list
+    """
+    query = """
+    match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'})-->(cp:CalendarPartial {value:'%s'})-->(cp_tit_type:CalendarPartial {value:'%s'})--(cp_entries:CalendarPartial)--(cp_last_level:CalendarPartial)--(g:GODOT)
+    return (cp_entries.value + " " + cp_last_level.value) as entry, g
+    order by entry
+    """ % (yrs2, yrs3)
+    results = query_neo4j_db(query)
+    titulature_entries_list = []
+    for res in results:
+        titulature_entries_list.append({'entry': res['entry'], 'godot_uri': res['g']['uri']})
+    return titulature_entries_list
+
+
 def get_browse_data(yrs, page):
     """
     returns GODOT URIs and string of paths as a list of dictionaries
@@ -98,10 +118,10 @@ def get_browse_data(yrs, page):
                 query = "match (yrs:YearReferenceSystem {type:'%s'})--(yrs2:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs2)-[*..15]->(g)) return p order by g skip %s limit %s" % (
                 yrs.split(" - ")[0], yrs.split(" - ")[1], page, limit)
         else:
-            query = "match (yrs:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs)-[*..15]->(g)) return p order by g skip %s limit %s" % (
+            query = "match (yrs:YearReferenceSystem {type:'%s'}), (g:GODOT), p = shortestPath((yrs)-[*..15]->(g)) return p skip %s limit %s" % (
             yrs, page, limit)
     else:
-        query = "match (t:Timeline), (g:GODOT), p = shortestPath((t)-[*..15]->(g)) return p order by g skip %s limit %s" % (
+        query = "match (t:Timeline), (g:GODOT), p = shortestPath((t)-[*..15]->(g)) return p skip %s limit %s" % (
             page, limit)
     results = query_neo4j_db(query)
     browse_array = []

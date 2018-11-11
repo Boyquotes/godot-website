@@ -18,11 +18,12 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1, 'yrs3':''})
-@app.route('/browse/<yrs>', defaults={'yrs2': 1, 'yrs3':''})
-@app.route('/browse/<yrs>/<yrs2>', defaults={'yrs3':''})
-@app.route('/browse/<yrs>/<yrs2>/<yrs3>')
-def browse(yrs, yrs2, yrs3):
+@app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1, 'yrs3':'', 'yrs4':''})
+@app.route('/browse/<yrs>', defaults={'yrs2': 1, 'yrs3':'', 'yrs4':''})
+@app.route('/browse/<yrs>/<yrs2>', defaults={'yrs3':'', 'yrs4':''})
+@app.route('/browse/<yrs>/<yrs2>/<yrs3>', defaults={'yrs4':''})
+@app.route('/browse/<yrs>/<yrs2>/<yrs3>/<yrs4>')
+def browse(yrs, yrs2, yrs3, yrs4):
     list_of_yrs = get_list_of_yrs()
     if yrs == "Regnal Years - Roman Emperors":
         if yrs2 == 1:
@@ -46,6 +47,18 @@ def browse(yrs, yrs2, yrs3):
             emperor_titulature_list = get_titulature_list_for_emperor(yrs2)
             return render_template('browse_emperors_titulature_list.html', title='Browse Data', browse_data=emperors_list,
                                    list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, emperor_titulature_list=emperor_titulature_list)
+        elif yrs3 == 'Imperial Consulates' or yrs3 == 'Imperial Victory Titles':
+            # add another level of information to drilldown
+            emperors_list = get_all_roman_emperors()
+            emperor_titulature_list = get_titulature_list_for_emperor(yrs2)
+            emperor_titulature_list_entries = get_titulature_list_entries_for_emperor(yrs2, yrs3)
+            emperor_titulature_list_entries_last_level = get_titulature_list_entries_for_emperor_last_level(yrs2, yrs3)
+            return render_template('browse_emperors_titulature_list_entries_last_level.html', title='Browse Data',
+                                   browse_data=emperors_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, yrs3=yrs3,
+                                   emperor_titulature_list=emperor_titulature_list,
+                                   emperor_titulature_list_entries=emperor_titulature_list_entries,
+                                   emperor_titulature_list_entries_last_level=emperor_titulature_list_entries_last_level)
         else:
             # show list entries of given titulature parts for specified emperor
             emperors_list = get_all_roman_emperors()

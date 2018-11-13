@@ -369,6 +369,20 @@ def get_number_of_godot_uris():
     return n
 
 
+def get_number_of_attestations():
+    """
+    returns number of Attestation nodes in GODOT graph
+    :return: number of nodes (int)
+    """
+    query = "MATCH (n:Attestation) RETURN count(*) as n"
+    results = query_neo4j_db(query)
+    n = 0
+    if results:
+        for record in results:
+            n = record["n"]
+    return n
+
+
 def get_list_of_yrs():
     """
     returns list of yrs in the GODOT graph

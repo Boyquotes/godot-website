@@ -105,8 +105,9 @@ def contact():
     number_of_nodes = get_number_of_nodes()
     number_of_relations = get_number_of_relations()
     number_of_godot_uris = get_number_of_godot_uris()
+    number_of_attestations = get_number_of_attestations()
     return render_template('contact.html', title='Contact', number_of_nodes=number_of_nodes,
-                           number_of_relations=number_of_relations, number_of_godot_uris=number_of_godot_uris)
+                           number_of_relations=number_of_relations, number_of_godot_uris=number_of_godot_uris, number_of_attestations=number_of_attestations)
 
 
 @app.route('/about')

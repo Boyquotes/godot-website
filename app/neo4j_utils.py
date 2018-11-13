@@ -21,6 +21,23 @@ def get_all_roman_emperors():
     return name_list
 
 
+def get_all_ptolemies():
+    """
+        returns list of name of Ptolemies for browse data page
+        :return: list of names of Ptolemies
+        """
+    query = """
+        match (yrs:YearReferenceSystem {type:'Ptolemies'})-->(cp:CalendarPartial)
+        return cp.value as name
+        order by cp.value
+        """
+    results = query_neo4j_db(query)
+    name_list = []
+    for res in results:
+        name_list.append(res['name'])
+    return name_list
+
+
 def get_regnal_years_for_emperor(yrs2):
     """
     returns list of dictionaries of regnal years of specified Roman emperor
@@ -29,6 +46,24 @@ def get_regnal_years_for_emperor(yrs2):
     """
     query = """
     match (yrs:YearReferenceSystem {type:'Roman Emperors'})-->(cp:CalendarPartial {value:'%s'})-->(cp_year:CalendarPartial)-->(g:GODOT)
+    return cp_year.value as year, g.uri as godot_uri
+    order by toInteger(cp_year.value)
+    """ % yrs2
+    results = query_neo4j_db(query)
+    year_list = []
+    for res in results:
+        year_list.append({'year':res['year'], 'godot_uri': res['godot_uri'].split("/")[-1]})
+    return year_list
+
+
+def get_regnal_years_for_ptolemy(yrs2):
+    """
+    returns list of dictionaries of regnal years of specified ptolemaic emperor
+    :param yrs2:
+    :return: list of dictionaries (keys: year, godot_uri)
+    """
+    query = """
+    match (yrs:YearReferenceSystem {type:'Ptolemies'})-->(cp:CalendarPartial {value:'%s'})-->(cp_year:CalendarPartial)-->(g:GODOT)
     return cp_year.value as year, g.uri as godot_uri
     order by toInteger(cp_year.value)
     """ % yrs2
@@ -210,6 +245,7 @@ def get_godot_path(godot_uri):
     :return: list of dictionaries
     """
     query = "match (t:Timeline),(g:GODOT {uri:'%s'}),p = ((t)-[*..15]->(g)) return p" % godot_uri
+    print(godot_uri)
     results = query_neo4j_db(query)
     paths = []
     if results:

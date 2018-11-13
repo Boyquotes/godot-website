@@ -29,13 +29,25 @@ def browse(yrs, yrs2, yrs3, yrs4):
         if yrs2 == 1:
             # show list of emperors names
             emperors_list = get_all_roman_emperors()
-            return render_template('browse_emperors.html', title='Browse Data', browse_data=emperors_list, list_of_yrs=list_of_yrs, yrs=yrs)
+            return render_template('browse_emperors.html', title='Browse Data', browse_data=emperors_list, list_of_yrs=list_of_yrs, yrs=yrs, period="Roman Emperors")
         else:
-            # show all regnal years of specified emperor
+            # show all regnal years of specified ruler
             emperors_list = get_all_roman_emperors()
             regnal_years_list = get_regnal_years_for_emperor(yrs2)
             return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
-                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list)
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list, period="Roman Emperors")
+
+    elif yrs == "Regnal Years - Ptolemies":
+        if yrs2 == 1:
+            # show list of Ptolemies names
+            names_list = get_all_ptolemies()
+            return render_template('browse_emperors.html', title='Browse Data', browse_data=names_list, list_of_yrs=list_of_yrs, yrs=yrs, period="Ptolemies")
+        else:
+            # show all regnal years of specified ruler
+            emperors_list = get_all_ptolemies()
+            regnal_years_list = get_regnal_years_for_ptolemy(yrs2)
+            return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list, period="Ptolemies")
     elif yrs == "Era - Actian":
         browse_data = get_actian_era_entries()
         total_hits = get_browse_data_number_of_results(yrs)

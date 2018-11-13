@@ -20,10 +20,10 @@
             {% endif %}
           {% endfor %}
         </p>
-    <h4>Roman Emperors <span style="font-size:smaller">(alphabetically)</span></h4>
+    <h4>{{ period }} <span style="font-size:smaller">(alphabetically)</span></h4>
     <p style="margin-bottom:2em; margin-left: 2em">
       {% for entry in browse_data %}
-        <span style="padding-right:10px"><a href="/browse/Regnal%20Years%20-%20Roman%20Emperors/{{ entry }}">{{ entry }}</a></span>
+        <span style="padding-right:10px"><a href="/browse/Regnal%20Years%20-%20{{ period }}/{{ entry }}">{{ entry }}</a></span>
       {% endfor %}
       </p>
   {% endblock %}

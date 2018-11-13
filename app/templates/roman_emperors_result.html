@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+        <h1>{{header}}</h1>
+        <p>Search for:</p>
+        <ul>
+            {%- if form.consul_number.data %}<li>Consul Number: {{ form.consul_number.data }}{%- endif%} {%- if form.consul_designatus.data %} design. </li>{%- endif %}
+            {%- if form.trib_pot_number.data %}<li>Tribunicia Potestas Number: {{ form.trib_pot_number.data }}</li>{%- endif %}
+            {%- if form.imperator_number.data %}<li>Imperial Acclamation Number: {{ form.imperator_number.data }}</li>{%- endif %}
+        </ul>
+        <p style="margin-top:2em; margin-bottom:2em"><a href="/tools/identify/roman_emperors">Identify another emperor</a></p>
+        <h4>Potential Roman Emperors:</h4>
+        {%- for result in result_list %}
+            <a href="#{{ result['emperor']['value'] }}" style="padding-right:1em">{{ result['emperor']['value'] }}</a>
+        {%- endfor %}
+        {%- for result in result_list %}
+            <h4 style="margin-top:1.5em"><a id="{{ result['emperor']['value'] }}">{{ result['emperor']['value'] }}</a></h4>
+            {%- if result['g_cos'] %}
+                <p>Consulate:</p><ul>
+                {%- for cos in result['g_cos'] %}
+                    {%- if result['g_cos'][cos] != "" and cos != "type" %}
+                    <li>{{ cos }}: {{ result['g_cos'][cos] }}</li>
+                    {%- endif %}
+                {%- endfor %}</ul>
+            {%- endif %}
+            {%- if result['g_tr_pot'] %}
+            <p>Tribunicia Potestas:</p><ul>
+            {%- for tr_pot in result['g_tr_pot'] %}
+                {%- if result['g_tr_pot'][tr_pot] != "" and tr_pot != "type" %}
+                    <li>{{ tr_pot }}: {{ result['g_tr_pot'][tr_pot] }}</li>
+                {%- endif %}
+            {%- endfor %}</ul>
+            {%- endif %}
+            {%- if result['g_imp_acc'] %}
+            <p>Imperial Acclamation:</p><ul>
+            {%- for imp_acc in result['g_imp_acc'] %}
+                {%- if result['g_imp_acc'][imp_acc] != "" and imp_acc != "type" %}
+                    <li>{{ imp_acc }}: {{ result['g_imp_acc'][imp_acc] }}</li>
+                {%- endif %}
+            {%- endfor %}</ul>
+            {%- endif %}
+        {%- endfor %}
+
+        <p style="margin-top:2em"><a href="/tools/identify/roman_emperors">Identify another emperor</a></p>
+{% endblock %}

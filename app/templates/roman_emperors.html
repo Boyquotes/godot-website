@@ -1,13 +1,9 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Roman Calendar Conversion &ndash; Imperial Dating</h1>
+    <h1>Identify Roman Emperor by Titulature</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.roman_emperors.label }}<br>
-            {{ form.roman_emperors(style='width:30em;') }}
-        </p>
         <p>
             {{ form.consul_number.label }}<br>
             {{ form.consul_number(size=10) }} {{ form.consul_designatus(style='margin-left:1em') }} {{ form.consul_designatus.label }}

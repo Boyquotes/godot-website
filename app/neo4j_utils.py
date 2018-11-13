@@ -621,6 +621,68 @@ def update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_u
     return result_dict
 
 
+def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles_list):
+    return_statement = "return emperor"
+    query = """
+    match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'})--(emperor:CalendarPartial) with emperor 
+    """
+    # emperor name
+
+    # consul number
+    cos_design = "cos."
+    if (consul_designatus):
+        cos_design = "cos. design."
+    if (consul_number):
+        query += """
+        match (emperor)--(cp_cos:CalendarPartial {value:'Imperial Consulates'})--(cp_cos_2:CalendarPartial {value:'%s'})--(cp_cos_nr:CalendarPartial {value:'%s'})--(g_cos:GODOT)
+        """ % (cos_design, consul_number)
+        return_statement += ", g_cos"
+    # trib pot number
+    if (trib_pot_number):
+        query += """
+        match (emperor)--(cp_vt_tr_pot:CalendarPartial {value:'Tribunicia Potestas'})--(cp_tp_nr:CalendarPartial {value:'%s'})--(g_tr_pot:GODOT)
+        """ % trib_pot_number
+        return_statement += ", g_tr_pot as g_tr_pot"
+    # imperator acclamation number
+    if (imperator_number):
+        query += """
+        match (emperor)--(cp_imp_acc:CalendarPartial {value:'Imperial Acclamations'})--(cp_imp_acc_2:CalendarPartial {value:'%s'})--(g_imp_acc:GODOT)
+        """ % imperator_number
+        return_statement += ", g_imp_acc"
+    # victory titles
+
+    query += return_statement + " order by emperor.value"
+    print(query)
+    results = query_neo4j_db(query)
+    result_list = []
+    for record in results:
+        result_dict = {}
+        result_dict_emperor = {}
+        result_dict_cos = {}
+        result_dict_tr_pot = {}
+        result_dict_imp_acc = {}
+
+        print(record)
+
+        for (k, v) in record["emperor"].items():
+            result_dict_emperor[k] = v
+            result_dict['emperor'] = result_dict_emperor
+        if consul_number:
+            for (k, v) in record["g_cos"].items():
+                result_dict_cos[k] = v
+                result_dict['g_cos'] = result_dict_cos
+        if trib_pot_number:
+            for (k, v) in record["g_tr_pot"].items():
+                result_dict_tr_pot[k] = v
+                result_dict['g_tr_pot'] = result_dict_tr_pot
+        if imperator_number:
+            for (k, v) in record["g_imp_acc"].items():
+                result_dict_imp_acc[k] = v
+                result_dict['g_imp_acc'] = result_dict_imp_acc
+        result_list.append(result_dict)
+    return result_list
+
+
 def _clean_string(str):
     """
     cleans data entered by user, including escaping

@@ -579,8 +579,6 @@ class CyrenaicaRomanImperialTitulature(FlaskForm):
 class RomanImperialDating(FlaskForm):
     reset = SubmitField('Reset...')
     submit = SubmitField('Submit...')
-    roman_emperors = SelectField('Roman Emperor:',
-                                 choices=roman_emperors_list)
     consul_number = StringField('Consul Number:', validators=[
         Optional(), Regexp('^[0-9_]*$')])
     consul_designatus = BooleanField('consul designatus')

@@ -232,11 +232,19 @@ def roman_consuls():
     return render_template('roman_consuls.html', title='Roman Consular Dating', form=form)
 
 
-@app.route('/convert/roman_emperors', methods=['GET', 'POST'])
+@app.route('/tools/identify/roman_emperors', methods=['GET', 'POST'])
 def roman_emperors():
     form = RomanImperialDating()
+    print("huhu")
     if form.validate_on_submit():
-        pass
+        consul_number = form.consul_number.data
+        consul_designatus = form.consul_designatus.data
+        trib_pot_number = form.trib_pot_number.data
+        imperator_number = form.imperator_number.data
+        victory_titles_list = form.victory_titles.data
+
+        result_list = get_emperors_by_titulature( consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles_list)
+        return render_template('roman_emperors_result.html', title='Roman Imperial Dating - Results', header="Roman Imperial Dating - Results", form=form, result_list=result_list)
     return render_template('roman_emperors.html', title='Roman Imperial Dating', form=form)
 
 
@@ -360,7 +368,7 @@ def tools_api():
     return render_template('tools_api.html', title="Tools: API")
 
 
-@app.route('/tools/search/consulate', methods=['GET', 'POST'])
+@app.route('/tools/identify/consulate', methods=['GET', 'POST'])
 def tools_search_consulate():
     form = SearchRomanConsulate()
     if form.validate_on_submit():

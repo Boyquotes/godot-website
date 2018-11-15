@@ -5,7 +5,7 @@ from flask_simplelogin import get_username
 import operator
 from functools import reduce
 import math
-
+from itertools import combinations
 
 def get_all_roman_emperors():
     """
@@ -697,9 +697,12 @@ def get_overlapping_periods_from_emperor_titulature_result_set(result_list):
         number_of_overlaps = 0
         tmp_dict = {}
         tmp_dict['emperor'] = emperor['emperor']
+        print(tmp_dict['emperor'])
         tmp_dict['result_list_length'] = len(ranges_list)
         tmp_dict['overlap_length'] = len(_get_overlap_of_date_ranges(ranges_list))
         tmp_dict['overlap_range'] = _get_overlap_range_of_date_ranges(ranges_list)
+        if not tmp_dict['overlap_range']:
+            tmp_dict['partial_overlap_range'] = _get_partial_overlap_range_of_date_ranges(ranges_list)
         result_overlap_list.append(tmp_dict)
     newlist = sorted(result_overlap_list, key=operator.itemgetter('overlap_length'), reverse=True)
     return newlist
@@ -711,7 +714,7 @@ def _get_overlap_range_of_date_ranges(ranges_list):
         # adding .5 as ranges take only integers
         # this gets subtracted later again
         jdn_set_list.append(set(range(int(r[0]+.5), int(r[1]+.5)+1 ))) # adding one to end of range
-    result = reduce(set.intersection, jdn_set_list)
+    result = reduce(set.intersection, jdn_set_list) # intersection of ALL ranges; fails if one is not intersected with the rest
     range_min = 0
     range_max = 0
     if len(result) > 0:
@@ -720,6 +723,27 @@ def _get_overlap_range_of_date_ranges(ranges_list):
         return [jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)]
     else:
         return ""
+
+
+def _get_partial_overlap_range_of_date_ranges(ranges_list):
+    jdn_set_list = []
+    for r in ranges_list:
+        # adding .5 as ranges take only integers
+        # this gets subtracted later again
+        jdn_set_list.append(set(range(int(r[0]+.5), int(r[1]+.5)+1 ))) # adding one to end of range
+    result = [ i[0] & i[1] for i in combinations(jdn_set_list,2) ]
+    result_set = []
+    for r in result:
+        if r:
+            range_min = 0
+            range_max = 0
+            if len(result) > 0:
+                range_min = float(min(r))
+                range_max = float(max(r))
+                result_set.append([jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)])
+    return result_set
+
+
 
 
 def format_date_string_not_before(p_start):

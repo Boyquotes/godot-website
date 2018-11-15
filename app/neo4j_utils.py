@@ -2,6 +2,9 @@ from app import app
 from neo4j.v1 import GraphDatabase, basic_auth
 import shortuuid
 from flask_simplelogin import get_username
+import operator
+from functools import reduce
+import math
 
 
 def get_all_roman_emperors():
@@ -681,46 +684,42 @@ def get_overlapping_periods_from_emperor_titulature_result_set(result_list):
     result_overlap_list = []
     for emperor in emperor_data_list:
         periods_list = emperor['periods']
-        #print(emperor['emperor'])
         ranges_list = []
         for period in periods_list:
             p_start_jdn = _date_to_jd(format_date_string_not_before(period[0]))
-            #print(format_date_string_not_before(period[0]), " = ", _date_to_jd(format_date_string_not_before(period[0])))
             p_end_jdn = _date_to_jd(format_date_string_not_after(period[1]))
-            #print(format_date_string_not_after(period[1]), " = ", _date_to_jd(format_date_string_not_after(period[1])))
             if p_start_jdn or p_end_jdn:
                 if not p_start_jdn:
                     p_start_jdn = 0
                 if not p_end_jdn:
                     p_end_jdn = 2458437
                 ranges_list.append([p_start_jdn, p_end_jdn])
-        #print("range_list: ", ranges_list)
-
-        #print("overlap result : ", _get_overlap_of_date_ranges(ranges_list))
-        #print("range_list length: ", len(ranges_list), " <===>", "overlap length result : ",
-        #      len(_get_overlap_of_date_ranges(ranges_list)))
-
         number_of_overlaps = 0
-        #if len(_get_overlap_of_date_ranges(ranges_list)) >= len(ranges_list) - 1:
-        #if len(_get_overlap_of_date_ranges(ranges_list)) == len(ranges_list):
         tmp_dict = {}
-        #print(emperor['emperor'])
-        #print("range_list: ", ranges_list)
-        #print("range_list length: ", len(ranges_list), " <===>", "overlap length result : ", len(_get_overlap_of_date_ranges(ranges_list)))
         tmp_dict['emperor'] = emperor['emperor']
         tmp_dict['result_list_length'] = len(ranges_list)
         tmp_dict['overlap_length'] = len(_get_overlap_of_date_ranges(ranges_list))
+        tmp_dict['overlap_range'] = _get_overlap_range_of_date_ranges(ranges_list)
         result_overlap_list.append(tmp_dict)
-        print(tmp_dict)
-        #print("overlap length result : ", len(_get_overlap_of_date_ranges(ranges_list)))
-        #if len(_get_overlap_of_date_ranges(ranges_list)) == 1:
-        #    number_of_overlaps = len(_get_overlap_of_date_ranges(ranges_list)[0])
-        #print("Overlap: ", number_of_overlaps, _get_overlap_of_date_ranges(ranges_list))
-    # sort by number_of_overlaps
-    #newlist = sorted(result_overlap_list, key=lambda k: k['overlap_length'])
-    import operator
     newlist = sorted(result_overlap_list, key=operator.itemgetter('overlap_length'), reverse=True)
     return newlist
+
+
+def _get_overlap_range_of_date_ranges(ranges_list):
+    jdn_set_list = []
+    for r in ranges_list:
+        # adding .5 as ranges take only integers
+        # this gets subtracted later again
+        jdn_set_list.append(set(range(int(r[0]+.5), int(r[1]+.5)+1 ))) # adding one to end of range
+    result = reduce(set.intersection, jdn_set_list)
+    range_min = 0
+    range_max = 0
+    if len(result) > 0:
+        range_min = float(min(result))
+        range_max = float(max(result))
+        return [jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)]
+    else:
+        return ""
 
 
 def format_date_string_not_before(p_start):
@@ -761,9 +760,9 @@ def format_date_string_not_after(p_end):
             p_end = ""
     elif len(p_start_list) == 2:
         # only year/month given => day = last day of month
-        if p_start_list[1] in [1, 3, 5, 7, 8, 10, 12]:
+        if int(p_start_list[1]) in [1, 3, 5, 7, 8, 10, 12]:
             last_day = 31
-        elif p_start_list[1] in [2, 4, 6, 9, 11]:
+        elif int(p_start_list[1]) in [2, 4, 6, 9, 11]:
             last_day = 30
         else:
             last_day = 28
@@ -795,11 +794,6 @@ def _get_chronological_data_from_emperors_list(result_list):
     return overlapping_data_list
 
 
-def _get_overlap_of_date_ranges_old(intervals):
-    overlapping = [[x, y] for x in intervals for y in intervals if x is not y and x[1] > y[0] and x[0] < y[0]]
-    return overlapping
-
-
 def _get_overlap_of_date_ranges(intervals):
     intervals = sorted(intervals)
     l = len(intervals)
@@ -827,7 +821,6 @@ def _date_to_jd(date_list):
     :return:
     """
     if len(date_list) == 3:
-        import math
         (year, month, day) = date_list
         if month == 1 or month == 2:
             yearp = year - 1
@@ -855,6 +848,40 @@ def _date_to_jd(date_list):
         return jd
     else:
         return []
+
+
+def jd_to_date(jd):
+    """
+    Algorithm taken from 'Practical Astronomy with your Calculator or Spreadsheet',
+        4th ed., Duffet-Smith and Zwart, 2011.
+    :param jd: jdn number (float)
+    :return: iso like date string
+    """
+    jd = jd + 0.5
+    F, I = math.modf(jd)
+    I = int(I)
+    A = math.trunc((I - 1867216.25) / 36524.25)
+    if I > 2299160:
+        B = I + 1 + A - math.trunc(A / 4.)
+    else:
+        B = I
+    C = B + 1524
+    D = math.trunc((C - 122.1) / 365.25)
+    E = math.trunc(365.25 * D)
+    G = math.trunc((C - E) / 30.6001)
+    day = C - E + F - math.trunc(30.6001 * G)
+    if G < 13.5:
+        month = G - 1
+    else:
+        month = G - 13
+    if month > 2.5:
+        year = D - 4716
+    else:
+        year = D - 4715
+    if year < 0:
+        return str(year).zfill(5) + "-" + str(month).zfill(2) + "-" + str(int(day)).zfill(2)
+    else:
+        return str(year).zfill(4) + "-" + str(month).zfill(2) + "-" + str(int(day)).zfill(2)
 
 
 def _clean_string(str):

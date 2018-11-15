@@ -235,17 +235,19 @@ def roman_consuls():
 @app.route('/tools/identify/roman_emperors', methods=['GET', 'POST'])
 def roman_emperors():
     form = RomanImperialDating()
-    print("huhu")
     if form.validate_on_submit():
         consul_number = form.consul_number.data
         consul_designatus = form.consul_designatus.data
         trib_pot_number = form.trib_pot_number.data
         imperator_number = form.imperator_number.data
         victory_titles_list = form.victory_titles.data
-
         result_list = get_emperors_by_titulature( consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles_list)
-        return render_template('roman_emperors_result.html', title='Roman Imperial Dating - Results', header="Roman Imperial Dating - Results", form=form, result_list=result_list)
-    return render_template('roman_emperors.html', title='Roman Imperial Dating', form=form)
+        result_list_overlap = get_overlapping_periods_from_emperor_titulature_result_set(result_list)
+
+        #print(result_list_overlap)
+
+        return render_template('roman_emperors_result.html', title='Identify Roman Emperor by Titulature - Results', header="Identify Roman Emperor by Titulature - Results", form=form, result_list=result_list, result_list_overlap=result_list_overlap)
+    return render_template('roman_emperors.html', title='Identify Roman Emperor by Titulature', form=form, header="Identify Roman Emperor by Titulature")
 
 
 @app.route('/convert/egyptian/late_period', methods=['GET', 'POST'])

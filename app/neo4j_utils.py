@@ -272,8 +272,6 @@ def get_godot_node_properties(godot_uri):
     node_props_dict = {}
     if results:
         for record in results:
-            from pprint import pprint
-            pprint(record)
             for k, v in record['g'].items():
                 node_props_dict[k] = v
     return node_props_dict
@@ -610,7 +608,7 @@ def update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_u
     """
     query = """
     match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)
-	set cp.value = '%s', cp.wikidata_uri = '%s', cp.snap_uri = '%s', cp.not_before = '%s', cp.not_after = '%s'
+    set cp.value = '%s', cp.wikidata_uri = '%s', cp.snap_uri = '%s', cp.not_before = '%s', cp.not_after = '%s'
     return cp
     """ % (official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after)
     results = query_neo4j_db(query)
@@ -626,25 +624,23 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
     query = """
     match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'})--(emperor:CalendarPartial) with emperor 
     """
-    # emperor name
-
     # consul number
     cos_design = "cos."
-    if (consul_designatus):
+    if consul_designatus:
         cos_design = "cos. design."
-    if (consul_number):
+    if consul_number:
         query += """
         match (emperor)--(cp_cos:CalendarPartial {value:'Imperial Consulates'})--(cp_cos_2:CalendarPartial {value:'%s'})--(cp_cos_nr:CalendarPartial {value:'%s'})--(g_cos:GODOT)
         """ % (cos_design, consul_number)
         return_statement += ", g_cos"
     # trib pot number
-    if (trib_pot_number):
+    if trib_pot_number:
         query += """
         match (emperor)--(cp_vt_tr_pot:CalendarPartial {value:'Tribunicia Potestas'})--(cp_tp_nr:CalendarPartial {value:'%s'})--(g_tr_pot:GODOT)
         """ % trib_pot_number
         return_statement += ", g_tr_pot as g_tr_pot"
     # imperator acclamation number
-    if (imperator_number):
+    if imperator_number:
         query += """
         match (emperor)--(cp_imp_acc:CalendarPartial {value:'Imperial Acclamations'})--(cp_imp_acc_2:CalendarPartial {value:'%s'})--(g_imp_acc:GODOT)
         """ % imperator_number
@@ -661,9 +657,6 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
         result_dict_cos = {}
         result_dict_tr_pot = {}
         result_dict_imp_acc = {}
-
-        print(record)
-
         for (k, v) in record["emperor"].items():
             result_dict_emperor[k] = v
             result_dict['emperor'] = result_dict_emperor
@@ -681,6 +674,187 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
                 result_dict['g_imp_acc'] = result_dict_imp_acc
         result_list.append(result_dict)
     return result_list
+
+
+def get_overlapping_periods_from_emperor_titulature_result_set(result_list):
+    emperor_data_list = _get_chronological_data_from_emperors_list(result_list)
+    result_overlap_list = []
+    for emperor in emperor_data_list:
+        periods_list = emperor['periods']
+        #print(emperor['emperor'])
+        ranges_list = []
+        for period in periods_list:
+            p_start_jdn = _date_to_jd(format_date_string_not_before(period[0]))
+            #print(format_date_string_not_before(period[0]), " = ", _date_to_jd(format_date_string_not_before(period[0])))
+            p_end_jdn = _date_to_jd(format_date_string_not_after(period[1]))
+            #print(format_date_string_not_after(period[1]), " = ", _date_to_jd(format_date_string_not_after(period[1])))
+            if p_start_jdn or p_end_jdn:
+                if not p_start_jdn:
+                    p_start_jdn = 0
+                if not p_end_jdn:
+                    p_end_jdn = 2458437
+                ranges_list.append([p_start_jdn, p_end_jdn])
+        #print("range_list: ", ranges_list)
+
+        #print("overlap result : ", _get_overlap_of_date_ranges(ranges_list))
+        #print("range_list length: ", len(ranges_list), " <===>", "overlap length result : ",
+        #      len(_get_overlap_of_date_ranges(ranges_list)))
+
+        number_of_overlaps = 0
+        #if len(_get_overlap_of_date_ranges(ranges_list)) >= len(ranges_list) - 1:
+        #if len(_get_overlap_of_date_ranges(ranges_list)) == len(ranges_list):
+        tmp_dict = {}
+        #print(emperor['emperor'])
+        #print("range_list: ", ranges_list)
+        #print("range_list length: ", len(ranges_list), " <===>", "overlap length result : ", len(_get_overlap_of_date_ranges(ranges_list)))
+        tmp_dict['emperor'] = emperor['emperor']
+        tmp_dict['result_list_length'] = len(ranges_list)
+        tmp_dict['overlap_length'] = len(_get_overlap_of_date_ranges(ranges_list))
+        result_overlap_list.append(tmp_dict)
+        print(tmp_dict)
+        #print("overlap length result : ", len(_get_overlap_of_date_ranges(ranges_list)))
+        #if len(_get_overlap_of_date_ranges(ranges_list)) == 1:
+        #    number_of_overlaps = len(_get_overlap_of_date_ranges(ranges_list)[0])
+        #print("Overlap: ", number_of_overlaps, _get_overlap_of_date_ranges(ranges_list))
+    # sort by number_of_overlaps
+    #newlist = sorted(result_overlap_list, key=lambda k: k['overlap_length'])
+    import operator
+    newlist = sorted(result_overlap_list, key=operator.itemgetter('overlap_length'), reverse=True)
+    return newlist
+
+
+def format_date_string_not_before(p_start):
+    bc = ""
+    date_list = []
+    if p_start.startswith("-"):
+        # BC date
+        p_start = p_start[1:]
+        bc = "-"
+    p_start_list = p_start.split("-")
+    if len(p_start_list) == 1:
+        # only year given => mont/day = 01
+        if p_start_list[0] != '':
+            date_list = [int(bc + p_start_list[0]), 1, 1]
+        else:
+            date_list = []
+    elif len(p_start_list) == 2:
+        # only year/month given => day = 01
+        date_list = [int(bc + p_start_list[0]), int(p_start_list[1]), 1]
+    else:
+        date_list = [int(bc + p_start_list[0]), int(p_start_list[1]), int(p_start_list[2])]
+    return date_list
+
+
+def format_date_string_not_after(p_end):
+    bc = ""
+    date_list = []
+    if p_end.startswith("-"):
+        # BC date
+        p_end = p_end[1:]
+        bc = "-"
+    p_start_list = p_end.split("-")
+    if len(p_start_list) == 1:
+        # only year given => mont/day = 01
+        if p_start_list[0] != '':
+            date_list = [int(bc + p_start_list[0]), 12, 31]
+        else:
+            p_end = ""
+    elif len(p_start_list) == 2:
+        # only year/month given => day = last day of month
+        if p_start_list[1] in [1, 3, 5, 7, 8, 10, 12]:
+            last_day = 31
+        elif p_start_list[1] in [2, 4, 6, 9, 11]:
+            last_day = 30
+        else:
+            last_day = 28
+        date_list = [int(bc + p_start_list[0]), int(p_start_list[1]), last_day]
+    else:
+        date_list = [int(bc + p_start_list[0]), int(p_start_list[1]), int(p_start_list[2])]
+    return date_list
+
+
+def _get_chronological_data_from_emperors_list(result_list):
+    emperor = ""
+    overlapping_data_list = []
+    for result_dict in result_list:
+        period_list = []
+        periods_dict = {}
+        for key in result_dict:
+            if key == 'emperor':
+                emperor = result_dict['emperor']['value']
+                continue
+            not_before = result_dict[key]['not_before']
+            not_after = result_dict[key]['not_after']
+            if "time_span_end" in result_dict[key]:
+                not_after = result_dict[key]['time_span_end']
+            periods_dict['emperor'] = emperor
+            period = [not_before, not_after]
+            period_list.append(period)
+        periods_dict['periods'] = period_list
+        overlapping_data_list.append(periods_dict)
+    return overlapping_data_list
+
+
+def _get_overlap_of_date_ranges_old(intervals):
+    overlapping = [[x, y] for x in intervals for y in intervals if x is not y and x[1] > y[0] and x[0] < y[0]]
+    return overlapping
+
+
+def _get_overlap_of_date_ranges(intervals):
+    intervals = sorted(intervals)
+    l = len(intervals)
+    overlaps = []
+    for i in range(l):
+        for j in range(i + 1, l):
+            x = intervals[i]
+            y = intervals[j]
+            if x[0] == y[0]:
+                overlaps.append([x, y])
+            elif x[1] == y[1]:
+                overlaps.append([x, y])
+            elif (x[1] > y[0] and x[0] < y[0]):
+                overlaps.append([x, y])
+    return overlaps
+
+
+def _date_to_jd(date_list):
+    """
+    Algorithm taken from 'Practical Astronomy with your Calculator or Spreadsheet',
+        4th ed., Duffet-Smith and Zwart, 2011.
+    :param year: int; 1 AD = 1, 1 BC = 0, 2 BC = -1, ...
+    :param month: int
+    :param day: float (for day fragments)
+    :return:
+    """
+    if len(date_list) == 3:
+        import math
+        (year, month, day) = date_list
+        if month == 1 or month == 2:
+            yearp = year - 1
+            monthp = month + 12
+        else:
+            yearp = year
+            monthp = month
+            # this checks where we are in relation to October 15, 1582, the beginning
+            # of the Gregorian calendar.
+        if ((year < 1582) or
+                (year == 1582 and month < 10) or
+                (year == 1582 and month == 10 and day < 15)):
+            # before start of Gregorian calendar
+            B = 0
+        else:
+            # after start of Gregorian calendar
+            A = math.trunc(yearp / 100.)
+            B = 2 - A + math.trunc(A / 4.)
+        if yearp < 0:
+            C = math.trunc((365.25 * yearp) - 0.75)
+        else:
+            C = math.trunc(365.25 * yearp)
+        D = math.trunc(30.6001 * (monthp + 1))
+        jd = B + C + D + day + 1720994.5
+        return jd
+    else:
+        return []
 
 
 def _clean_string(str):

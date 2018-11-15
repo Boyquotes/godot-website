@@ -17,37 +17,46 @@
             {%- if form.trib_pot_number.data %}<li>Tribunicia Potestas Number: {{ form.trib_pot_number.data }}</li>{%- endif %}
             {%- if form.imperator_number.data %}<li>Imperial Acclamation Number: {{ form.imperator_number.data }}</li>{%- endif %}
         </ul>
-        <p style="margin-top:2em; margin-bottom:2em"><a href="/tools/identify/roman_emperors">Identify another emperor</a></p>
         <h4>Potential Roman Emperors:</h4>
-        {%- for result in result_list %}
-            <a href="#{{ result['emperor']['value'] }}" style="padding-right:1em">{{ result['emperor']['value'] }}</a>
-        {%- endfor %}
-        {%- for result in result_list %}
-            <h4 style="margin-top:1.5em"><a id="{{ result['emperor']['value'] }}">{{ result['emperor']['value'] }}</a></h4>
-            {%- if result['g_cos'] %}
-                <p>Consulate:</p><ul>
-                {%- for cos in result['g_cos'] %}
-                    {%- if result['g_cos'][cos] != "" and cos != "type" %}
-                    <li>{{ cos }}: {{ result['g_cos'][cos] }}</li>
+        <p>Numbers in parenthsis provide information about the number of temporal overlaps in given titulature data, e. g. (2/3) = two out of three titulature partials show a temporal overlap. The list of emperors is sorted by this ratio with those emperors with highest ratio first.</p>
+        {%- if result_list_overlap %}
+            {%- for result in result_list_overlap %}
+                <a href="#{{ result['emperor'] }}" style="padding-right:1em">{{ result['emperor'] }} ({{ result['overlap_length'] }}/{{result['result_list_length'] }})</a>
+            {%- endfor %}
+        {%- else %}<span style="color:#aa2222">None</span>
+        {%- endif %}
+
+        {%- for result in result_list_overlap %}
+            <h4 style="margin-top:1.5em"><a id="{{ result['emperor'] }}" style="padding-right:1em">{{ result['emperor'] }} ({{ result['overlap_length'] }}/{{result['result_list_length'] }})</a></h4>
+
+            {%- for result_emperor in result_list %}
+                {%- if result_emperor['emperor']['value'] == result['emperor'] %}
+                    {%- if result_emperor['g_cos'] %}
+                        <p>Consulate:</p><ul>
+                        {%- for cos in result_emperor['g_cos'] %}
+                            {%- if result_emperor['g_cos'][cos] != "" and cos != "type" %}
+                            <li>{{ cos }}: {{ result_emperor['g_cos'][cos] }}</li>
+                            {%- endif %}
+                        {%- endfor %}</ul>
                     {%- endif %}
-                {%- endfor %}</ul>
-            {%- endif %}
-            {%- if result['g_tr_pot'] %}
-            <p>Tribunicia Potestas:</p><ul>
-            {%- for tr_pot in result['g_tr_pot'] %}
-                {%- if result['g_tr_pot'][tr_pot] != "" and tr_pot != "type" %}
-                    <li>{{ tr_pot }}: {{ result['g_tr_pot'][tr_pot] }}</li>
+                    {%- if result_emperor['g_tr_pot'] %}
+                        <p>Tribunicia Potestas:</p><ul>
+                        {%- for tr_pot in result_emperor['g_tr_pot'] %}
+                            {%- if result_emperor['g_tr_pot'][tr_pot] != "" and tr_pot != "type" %}
+                                <li>{{ tr_pot }}: {{ result_emperor['g_tr_pot'][tr_pot] }}</li>
+                            {%- endif %}
+                        {%- endfor %}</ul>
+                        {%- endif %}
+                    {%- if result_emperor['g_imp_acc'] %}
+                        <p>Imperial Acclamation:</p><ul>
+                        {%- for imp_acc in result_emperor['g_imp_acc'] %}
+                            {%- if result_emperor['g_imp_acc'][imp_acc] != "" and imp_acc != "type" %}
+                                <li>{{ imp_acc }}: {{ result_emperor['g_imp_acc'][imp_acc] }}</li>
+                            {%- endif %}
+                        {%- endfor %}</ul>
+                    {%- endif %}
                 {%- endif %}
-            {%- endfor %}</ul>
-            {%- endif %}
-            {%- if result['g_imp_acc'] %}
-            <p>Imperial Acclamation:</p><ul>
-            {%- for imp_acc in result['g_imp_acc'] %}
-                {%- if result['g_imp_acc'][imp_acc] != "" and imp_acc != "type" %}
-                    <li>{{ imp_acc }}: {{ result['g_imp_acc'][imp_acc] }}</li>
-                {%- endif %}
-            {%- endfor %}</ul>
-            {%- endif %}
+            {%- endfor %}
         {%- endfor %}
 
         <p style="margin-top:2em"><a href="/tools/identify/roman_emperors">Identify another emperor</a></p>

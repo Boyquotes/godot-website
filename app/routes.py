@@ -241,12 +241,10 @@ def roman_emperors():
         trib_pot_number = form.trib_pot_number.data
         imperator_number = form.imperator_number.data
         victory_titles_list = form.victory_titles.data
-        result_list = get_emperors_by_titulature( consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles_list)
-        result_list_overlap = get_overlapping_periods_from_emperor_titulature_result_set(result_list)
-
-        #print(result_list_overlap)
-
-        return render_template('roman_emperors_result.html', title='Identify Roman Emperor by Titulature - Results', header="Identify Roman Emperor by Titulature - Results", form=form, result_list=result_list, result_list_overlap=result_list_overlap)
+        if consul_number or trib_pot_number or imperator_number or victory_titles_list:
+            result_list = get_emperors_by_titulature( consul_number, consul_designatus, trib_pot_number, imperator_number, victory_titles_list)
+            result_list_overlap = get_overlapping_periods_from_emperor_titulature_result_set(result_list)
+            return render_template('roman_emperors_result.html', title='Identify Roman Emperor by Titulature - Results', header="Identify Roman Emperor by Titulature - Results", form=form, result_list=result_list, result_list_overlap=result_list_overlap)
     return render_template('roman_emperors.html', title='Identify Roman Emperor by Titulature', form=form, header="Identify Roman Emperor by Titulature")
 
 

@@ -651,7 +651,7 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
     # victory titles
 
     query += return_statement + " order by emperor.value"
-    print(query)
+    #print(query)
     results = query_neo4j_db(query)
     result_list = []
     for record in results:
@@ -714,15 +714,16 @@ def _get_overlap_range_of_date_ranges(ranges_list):
         # adding .5 as ranges take only integers
         # this gets subtracted later again
         jdn_set_list.append(set(range(int(r[0]+.5), int(r[1]+.5)+1 ))) # adding one to end of range
-    result = reduce(set.intersection, jdn_set_list) # intersection of ALL ranges; fails if one is not intersected with the rest
-    range_min = 0
-    range_max = 0
-    if len(result) > 0:
-        range_min = float(min(result))
-        range_max = float(max(result))
-        return [jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)]
-    else:
-        return ""
+    if jdn_set_list:
+        result = reduce(set.intersection, jdn_set_list) # intersection of ALL ranges; fails if one is not intersected with the rest
+        range_min = 0
+        range_max = 0
+        if len(result) > 0:
+            range_min = float(min(result))
+            range_max = float(max(result))
+            return [jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)]
+        else:
+            return ""
 
 
 def _get_partial_overlap_range_of_date_ranges(ranges_list):
@@ -742,8 +743,6 @@ def _get_partial_overlap_range_of_date_ranges(ranges_list):
                 range_max = float(max(r))
                 result_set.append([jd_to_date(range_min - 0.5), jd_to_date(range_max - 0.5)])
     return result_set
-
-
 
 
 def format_date_string_not_before(p_start):

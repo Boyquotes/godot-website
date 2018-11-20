@@ -153,8 +153,9 @@ def display_godot_uri(godot_uri):
             path_list.append(p_dict)
     paths = path_list
     attestations = get_attestations("https://godot.date/id/" + godot_uri)
+    sub_godot_nodes = get_sub_godot_nodes("https://godot.date/id/" + godot_uri)
     if paths:
-        return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations)
+        return render_template('detail.html', title='Detail view', id=godot_uri, paths=paths, attestations=attestations, sub_godot_nodes=sub_godot_nodes)
     else:
         return render_template('404.html'), 404
 

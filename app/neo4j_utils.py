@@ -715,6 +715,43 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
     return result_list
 
 
+def get_sub_godot_nodes(godot_uri):
+    """
+
+    :param godot_uri:
+    :return:
+    """
+    query = """
+    match (g:GODOT {uri:'%s'})--(cp:CalendarPartial),
+    (cp)-->(u)-[*..10]->(g2:GODOT),
+    p = shortestPath( (u)-[*..10]-(g2) )
+    return p
+    """ % godot_uri
+    results = query_neo4j_db(query)
+    result_list = []
+
+    for path in results:
+        nodes = path["p"].nodes
+        date_string = ""
+        month = ""
+        day = ""
+        date_info = []
+        date_dict = {}
+        for n in nodes:
+            label = list(n.labels)[0]
+            if label == "GODOT":
+                for k, v in n.items():
+                    if k == "uri":
+                        date_dict['godot_uri'] = v
+            else:
+                for k, v in n.items():
+                    if v != "standard" and v != "year" and v != "month" and v!= "day" and k != "type":
+                        date_info.append(v)
+        date_dict['date_partials'] = date_info
+        result_list.append(date_dict)
+    return result_list
+
+
 def get_overlapping_periods_from_emperor_titulature_result_set(result_list):
     emperor_data_list = _get_chronological_data_from_emperors_list(result_list)
     result_overlap_list = []

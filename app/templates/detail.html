@@ -82,6 +82,12 @@
             </p>
         {%- endif %}
     {%- endfor%}
+    {%- if sub_godot_nodes %}
+        <h3>Attested Dates in this Period</h3>
+        {%- for datum in sub_godot_nodes %}
+            <li><a href="/id/{{datum['godot_uri'].split('/')[-1]}}">{%- for part in datum['date_partials'] %} {{part}} {%- endfor %}</a></li>
+        {%- endfor %}
+    {%- endif %}
     <p>&nbsp;</p>
     <script>
         function copy2clipboard() {

@@ -94,21 +94,9 @@ def browse(yrs, yrs2, yrs3, yrs4):
                                    list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, yrs3=yrs3,
                                    emperor_titulature_list=emperor_titulature_list, emperor_titulature_list_entries=emperor_titulature_list_entries)
     elif yrs == "Cycles - Indiction Cycle":
-        if yrs2 == 1:
-            # show list of cyles numbers
-            cycles_list = get_indiction_cycles()
-            return render_template('browse_indiction_cycles.html', title='Browse Data', browse_data=cycles_list, list_of_yrs=list_of_yrs, yrs=yrs, period="Indiction Cycles (311 AD - 704 AD)"
-                               )
-        else:
-            # show years of given cycle
-            cycles_list = get_indiction_cycles()
-            years_of_given_cycle = get_years_of_indicion_cycle(yrs2)
-            print(years_of_given_cycle)
-            return render_template('browse_indiction_cycles_years.html', title='Browse Data', browse_data=cycles_list, years=years_of_given_cycle,
-                                   list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, period="Indiction Cycles (311 AD - 704 AD)"
-                                   )
-
-
+        # show list of year numbers
+        cycles_list = get_indiction_cycles()
+        return render_template('browse_indiction_cycles_years.html', title='Browse Data', browse_data=cycles_list, list_of_yrs=list_of_yrs, yrs=yrs, period="Indiction Years (311 AD - 704 AD)")
     else:
         browse_data = get_browse_data(yrs, yrs2)
         total_hits = get_browse_data_number_of_results(yrs)

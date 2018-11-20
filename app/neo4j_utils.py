@@ -174,21 +174,18 @@ def get_consulate_entries(yrs, page):
 
 def get_indiction_cycles():
     """
-    returns list of indiction cycles
+    returns list of indiction years
     :return:
     """
     query="""
-    match (t:Timeline)--(yrs:YearReferenceSystem {type:'Cycles'})--(yrs2:YearReferenceSystem {type:'Indiction Cycle'})--(cp:CalendarPartial)
-    return cp.value as cycle
+    match (t:Timeline)--(yrs:YearReferenceSystem {type:'Cycles'})--(yrs2:YearReferenceSystem {type:'Indiction Cycle'})--(cp:CalendarPartial)--(g:GODOT)
+    return cp.value as cycle, g.uri as godot_uri
     order by toInteger(cp.value)
     """
     results = query_neo4j_db(query)
     cycle_list = []
     for res in results:
-        year_start = 311
-        year_end = 326
-        #cycle_list.append("Cycle " + res['cycle'] + " (" + str(year_start + (15 * int(res['cycle']))) + " - " + str(year_end + (15 * int(res['cycle']))) + ")" )
-        cycle_list.append("Cycle " + res['cycle'])
+        cycle_list.append({"year": res['cycle'], "godot_uri": res['godot_uri']})
     return cycle_list
 
 

@@ -172,6 +172,45 @@ def get_consulate_entries(yrs, page):
     return actian_era_entries_list
 
 
+def get_indiction_cycles():
+    """
+    returns list of indiction cycles
+    :return:
+    """
+    query="""
+    match (t:Timeline)--(yrs:YearReferenceSystem {type:'Cycles'})--(yrs2:YearReferenceSystem {type:'Indiction Cycle'})--(cp:CalendarPartial)
+    return cp.value as cycle
+    order by toInteger(cp.value)
+    """
+    results = query_neo4j_db(query)
+    cycle_list = []
+    for res in results:
+        year_start = 311
+        year_end = 326
+        #cycle_list.append("Cycle " + res['cycle'] + " (" + str(year_start + (15 * int(res['cycle']))) + " - " + str(year_end + (15 * int(res['cycle']))) + ")" )
+        cycle_list.append("Cycle " + res['cycle'])
+    return cycle_list
+
+
+def get_years_of_indicion_cycle(cycle):
+    """
+    return list of years of given cycle number
+    :param cycle: cycle number
+    :return: dict of years with godot_uris; key: year number
+    """
+    cycle = cycle.split()[1]
+    query = """
+    match (t:Timeline)--(yrs:YearReferenceSystem {type:'Cycles'})--(yrs2:YearReferenceSystem {type:'Indiction Cycle'})--(cp:CalendarPartial {value:'%s'})--(cp_years:CalendarPartial)--(g:GODOT)
+    return cp_years.value as year, g.uri as godot_uri
+    order by toInteger(cp_years.value)
+    """ % cycle
+    results = query_neo4j_db(query)
+    year_list = []
+    for res in results:
+        year_list.append({"year": res['year'], "godot_uri": res['godot_uri'].split("/")[-1]})
+    return year_list
+
+
 def get_browse_data(yrs, page):
     """
     returns GODOT URIs and string of paths as a list of dictionaries

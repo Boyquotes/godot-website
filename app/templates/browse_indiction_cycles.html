@@ -23,7 +23,7 @@
     <h4>{{ period }}</h4>
     <p style="margin-bottom:2em; margin-left: 2em">
       {% for entry in browse_data %}
-        <span style="padding-right:10px"><a href="/browse/Cycles - Indiction Cycle/{{ entry }}">{{ entry }}</a></span>
+        <span style="padding-right:10px"><a href="/browse/Cycles - Indiction Cycle/{{ entry }}">{{ entry }} ({{311 + loop.index0 * 15}} - {{326 + loop.index0 * 15}})</a></span>
       {% endfor %}
       </p>
   {% endblock %}

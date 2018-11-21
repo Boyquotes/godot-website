@@ -45,24 +45,26 @@
                 {%- endif %}
             {%- endfor %}
         {%- elif path.label == 'GODOT' %}
-            GODOT Information:
-            <ul>
-            {%- for key, value in path.items() %}
-                {%- if key != 'type' and key != 'label' and value != '' %}
-                    {%- if key == 'uri' %}
-                        <li>GODOT {{ key.upper() }}: <a href="{{ value }}">{{ value }}</a></li>
-                    {%- elif key == 'not_before' or key == 'not_after' %}
-                        <li>{{ key }}: {{ value }}</li>
-                    {% else %}
-                        <li>{{ key }}: {{ value }}</li>
+            {%- if path.items()|length > 3 %}
+                GODOT Information:<ul>
+                {%- for key, value in path.items() %}
+                    {%- if key != 'type' and key != 'label' and value != '' %}
+                        {%- if key == 'not_before' or key == 'not_after' %}
+                            <li>{{ key }}: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
+                        {% elif "uri" in key %}
+                            <li>{{ key }}: <a href="{{ value }}">{{ value }}</a></li>
+                        {% else %}
+                            <li>{{ key }}: {{ value }}</li>
+                        {%- endif %}
                     {%- endif %}
-                {%- endif %}
-            {%- endfor %}
-            </ul>
+                {%- endfor %}
+                </ul>
+            {%- endif %}
         {%- endif %}
     {%- endfor %}
     </ul>
     <h3>Attestations</h3>
+    {%- if attestations %}
     {%- for att in attestations %}
         {%- if get_username() == "roueche" or get_username() == "grieshaber" %}
             <p style="margin-bottom:2em"><a href="{{ att.uri }}">{{ att.title }}</a>
@@ -82,10 +84,15 @@
             </p>
         {%- endif %}
     {%- endfor%}
+    {%- else %}<p>None</p>
+    {%- endif %}
     {%- if sub_godot_nodes %}
         <h3>Attested Dates in this Period</h3>
+        <p">
         {%- for datum in sub_godot_nodes %}
-            <li><a href="/id/{{datum['godot_uri'].split('/')[-1]}}">{%- for part in datum['date_partials'] %} {{part}} {%- endfor %}</a></li>
+            <a href="/id/{{datum['godot_uri'].split('/')[-1]}}">{%- for part in datum['date_partials'] %} {{part}} {%- endfor %}</a> ({{ datum['title'] }})<br/>
+            {{ datum['date_string'] }}
+        </p>
         {%- endfor %}
     {%- endif %}
     <p>&nbsp;</p>

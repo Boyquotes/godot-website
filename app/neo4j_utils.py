@@ -6,6 +6,8 @@ import operator
 from functools import reduce
 import math
 from itertools import combinations
+import re
+
 
 def get_all_roman_emperors():
     """
@@ -284,7 +286,6 @@ def get_godot_path(godot_uri):
     :return: list of dictionaries
     """
     query = "match (t:Timeline),(g:GODOT {uri:'%s'}),p = ((t)-[*..15]->(g)) return p" % godot_uri
-    print(godot_uri)
     results = query_neo4j_db(query)
     paths = []
     if results:
@@ -717,24 +718,23 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
 
 def get_sub_godot_nodes(godot_uri):
     """
-
-    :param godot_uri:
-    :return:
+    drill down into graph: queries for following godot nodes (type:synchron) which hold
+    information about Roman emperor titulatures
+    :param godot_uri: string of godot uri which serves as entry point into graph
+    :return: result list of dictionary needed for template detail.html
     """
     query = """
     match (g:GODOT {uri:'%s'})--(cp:CalendarPartial),
-    (cp)-->(u)-[*..10]->(g2:GODOT),
-    p = shortestPath( (u)-[*..10]-(g2) )
+    (cp)-->(u)-[*..10]->(g2:GODOT)--(a:Attestation),
+    p = shortestPath( (u)-[*..10]-(a) )
     return p
     """ % godot_uri
+
     results = query_neo4j_db(query)
     result_list = []
 
     for path in results:
         nodes = path["p"].nodes
-        date_string = ""
-        month = ""
-        day = ""
         date_info = []
         date_dict = {}
         for n in nodes:
@@ -743,12 +743,72 @@ def get_sub_godot_nodes(godot_uri):
                 for k, v in n.items():
                     if k == "uri":
                         date_dict['godot_uri'] = v
+            if label == "Attestation":
+                for k, v in n.items():
+                    if k == "title":
+                        date_dict['title'] = v
+                    elif k == "date_string":
+                        date_dict['date_string'] = v
             else:
                 for k, v in n.items():
-                    if v != "standard" and v != "year" and v != "month" and v!= "day" and k != "type":
+                    if v != "standard" and v != "year" and v != "month" and v!= "day" and k != "type" and k != "uri":
                         date_info.append(v)
         date_dict['date_partials'] = date_info
         result_list.append(date_dict)
+    # if there's a synchron GODOT node adjecent, follow this pattern also
+    # these are Roman Emperor titulature data
+    query = "match (g:GODOT {uri:'%s'})-->(g2:GODOT {type:'synchron'}) return g2.uri as synchron_godot_node" % godot_uri
+    results = query_neo4j_db(query)
+    synchron_godot_node_list = []
+    for res in results:
+        synchron_godot_node_list.append(res['synchron_godot_node'])
+
+    # iterate over all synchron nodes
+    for synchron_godot_node in synchron_godot_node_list:
+        query = "match (yrs:YearReferenceSystem {type:'Titulature of Roman Emperors'}),(g:GODOT {uri:'%s'})--(a:Attestation),p = ((yrs)-[*..15]->(g)) return p, a.title as title, a.date_string as date_string" % synchron_godot_node
+        results = query_neo4j_db(query)
+        paths = []
+        if results:
+            emperor_data = ""
+            attestation_dict = {}
+            # get attestation data
+            att_title = ""
+            att_date_string = ""
+            # get date path information
+            for record in results:
+                att_title = record["title"]
+                att_date_string = record["date_string"]
+                nodes = record["p"].nodes
+                for n in nodes:
+                    if list(n.labels)[0] != 'YearReferenceSystem' and list(n.labels)[0] != "GODOT":
+                        n_dict = {'label': list(n.labels)[0]}
+                        for k, v in n.items():
+                            if k == "type" or k == "uri":
+                                continue
+                            if v == "Tribunicia Potestas":
+                                v = "trib. pot."
+                            if v == "Imperial Acclamations":
+                                v = "imp."
+                            elif v == "Imperial Consulates":
+                                continue
+                            elif v == "Imperial Victory Titles":
+                                continue
+                            emperor_data += v + " "
+                            n_dict[k] = str(v)
+                        paths.append(n_dict)
+            # name only once at beginning
+            emperor_name = ""
+            if emperor_data:
+                emperor_name = emperor_data.split()[0]
+            emperor_data = emperor_name + ": " + re.sub(emperor_name, "", emperor_data)
+            if emperor_data:
+                tmp_dict = {}
+                tmp_dict['godot_uri'] = synchron_godot_node
+                tmp_dict['date_partials'] = [emperor_data]
+                tmp_dict['title'] = att_title
+                tmp_dict['date_string'] = att_date_string
+                if tmp_dict['godot_uri'] != "":
+                    result_list.append(tmp_dict)
     return result_list
 
 
@@ -770,7 +830,6 @@ def get_overlapping_periods_from_emperor_titulature_result_set(result_list):
         number_of_overlaps = 0
         tmp_dict = {}
         tmp_dict['emperor'] = emperor['emperor']
-        print(tmp_dict['emperor'])
         tmp_dict['result_list_length'] = len(ranges_list)
         tmp_dict['overlap_length'] = len(_get_overlap_of_date_ranges(ranges_list))
         tmp_dict['overlap_range'] = _get_overlap_range_of_date_ranges(ranges_list)

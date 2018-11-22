@@ -59,6 +59,18 @@ def browse(yrs, yrs2, yrs3, yrs4):
         return render_template('browse_consulates.html', title='Browse Data', browse_data=browse_data,
                                list_of_yrs=list_of_yrs,
                                yrs=yrs, page=yrs2, total_hits=total_hits)
+    elif yrs == "Eponymous officials":
+        if yrs2 == 1:
+            # show list of all eponym. officials
+            eponyms_list = get_eponyms()
+            return render_template('browse_eponymous_offices.html', title='Browse Data', browse_data=eponyms_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, period="Eponymous Officials")
+        else:
+            # show individuals of given eponym. official
+            eponyms_list = get_eponyms()
+
+            return render_template('browse_eponymous_offices.html', title='Browse Data', browse_data=eponyms_list,
+                                   list_of_yrs=list_of_yrs, yrs=yrs, period="Eponymous Officials")
 
 
     elif yrs == "Titulature of Roman Emperors":

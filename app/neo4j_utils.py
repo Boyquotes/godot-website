@@ -433,14 +433,12 @@ def get_list_of_yrs():
     if results:
         for record in results:
             label = record["yrs1"]["type"]
-            if record["yrs2"]:
-                # add placename for eponymous officials
-                if record["yrs2"]["place_label"]:
-                    label += " - " + record["yrs2"]["type"] + " of " + record["yrs2"]["place_label"]
-                else:
-                    label += " - " + record["yrs2"]["type"]
+            if record["yrs1"]["type"] == "Regnal Years":
+                label += " - " + record["yrs2"]["type"]
+            elif record["yrs1"]["type"] == "Era":
+                label += " - " + record["yrs2"]["type"]
             yrs.append(label)
-    return yrs
+    return set(yrs)
 
 
 def get_attestation(node_id):

@@ -437,8 +437,10 @@ def get_list_of_yrs():
                 label += " - " + record["yrs2"]["type"]
             elif record["yrs1"]["type"] == "Era":
                 label += " - " + record["yrs2"]["type"]
+            elif record["yrs1"]["type"] == "Cycles":
+                label += " - " + record["yrs2"]["type"]
             yrs.append(label)
-    return set(yrs)
+    return sorted(set(yrs))
 
 
 def get_attestation(node_id):

@@ -21,9 +21,7 @@
           {% endfor %}
         </p>
     <h4>{{ period }}</h4>
-    <p style="margin-bottom:2em; margin-left: 2em">
       {% for entry in browse_data %}
-        <span style="padding-right:10px"><a href="/eponymous_office/{{ entry['godot_uri'] }}">{{ entry['type'] }} of {{ entry['place_label']}}</a></span>
+        <li style="margin-left: 2em"><a href="/eponymous_office/{{ entry['godot_uri'] }}">{{ entry['type'] }} of {{ entry['place_label']}}</a></li>
       {% endfor %}
-      </p>
   {% endblock %}

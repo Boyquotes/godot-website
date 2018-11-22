@@ -20,8 +20,9 @@
             {% endif %}
           {% endfor %}
         </p>
+      <h4>{%- if yrs == "None" %} None (no reference to a year given)) {%- elif yrs == "Unknown" %} Unknown (year of unknown system) {%- else %} {{ yrs }} {%- endif %}</h4>
       {% for entry in browse_data %}
-        <p>{{ loop.index + page | int * 20 -20 }}. <a href="/id/{{ entry.godot_uri }}">https://godot.date/id/{{ entry.godot_uri }}</a> <br />{{ entry.path_str }}</p>
+        <p style="margin-left: 2em">{{ loop.index + page | int * 20 -20 }}. <a href="/id/{{ entry.godot_uri }}">https://godot.date/id/{{ entry.godot_uri }}</a> <br />{{ entry.path_str }}</p>
       {% endfor %}
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">

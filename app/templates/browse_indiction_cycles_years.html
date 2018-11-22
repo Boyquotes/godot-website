@@ -21,11 +21,8 @@
           {% endfor %}
         </p>
     <h4>{{ period }}</h4>
-    <p style="margin-bottom:2em; margin-left: 2em">
-      {%- for entry in browse_data %}
-            <li style="margin-left: 2em"><span style="padding-right:10px"><a href="/id/{{ entry['godot_uri'].split('/')[-1] }}">Year {{ entry['year'] }}</a></span></li>
-      {% endfor %}
-      </p>
-
+    {%- for entry in browse_data %}
+        <li style="margin-left: 2em"><span style="padding-right:10px"><a href="/id/{{ entry['godot_uri'].split('/')[-1] }}">Year {{ entry['year'] }}</a></span></li>
+    {% endfor %}
 <p>&nbsp;</p>
 {% endblock %}

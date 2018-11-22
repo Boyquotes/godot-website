@@ -22,6 +22,6 @@
         </p>
         <h4>Actian Era Entries</h4>
       {% for entry in browse_data %}
-        <p style="margin-left: 2em"><a href="/id/{{entry['godot_uri']}}">Year {{ entry['year']}}</a></p>
+        <li style="margin-left: 2em"><a href="/id/{{entry['godot_uri']}}">Year {{ entry['year']}}</a></li>
       {% endfor %}
   {% endblock %}

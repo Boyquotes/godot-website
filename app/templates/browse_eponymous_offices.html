@@ -22,6 +22,6 @@
         </p>
     <h4>{{ period }}</h4>
       {% for entry in browse_data %}
-        <li style="margin-left: 2em"><a href="/eponymous_office/{{ entry['godot_uri'] }}">{{ entry['type'] }} of {{ entry['place_label']}}</a></li>
+        <li style="margin-left: 2em"><a href="/eponymous_office/{{ entry['godot_uri'] }}">{{ entry['type'] }} at {{ entry['place_label']}}</a></li>
       {% endfor %}
   {% endblock %}

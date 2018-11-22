@@ -13,7 +13,7 @@
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <input type="hidden" id="godot_uri" name="godot_uri" value="{{official_godot_uri}}">
-        <h4 style="margin-bottom:1em">{{ office_data['type'] }} of {{ office_data['place_label'] }}</h4>
+        <h4 style="margin-bottom:1em">{{ office_data['type'] }} at {{ office_data['place_label'] }}</h4>
         <p>
             {{ form.name.label }}<br>
             {{ form.name(value=official_data['value'], size=50, style='width:30em;') }}

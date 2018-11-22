@@ -654,6 +654,7 @@ class EponymOffice(FlaskForm):
 class EponymOfficial(FlaskForm):
     name = StringField('Name:', validators=[DataRequired()])
     wikidata_uri = StringField('Wikidata URI of Official:', validators=[Optional(), URL()])
+    identifying_uri = StringField('Identifying URI of Official:', validators=[Optional()])
     snap_uri = StringField('SNAP URI of Official:', validators=[Optional(), URL()])
     office_godot_uri = StringField('Office GODOT URI:')
     official_godot_uri = StringField('Official GODOT URI:')

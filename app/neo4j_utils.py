@@ -554,12 +554,11 @@ def get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata
     return g
 
 
-def get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after):
+def get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri, not_before, not_after):
     """
     creates/returns GODOT URi for eponymou official
     :param name:
-    :param wikidata_uri:
-    :param snap_uri:
+    :param identifying_uri:
     :param not_before:
     :param not_after:
     :return: godot URI of official
@@ -567,11 +566,11 @@ def get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, s
     godot_uri  = "https://godot.date/id/" + shortuuid.uuid()
     query = """
     match (g:GODOT {uri:'%s'})--(yrs:YearReferenceSystem)
-    merge (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type:'name', value:'%s', wikidata_uri:'%s', snap_uri:'%s', not_before:'%s', not_after:'%s'})
+    merge (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type:'name', value:'%s', identifying_uri:'%s', not_before:'%s', not_after:'%s'})
     merge (cp)-[:hasGodotUri]->(g2:GODOT {type:'standard'})
         on create set g2.uri = '%s'
     return g2.uri as g
-    """ % (office_godot_uri, _clean_string(name), wikidata_uri, snap_uri, _clean_string(not_before), _clean_string(not_after), godot_uri)
+    """ % (office_godot_uri, _clean_string(name), identifying_uri, _clean_string(not_before), _clean_string(not_after), godot_uri)
     results = query_neo4j_db(query)
     if results:
         for record in results:
@@ -689,7 +688,6 @@ def get_emperors_by_titulature(consul_number, consul_designatus, trib_pot_number
     # victory titles
 
     query += return_statement + " order by emperor.value"
-    #print(query)
     results = query_neo4j_db(query)
     result_list = []
     for record in results:

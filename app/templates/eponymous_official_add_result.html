@@ -10,12 +10,11 @@
     {% endif %}
 {% endwith %}
 <h1>{{ data_text }}</h1>
-<h3>{{ office_data['type'] }} of {{ office_data['place_label'] }}</h3>
+<h3>{{ office_data['type'] }} at {{ office_data['place_label'] }}</h3>
    <p>GODOT URI for:</p>
     <ul>
         <li><span style="font-weight:1000">Name</span>: {{ name }}</li>
-        <li><span style="font-weight:1000">Wikidata URI for office</span>: {{ wikidata_uri }}</li>
-        <li><span style="font-weight:1000">SNAP URI</span>: {{ snap_uri }}</li>
+        <li><span style="font-weight:1000">Identifying URI(s) for official</span>: &nbsp;  {%- for uri in identifying_uri %}<a href="{{ uri }}">{{ uri }} &nbsp; </a>{%- endfor %}</li>
         <li><span style="font-weight:1000">Not Before Year</span>: {{ not_before }}</li>
         <li><span style="font-weight:1000">Not After Year</span>: {{ not_after }}</li>
     </ul>
@@ -28,7 +27,7 @@
         </div>
     </p>
     <p style="margin-top:2em"><a href="/eponymous_office">List of all offices</a></p>
-    <p><a href="/eponymous_office/{{office_godot_uri}}/add">Add another {{ office_data['type'] }} of {{ office_data['place_label'] }}</a></p>
+    <p><a href="/eponymous_office/{{office_godot_uri}}/add">Add another {{ office_data['type'] }} at {{ office_data['place_label'] }}</a></p>
     <script>
         function copy2clipboard() {
             let textarea = document.createElement('textarea')

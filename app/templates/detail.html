@@ -53,12 +53,17 @@
                             <li>Not Before: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
                         {%- elif key == 'not_after' %}
                             <li>Not After: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
-                        {% elif "uri" in key %}
+                        {% elif key == 'uri' %}
                             <li>GODOT URI: <a href="/id/{{ value.split('/')[-1] }}">{{ value }}</a></li>
                         {%- elif "part_of_consulate" in key %}<li>Part of Consulate(s): {{ value }}</li>
                         {%- elif "date_is_uncertain" in key %}<li>Date is uncertain</li>
                         {%- elif "time_span_end" in key %}<li>End of Timespan: {{ value }}</li>
-                        {%- elif "uri" in key %}<li>GODOT URI: {{ value }}</li>
+                        {%- elif key == "consul_prior_uri" %}<li>Consul Prior URI: <a href="{{ value }}">{{ value }}</a></li>
+                        {%- elif key == "consul_posterior_uri" %}<li>Consul Posterior URI: <a href="{{ value }}">{{ value }}</a></li>
+                        {%- elif key == "comment_consul_posterior" %}<li>Consul Prior Comment: {{ value }}</li>
+                        {%- elif key == "comment_consul_posterior" %}<li>Consul Posterior Comment: {{ value }}</li>
+                        {%- elif "uri" in key %}<li>URI: <a href="{{ value }}">{{ value }}</a></li>
+                        {%- elif key == "comment_year" %}<li>{{ value }}</li>
                         {% else %}
                             <li>{{ key }}: {{ value }}</li>
                         {%- endif %}

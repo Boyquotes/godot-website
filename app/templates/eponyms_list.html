@@ -3,7 +3,7 @@
 <h1>{{ data_text }}</h1>
 <ul>
 {%- for eponym in eponyms_list %}
-<li><a href="/eponymous_office/{{ eponym.godot_uri }}">{{ eponym.type }} of {{ eponym.place_label }}</a>
+<li><a href="/eponymous_office/{{ eponym.godot_uri }}">{{ eponym.type }} at {{ eponym.place_label }}</a>
     </li>
 
 {%- endfor%}

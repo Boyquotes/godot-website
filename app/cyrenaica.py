@@ -552,3 +552,32 @@ def _clean_string(str):
     """
     str = str.replace("'", "\\'")
     return str
+
+
+def get_snap_uri_for_lgpn(uri):
+    """
+    queries SNAP SPARQL endpoint for snap uri for given lgpn uri
+    :param uri:
+    :return: snap uri
+    """
+    from SPARQLWrapper import SPARQLWrapper, JSON
+    sparql = SPARQLWrapper("https://snap.dighum.kcl.ac.uk/sparql/")
+    query = """
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX dc: <http://purl.org/dc/terms/>
+
+    SELECT DISTINCT ?snap2
+    WHERE {
+    {?snap2 dc:replaces ?snap1 .
+    ?snap1 prov:wasDerivedFrom <%s>}
+    UNION
+    { ?snap2 prov:wasDerivedFrom <%s>
+    MINUS { ?s dc:replaces ?snap2 } }
+    }
+    """ % (uri, uri)
+    sparql.setQuery(query)
+    sparql.setReturnFormat(JSON)
+    sparql.setTimeout(2000)
+    results = sparql.query().convert()
+    for result in results["results"]["bindings"]:
+        return result['snap2']['value']

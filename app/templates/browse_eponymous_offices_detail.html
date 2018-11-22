@@ -24,9 +24,9 @@
     <p style="margin-bottom:2em; margin-left:2em">
       {% for entry in browse_data %}
         {%- if entry == yrs2%}
-          <span style="color:#4a4">✓</span> <span style="padding-right:10px"><a href="/browse/Eponymous Officials/{{ entry['type'] }} of {{ entry['place_label']}}">{{ entry['type'] }} of {{ entry['place_label']}}</a></span>
+          <span style="color:#4a4">✓</span> <span style="padding-right:10px"><a href="/browse/Eponymous Officials/{{ entry['type'] }} at {{ entry['place_label']}}">{{ entry['type'] }} at {{ entry['place_label']}}</a></span>
         {%- else %}
-          <span style="padding-right:10px"><a href="/browse/Eponymous Officials/{{ entry['type'] }} of {{ entry['place_label']}}">{{ entry['type'] }} of {{ entry['place_label']}}</a></span>
+          <span style="padding-right:10px"><a href="/browse/Eponymous Officials/{{ entry['type'] }} at {{ entry['place_label']}}">{{ entry['type'] }} at {{ entry['place_label']}}</a></span>
         {%- endif %}
       {% endfor %}
       </p>

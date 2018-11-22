@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block app_content %}
 <h1>{{ data_text }}</h1>
-<h3>{{ eponym_data.type }} of {{ eponym_data.place_label }} {%- if get_username() == "roueche" or get_username() == "grieshaber" %}<a href="/eponymous_office/{{ godot_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a>{%- endif %}</h3>
+<h3>{{ eponym_data.type }} at {{ eponym_data.place_label }} {%- if get_username() == "roueche" or get_username() == "grieshaber" %}<a href="/eponymous_office/{{ godot_id }}/edit" class="btn btn-godot-reset btn-xs">edit</a>{%- endif %}</h3>
 <p>{{ eponym_data.description }}</p>
 <p>Wikidata URI for {{ eponym_data.type }}: <a href="{{ eponym_data.wikidata_uri }}">{{ eponym_data.wikidata_uri }}</a></p>
 <p>Pleiades URI for {{ eponym_data.place_label }}: <a href="{{ eponym_data.pleiades_uri }}">{{ eponym_data.pleiades_uri }}</a></p>

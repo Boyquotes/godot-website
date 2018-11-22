@@ -10,7 +10,7 @@
     {% endif %}
 {% endwith %}
 <h1>{{ data_text }}</h1>
-<h3>{{ office_data['type'] }} of {{ office_data['place_label'] }}</h3>
+<h3>{{ office_data['type'] }} at {{ office_data['place_label'] }}</h3>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <input type="hidden" id="office_godot_uri" name="office_godot_uri" value="{{godot_uri}}">
@@ -22,16 +22,9 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.wikidata_uri.label }}<br>
-            {{ form.wikidata_uri(size=50, style='width:30em;') }}
-            {% for error in form.wikidata_uri.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.snap_uri.label }}<br>
-            {{ form.snap_uri(size=50, style='width:30em;') }}
-            {% for error in form.snap_uri.errors %}
+            {{ form.identifying_uri.label }}<br>
+            {{ form.identifying_uri(size=500, style='width:30em;') }}
+            {% for error in form.identifying_uri.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>

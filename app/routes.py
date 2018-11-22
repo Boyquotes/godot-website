@@ -5,7 +5,7 @@ from app.forms import RomanConsularDating, CyrenaicaYears, AttestationUpdate, At
 from app.convert import Convert_roman_calendar
 from app.EgyptianCalendarDate import EgyptianCalendarDate
 from app.neo4j_utils import *
-from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path
+from app.cyrenaica import write_cyrenaica_single_year, write_cyrenaica_emperor_titulature_path, get_snap_uri_for_lgpn
 import simplejson as json
 from app.openrefine_utils import search, get_openrefine_metadata
 import requests
@@ -53,7 +53,7 @@ def browse(yrs, yrs2, yrs3, yrs4):
         total_hits = get_browse_data_number_of_results(yrs)
         return render_template('browse_actian_era.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
                                yrs=yrs, page=yrs2, total_hits=total_hits)
-    elif yrs == "Eponymous officials - Roman Consulships":
+    elif yrs == "Roman Consulships":
         browse_data = get_consulate_entries(yrs, yrs2)
         total_hits = get_browse_data_number_of_results(yrs)
         return render_template('browse_consulates.html', title='Browse Data', browse_data=browse_data,
@@ -68,7 +68,6 @@ def browse(yrs, yrs2, yrs3, yrs4):
         else:
             # show individuals of given eponym. official
             eponyms_list = get_eponyms()
-
             return render_template('browse_eponymous_offices.html', title='Browse Data', browse_data=eponyms_list,
                                    list_of_yrs=list_of_yrs, yrs=yrs, period="Eponymous Officials")
 
@@ -486,13 +485,20 @@ def eponymous_official_add(godot_id):
     if form.validate_on_submit():
         name = form.name.data
         office_godot_uri = "https://godot.date/id/"+godot_id
-        wikidata_uri = form.wikidata_uri.data
-        snap_uri = form.snap_uri.data
+        identifying_uri = form.identifying_uri.data
+        identifying_uri_list = []
+        for uri in identifying_uri.split():
+            if uri.startswith("http://www.lgpn.ox.ac.uk"):
+                # adding SNAP URI if LPGN URI is entered via SNAP SPARQL endpoint
+                snap_uri = get_snap_uri_for_lgpn(uri)
+                if snap_uri:
+                    identifying_uri_list.append(snap_uri)
+            identifying_uri_list.append(uri)
         not_before = form.not_before.data
         not_after = form.not_after.data
-        official_godot_uri = get_godot_uri_for_eponymous_official(office_godot_uri, name, wikidata_uri, snap_uri, not_before, not_after)
+        official_godot_uri = get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri, not_before, not_after)
         return render_template('eponymous_official_add_result.html', title="Add Eponymous Official Result",
-                               data_text="Add Eponymous Office Result", name=name, wikidata_uri=wikidata_uri, snap_uri=snap_uri, not_before=not_before, not_after=not_after, official_godot_uri=str(official_godot_uri.split("/")[-1]), office_godot_uri=str(office_godot_uri.split("/")[-1]), office_data=office_data)
+                               data_text="Add Eponymous Official Result", name=name, identifying_uri=identifying_uri_list, not_before=not_before, not_after=not_after, official_godot_uri=str(official_godot_uri.split("/")[-1]), office_godot_uri=str(office_godot_uri.split("/")[-1]), office_data=office_data)
     return render_template('eponymous_official_add.html', title="Add Eponymous Official", data_text="Add Eponymous Official", form=form, godot_uri='https://godot.date/id/'+godot_id, office_data=office_data)
 
 

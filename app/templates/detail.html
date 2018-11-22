@@ -49,10 +49,16 @@
                 GODOT Information:<ul>
                 {%- for key, value in path.items() %}
                     {%- if key != 'type' and key != 'label' and value != '' %}
-                        {%- if key == 'not_before' or key == 'not_after' %}
-                            <li>{{ key }}: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
+                        {%- if key == 'not_before' %}
+                            <li>Not Before: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
+                        {%- elif key == 'not_after' %}
+                            <li>Not After: {%- if value < "0" %} {{ value[1:] }} {%- else %} {{value}}{%- endif%} {%- if value < "0" %} BC{%- else %} AD{%- endif %}</li>
                         {% elif "uri" in key %}
-                            <li>{{ key }}: <a href="{{ value }}">{{ value }}</a></li>
+                            <li>GODOT URI: <a href="/id/{{ value.split('/')[-1] }}">{{ value }}</a></li>
+                        {%- elif "part_of_consulate" in key %}<li>Part of Consulate(s): {{ value }}</li>
+                        {%- elif "date_is_uncertain" in key %}<li>Date is uncertain</li>
+                        {%- elif "time_span_end" in key %}<li>End of Timespan: {{ value }}</li>
+                        {%- elif "uri" in key %}<li>GODOT URI: {{ value }}</li>
                         {% else %}
                             <li>{{ key }}: {{ value }}</li>
                         {%- endif %}
@@ -88,7 +94,7 @@
     {%- endif %}
     {%- if sub_godot_nodes %}
         <h3>Attested Dates in this Period</h3>
-        <p">
+        <p>
         {%- for datum in sub_godot_nodes %}
             <a href="/id/{{datum['godot_uri'].split('/')[-1]}}">{%- for part in datum['date_partials'] %} {{part}} {%- endfor %}</a> ({{ datum['title'] }})<br/>
             {{ datum['date_string'] }}

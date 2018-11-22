@@ -10,7 +10,7 @@
         </ul>
         {% endif %}
     {% endwith %}
-        <h1>Search Roman Consulate: Result</h1>
+        <h1>Identify Roman Consulate: Result</h1>
         <p>{{ consulate }}<br /> <a href="{{godot_uri}}" id="godot_uri">{{ godot_uri }}</a>
         <span class="g_tooltip">
             <button class="btn btn-godot-reset btn-xs" style="margin-left:10px; width:200px; " onclick="copy2clipboard()" id="copy_button">
@@ -36,7 +36,7 @@
             {%- endif %}
         {%- endfor%}
 
-        <p style="margin-top:2em"><a href="/tools/search/consulate">Search another consulate...</a></p>
+        <p style="margin-top:2em"><a href="/tools/identify/consulate">Identify another consulate...</a></p>
     <script>
         function copy2clipboard() {
             let textarea = document.createElement('textarea')

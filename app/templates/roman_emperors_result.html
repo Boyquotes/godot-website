@@ -31,9 +31,9 @@
             {%- if result['overlap_range'] %}
             <p><span style="color:#aa2222">Temporal Overlap: {{ result['overlap_range'][0] }} &ndash; {{ result['overlap_range'][1] }}</span></p>
             {%- elif result['partial_overlap_range'] %}
-                <p><span style="color:#aa2222; margin-right:1em">Partial Temporal Overlap(s):</span></p>
+                <p><span style="smargin-right:1em">Partial Temporal Overlap(s):</span></p>
                 <ul>{%- for overlap in result['partial_overlap_range'] %}
-                    <li><span style="color:#aa2222; margin-right:1em">{{ overlap[0] }} &ndash; {{ overlap[1] }}</span></li>
+                    <li><span style="margin-right:1em">{{ overlap[0] }} &ndash; {{ overlap[1] }}</span></li>
                     {%- endfor %}</ul>
             {%- endif %}
 

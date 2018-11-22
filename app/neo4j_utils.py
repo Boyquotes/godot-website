@@ -430,6 +430,7 @@ def get_list_of_yrs():
     optional match (yrs1)--(yrs2:YearReferenceSystem) return yrs1, yrs2"""
     results = query_neo4j_db(query)
     yrs = ['All']
+    yrs.append('Roman Consulships')
     if results:
         for record in results:
             label = record["yrs1"]["type"]
@@ -937,8 +938,14 @@ def _get_chronological_data_from_emperors_list(result_list):
             if key == 'emperor':
                 emperor = result_dict['emperor']['value']
                 continue
-            not_before = result_dict[key]['not_before']
-            not_after = result_dict[key]['not_after']
+            if 'not_before' in result_dict[key]:
+                not_before = result_dict[key]['not_before']
+            else:
+                not_before = ''
+            if  'not_after' in result_dict[key]:
+                not_after = result_dict[key]['not_after']
+            else:
+                not_after = ''
             if "time_span_end" in result_dict[key]:
                 not_after = result_dict[key]['time_span_end']
             periods_dict['emperor'] = emperor

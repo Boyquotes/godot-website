@@ -22,8 +22,14 @@
         <p><b>Properties</b>: </p>
         <ul>
         {%- for prop in property_dict %}
-            {%- if prop != 'uri' and prop != 'type' %}
-            <li>{{ prop }}: {{ property_dict[prop] }}</li>
+            {%- if prop != 'uri' and prop != 'type' and property_dict[prop] != "" %}
+                {%- if prop == "not_before" %}<li>Not before: {%- if property_dict[prop].startswith("-") %} {{ property_dict[prop] }} BC {% else %} {{ property_dict[prop] }} AD {%- endif %} </li>
+                {%- elif prop == "not_after" %}<li>Not after: {%- if property_dict[prop].startswith("-") %} {{ property_dict[prop] }} BC {% else %} {{ property_dict[prop] }} AD {%- endif %}</li>
+                {% elif prop == "comment_year" %}<li>{{ property_dict[prop] }}</li>
+                {% elif prop == "consul_prior_uri" %}<li>Consul prior URI: <a href="{{ property_dict[prop] }}">{{ property_dict[prop] }}</a></li>
+                {% elif prop == "consul_posterior_uri" %}<li>Consul posterior URI: <a href="{{ property_dict[prop] }}">{{ property_dict[prop] }}</a></li>
+                {% else %}<li>{{prop}}: {{ property_dict[prop] }}</li>
+                {%- endif %}
             {%- endif %}
         {%- endfor %}
         </ul>

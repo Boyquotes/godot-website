@@ -2,7 +2,8 @@
 
 {% block app_content %}
     <h1>Egyptian Calendar Conversion (Roman Emprerors)</h1>
-
+    <p>All calculations are based on the tables in Skeat, Reigns of the Ptolemies (1969), Pestman, Chronologie égyptienne d'après les textes démotiques (1967) and Pestman, Les papyrus démotiques de Tsenhor (1994).
+        The system expects that the user knows what (s)he's doing; ahistoric entries will result in mathematically correct but otherwise rather useless dates. Not specifying a day will result in calculation of both the first and last day of the given month.</p>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p id="reign">

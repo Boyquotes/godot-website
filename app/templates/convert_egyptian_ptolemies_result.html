@@ -11,15 +11,19 @@
         {% endif %}
     {% endwith %}
     <h1>Egyptian Calendar Conversion (Ptolemies) &ndash; Result</h1>
+    <p>All calculations are based on the tables in Skeat, Reigns of the Ptolemies (1969), Pestman, Chronologie égyptienne d'après les textes démotiques (1967) and Pestman, Les papyrus démotiques de Tsenhor (1994).
+        The system expects that the user knows what (s)he's doing; ahistoric entries will result in mathematically correct but otherwise rather useless dates. Not specifying a day will result in calculation of both the first and last day of the given month.</p>
     {%- if response['type'] == 'day' %}
-        <p><b>{{ response['egyptianDateString'] }}</b>:</p>
-        <p>{{ response['dateJulian'] }} (Julian)<br />{{ response['dateGregorian'] }} (Gregorian)</p>
+        <p style="font-size:18px"><b>{{ response['egyptianDateString'] }}</b>:</p>
+        <p style="font-size:18px">{%- if response['dateJulian'].startswith("-") %}{{ response['dateJulian'][1:] }} BC {%- else %} {{ response['dateJulian']}} {% endif %} (Julian)<br />
+                                  {%- if response['dateGregorian'].startswith("-") %} {{ response['dateGregorian'][1:] }} BC {%- else %} {{ response['dateGregorian']}} {%- endif %} (Gregorian)</p>
     {%- else %}
-        <p><b>Date Range Start</b>: {{ response['dateRangeStart']['egyptianDateString'] }}</p>
-        <p>{{ response['dateRangeStart']['dateJulian'] }} (Julian)<br />{{ response['dateRangeEnd']['dateGregorian'] }} (Gregorian)</p>
-        <p><b>Date Range End</b>: {{ response['dateRangeEnd']['egyptianDateString'] }}</p>
-        <p>{{ response['dateRangeEnd']['dateJulian'] }} (Julian)<br />{{ response['dateRangeEnd']['dateGregorian'] }} (Gregorian)</p>
+        <p style="font-size:18px"><b>Date Range Start</b>: {{ response['dateRangeStart']['egyptianDateString'] }}</p>
+        <p style="font-size:18px">{%- if response['dateRangeStart']['dateJulian'].startswith("-") %}{{ response['dateRangeStart']['dateJulian'][1:] }} BC {%- else %} {{ response['dateRangeStart']['dateJulian']}} {%- endif %} (Julian)<br />
+                                  {%- if response['dateRangeStart']['dateGregorian'].startswith("-") %}{{ response['dateRangeEnd']['dateGregorian'][1:] }} BC {%- else %} response['dateRangeEnd']['dateGregorian'] {% endif %} (Gregorian)</p>
+        <p style="font-size:18px"><b>Date Range End</b>: {{ response['dateRangeEnd']['egyptianDateString'] }}</p>
+        <p style="font-size:18px">{%- if response['dateRangeEnd']['dateJulian'].startswith("-") %}{{ response['dateRangeEnd']['dateJulian'][1:] }} BC {%- else %} {{ response['dateRangeStart']['dateJulian']}} {%- endif %} (Julian)<br />
+                                  {%- if response['dateRangeEnd']['dateGregorian'].startswith("-") %}{{ response['dateRangeEnd']['dateGregorian'][1:] }} BC {%- else %} response['dateRangeEnd']['dateGregorian'] {% endif %} (Gregorian)</p>
     {%- endif %}
-
     <p style="margin-top:2em"><a href="/convert/egyptian/ptolemies">Another date conversion...</a></p>
 {% endblock %}

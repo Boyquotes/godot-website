@@ -575,6 +575,7 @@ def get_snap_uri_for_lgpn(uri):
     MINUS { ?s dc:replaces ?snap2 } }
     }
     """ % (uri, uri)
+    print(query)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     sparql.setTimeout(2000)

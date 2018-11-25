@@ -22,16 +22,9 @@
             {% endfor %}
         </p>
         <p>
-            {{ form.wikidata_uri.label }}<br>
-            {{ form.wikidata_uri(value=official_data['wikidata_uri'], size=50, style='width:30em;') }}
-            {% for error in form.wikidata_uri.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.snap_uri.label }}<br>
-            {{ form.snap_uri(value=official_data['snap_uri'], size=50, style='width:30em;') }}
-            {% for error in form.snap_uri.errors %}
+            {{ form.identifying_uri.label }}<br>
+            {{ form.identifying_uri(value=official_data['identifying_uri'], size=50, style='width:30em;') }}
+            {% for error in form.identifying_uri.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>

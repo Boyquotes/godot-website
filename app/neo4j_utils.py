@@ -554,7 +554,7 @@ def get_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata
     return g
 
 
-def get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri, not_before, not_after):
+def get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri_list, not_before, not_after):
     """
     creates/returns GODOT URi for eponymou official
     :param name:
@@ -566,11 +566,11 @@ def get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri
     godot_uri  = "https://godot.date/id/" + shortuuid.uuid()
     query = """
     match (g:GODOT {uri:'%s'})--(yrs:YearReferenceSystem)
-    merge (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type:'name', value:'%s', identifying_uri:'%s', not_before:'%s', not_after:'%s'})
+    merge (yrs)-[:hasCalendarPartial]->(cp:CalendarPartial {type:'name', value:'%s', identifying_uri:%s, not_before:'%s', not_after:'%s'})
     merge (cp)-[:hasGodotUri]->(g2:GODOT {type:'standard'})
         on create set g2.uri = '%s'
     return g2.uri as g
-    """ % (office_godot_uri, _clean_string(name), identifying_uri, _clean_string(not_before), _clean_string(not_after), godot_uri)
+    """ % (office_godot_uri, _clean_string(name), identifying_uri_list, _clean_string(not_before), _clean_string(not_after), godot_uri)
     results = query_neo4j_db(query)
     if results:
         for record in results:
@@ -605,6 +605,7 @@ def get_office_data_by_official_id(official_godot_id):
     match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)--(yrs:YearReferenceSystem)
     return yrs
     """ % official_godot_id
+    print(query)
     results = query_neo4j_db(query)
     result_dict = {}
     for record in results:
@@ -635,7 +636,7 @@ def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikid
     return g
 
 
-def update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after):
+def update_eponymous_official_data(official_godot_id, name, identifying_uri_list, not_before, not_after):
     """
     updates data of official specified by godot_id
     :param official_godot_id:
@@ -648,9 +649,10 @@ def update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_u
     """
     query = """
     match (g:GODOT {uri:'https://godot.date/id/%s'})--(cp:CalendarPartial)
-    set cp.value = '%s', cp.wikidata_uri = '%s', cp.snap_uri = '%s', cp.not_before = '%s', cp.not_after = '%s'
+    set cp.value = '%s', cp.identifying_uri = %s, cp.not_before = '%s', cp.not_after = '%s'
     return cp
-    """ % (official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after)
+    """ % (official_godot_id, name, identifying_uri_list, not_before, not_after)
+    print(query)
     results = query_neo4j_db(query)
     result_dict = {}
     for record in results:

@@ -487,16 +487,21 @@ def eponymous_official_add(godot_id):
         office_godot_uri = "https://godot.date/id/"+godot_id
         identifying_uri = form.identifying_uri.data
         identifying_uri_list = []
+        has_snap_uri = False
         for uri in identifying_uri.split():
-            if uri.startswith("http://www.lgpn.ox.ac.uk"):
+            if "snapdrgn" in uri:
+                has_snap_uri = True
+        for uri in identifying_uri.split():
+            if uri.startswith("http://www.lgpn.ox.ac.uk") and not has_snap_uri:
                 # adding SNAP URI if LPGN URI is entered via SNAP SPARQL endpoint
                 snap_uri = get_snap_uri_for_lgpn(uri)
                 if snap_uri:
                     identifying_uri_list.append(snap_uri)
             identifying_uri_list.append(uri)
+        print("identifying_uri_list", identifying_uri_list)
         not_before = form.not_before.data
         not_after = form.not_after.data
-        official_godot_uri = get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri, not_before, not_after)
+        official_godot_uri = get_godot_uri_for_eponymous_official(office_godot_uri, name, identifying_uri_list, not_before, not_after)
         return render_template('eponymous_official_add_result.html', title="Add Eponymous Official Result",
                                data_text="Add Eponymous Official Result", name=name, identifying_uri=identifying_uri_list, not_before=not_before, not_after=not_after, official_godot_uri=str(official_godot_uri.split("/")[-1]), office_godot_uri=str(office_godot_uri.split("/")[-1]), office_data=office_data)
     return render_template('eponymous_official_add.html', title="Add Eponymous Official", data_text="Add Eponymous Official", form=form, godot_uri='https://godot.date/id/'+godot_id, office_data=office_data)
@@ -506,17 +511,44 @@ def eponymous_official_add(godot_id):
 def eponymous_official_edit(office_godot_id, official_godot_id):
     form = EponymOfficial()
     official_data_dict = get_official_data(official_godot_id)
+
+    identifying_uri_str = ""
+    # convert list of identifying_uris into string
+    for uri in official_data_dict['identifying_uri']:
+        identifying_uri_str += uri + " "
+    official_data_dict['identifying_uri'] = identifying_uri_str
     office_data = get_office_data_by_official_id(official_godot_id)
     if form.validate_on_submit():
         name = form.name.data
+        not_before = ""
+        not_after = ""
         office_godot_uri = "https://godot.date/id/"+office_godot_id
-        wikidata_uri = form.wikidata_uri.data
-        snap_uri = form.snap_uri.data
+        identifying_uri_list = []
+        identifying_uri_str = form.identifying_uri.data
+        for uri in identifying_uri_str.split():
+            identifying_uri_list.append(uri.strip())
+
+        print(identifying_uri_list)
+
+        has_snap_uri = False
+        for uri in identifying_uri_list:
+            if "snapdrgn" in uri:
+                has_snap_uri = True
+        identifying_uri_snap_list= []
+        for uri in identifying_uri_list:
+            if uri.startswith("http://www.lgpn.ox.ac.uk") and not has_snap_uri:
+                # adding SNAP URI if LPGN URI is entered via SNAP SPARQL endpoint
+                snap_uri = get_snap_uri_for_lgpn(uri)
+                if snap_uri:
+                    identifying_uri_snap_list.append(snap_uri)
+            identifying_uri_snap_list.append(uri)
+
+        print("identifying_uri_snap_list", identifying_uri_snap_list)
         not_before = form.not_before.data
         not_after = form.not_after.data
-        official_data = update_eponymous_official_data(official_godot_id, name, wikidata_uri, snap_uri, not_before, not_after)
+        official_data = update_eponymous_official_data(official_godot_id, name, identifying_uri_snap_list, not_before, not_after)
         return render_template('eponymous_official_add_result.html', title="Edit Eponymous Official Result",
-                               data_text="Edit Eponymous Office Result", name=official_data['value'], wikidata_uri=official_data['wikidata_uri'], snap_uri=official_data['snap_uri'], not_before=official_data['not_before'], not_after=official_data['not_after'], official_godot_uri=official_godot_id, office_godot_uri=office_godot_id)
+                               data_text="Edit Eponymous Office Result", name=official_data['value'], identifying_uri=identifying_uri_list, not_before=official_data['not_before'], not_after=official_data['not_after'], official_godot_uri=official_godot_id, office_godot_uri=office_godot_id, office_data=office_data, official_data=official_data_dict)
     return render_template('eponymous_official_edit.html', title="Edit Eponymous Official", data_text="Edit Eponymous Official", form=form, official_godot_uri='https://godot.date/id/'+official_godot_id, official_data=official_data_dict, office_data=office_data)
 
 
@@ -524,12 +556,14 @@ def eponymous_official_edit(office_godot_id, official_godot_id):
 def eponymous_official(office_godot_id, official_godot_id):
     form = EponymOfficial()
     official_data_dict = get_official_data(official_godot_id)
+    print(official_data_dict)
     office_data = get_office_data_by_official_id(official_godot_id)
     return render_template('eponymous_official_add_result.html', title="Eponymous Official Detail View",
                            data_text="Eponymous Official Detail View", name=official_data_dict['value'],
-                           wikidata_uri=official_data_dict['wikidata_uri'], snap_uri=official_data_dict['snap_uri'],
+                           identifying_uri=official_data_dict['identifying_uri'],
                            not_before=official_data_dict['not_before'], not_after=official_data_dict['not_after'],
                            official_godot_uri=official_godot_id, office_godot_uri=office_godot_id, office_data=office_data)
+
 
 @app.route('/workshop')
 def workshop():

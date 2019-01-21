@@ -135,13 +135,49 @@ def get_titulature_list_entries_for_emperor_last_level(yrs2, yrs3):
     return titulature_entries_list
 
 
+def get_actian_era_year_entries():
+    """
+    returns list of actian era years
+    :return: distinct list of years
+    """
+    query = """
+        match (yrs1:YearReferenceSystem {type:'Era'})--(yrs2:YearReferenceSystem {type:'Actian'})--(cp_year:CalendarPartial)-[*1..5]-(g:GODOT)
+        return distinct cp_year.value as year
+        order by toInteger(cp_year.value)
+        """
+    results = query_neo4j_db(query)
+    actian_era_entries_list = []
+    for res in results:
+        actian_era_entries_list.append(res['year'])
+    return actian_era_entries_list
+
+
+def get_actian_era_single_year_entries(year):
+    """
+    returns list of GODOT URIs for given year
+    :param year: int of year in Actian era
+    :return: list of godot uris
+    """
+    query = """
+    match (yrs1:YearReferenceSystem {type:'Era'})--(yrs2:YearReferenceSystem {type:'Actian'})--(cp_year:CalendarPartial {value:'%s'})-[*1..5]-(g:GODOT)
+    return g.uri as godot_uri
+    order by toInteger(cp_year.value)   
+    """ % year
+    results = query_neo4j_db(query)
+    actian_era_entries_list = []
+    for res in results:
+        date_info = _get_date_info_of_actian_era(res['godot_uri'])
+        actian_era_entries_list.append({'godot_uri':res['godot_uri'], 'date_info': date_info})
+    return actian_era_entries_list
+
+
 def get_actian_era_entries():
     """
     return list of dicts (keys: year, godot uri) of all Actian Era nodes
     :return: list of dicts (keys: year, godot uri)
     """
     query = """
-    match (yrs1:YearReferenceSystem {type:'Era'})--(yrs2:YearReferenceSystem {type:'Actian'})--(cp_year:CalendarPartial)--(g:GODOT)
+    match (yrs1:YearReferenceSystem {type:'Era'})--(yrs2:YearReferenceSystem {type:'Actian'})--(cp_year:CalendarPartial)-[*1..5]-(g:GODOT)
     return cp_year.value as year, g.uri as godot_uri
     order by toInteger(cp_year.value)
     """
@@ -1046,6 +1082,77 @@ def jd_to_date(jd):
         return str(year).zfill(4) + "-" + str(month).zfill(2) + "-" + str(int(day)).zfill(2)
 
 
+def get_date_string_for_godot_uri(godot_uri):
+    query = """
+    match (g:GODOT {uri:'%s'})--(a:Attestation) , (ct:CalendarType)<--(common_node),
+    p = allShortestPaths((g)<-[*..15]-(ct)) 
+    with p, common_node, a
+    match (t:Timeline), p2 = shortestPath((common_node)-[*..15]-(t))
+    return distinct(p) as p, p2 as p2, a.title as title
+    """ % godot_uri
+    results = query_neo4j_db(query)
+    date_string = ""
+    for record in results:
+        p_nodes = record['p'].nodes
+        date_partial_month_str = ""
+        date_partial_day_str = ""
+        for n in p_nodes:
+            label = list(n.labels)[0]
+            if label == "CalendarPartial":
+                if n['type'] == "day":
+                    date_partial_day_str += n['value']
+                elif n['type'] == "month":
+                    date_partial_month_str += n['value']
+        # get common date string (like year x of king y)
+        p2 = record['p2']
+        p2_nodes = p2.nodes
+        date_common_str = ""
+        for n in p2_nodes:
+            label = list(n.labels)[0]
+            if label == "CalendarPartial":
+                if n['type'] == "name":
+                    date_common_str += n['value']
+                elif n['type'] == "year":
+                    date_common_str += "year " + n['value'] + " of "
+        date_string += date_common_str+" "+date_partial_month_str+" "+date_partial_day_str+" = "
+    return date_string[:-3]
+
+
+
+def get_synchronisms():
+    query = """
+    match (g:GODOT {type:'synchron'})--(a:Attestation), (ct:CalendarType),
+    p = shortestPath((g)<-[*..15]-(ct)) 
+    return g.uri as godot_uri, ct.type as type, a as attestation
+    order by g
+    """
+    results = query_neo4j_db(query)
+    result_dict = {}
+    calendar_type_dict = {}
+    for record in results:
+        if record['godot_uri'] in calendar_type_dict:
+            calendar_type_dict[record['godot_uri']].update({"type":record['type']})
+        else:
+            calendar_type_dict[record['godot_uri']] = {"type":record['type']}
+        att_title = record['attestation']['title']
+        result_dict[record['godot_uri']] = {"attestation_title": att_title}
+
+    # remove all entries in list with length = 1
+    double_dict = {}
+    for entry in result_dict:
+        #print(len(result_dict[entry]))
+        if len(result_dict[entry]) >= 2:
+            double_dict[entry] = result_dict[entry]
+
+    # for all godot_uris in double_dict look for data to construct date string
+    for godot_uri in result_dict:
+        date_string = get_date_string_for_godot_uri(godot_uri)
+        result_dict[godot_uri].update({"date_string": date_string})
+
+
+    return result_dict
+
+
 def _clean_string(str):
     """
     cleans data entered by user, including escaping
@@ -1054,3 +1161,25 @@ def _clean_string(str):
     """
     str = str.replace("'", "\\'")
     return str
+
+
+def _get_date_info_of_actian_era(godot_uri):
+    """
+    return date information string of actian era year if it exists
+    :param godot_uri: string of GODOT URI
+    :return: string with date information like "Thot 27"
+    """
+    query = """
+    match path=((cp:CalendarType)-[*2..5]->(g:GODOT {uri:'%s'}))
+    return extract(n in nodes(path) | n.value) as str
+    """ % godot_uri
+    results = query_neo4j_db(query)
+    str_buffer = ""
+    for res in results:
+        date_info = res['str']
+        for value in date_info:
+            if value is None:
+                continue
+            str_buffer += value + " "
+    return str_buffer
+

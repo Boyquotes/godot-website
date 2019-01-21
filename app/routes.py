@@ -18,6 +18,12 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/browse/synchronisms')
+def browse_synchronsims():
+    synchronisms_list = get_synchronisms()
+    return render_template('browse_synchronisms.html', title='Browse Synchronisms', synchronisms_list=synchronisms_list)
+
+
 @app.route('/browse', defaults={'yrs': 'All', 'yrs2': 1, 'yrs3':'', 'yrs4':''})
 @app.route('/browse/<yrs>', defaults={'yrs2': 1, 'yrs3':'', 'yrs4':''})
 @app.route('/browse/<yrs>/<yrs2>', defaults={'yrs3':'', 'yrs4':''})
@@ -49,10 +55,20 @@ def browse(yrs, yrs2, yrs3, yrs4):
             return render_template('browse_emperors_detail.html', title='Browse Data', browse_data=emperors_list,
                                    list_of_yrs=list_of_yrs, yrs=yrs, yrs2=yrs2, regnal_years_list=regnal_years_list, period="Ptolemies")
     elif yrs == "Era - Actian":
-        browse_data = get_actian_era_entries()
-        total_hits = get_browse_data_number_of_results(yrs)
-        return render_template('browse_actian_era.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
+        if yrs2 == 1:
+            browse_data = get_actian_era_year_entries()
+            total_hits = get_browse_data_number_of_results(yrs)
+            return render_template('browse_actian_era.html', title='Browse Data', browse_data=browse_data, list_of_yrs=list_of_yrs,
                                yrs=yrs, page=yrs2, total_hits=total_hits)
+        else:
+            # show entries for given year only
+            browse_data = get_actian_era_single_year_entries(yrs2)
+            total_hits = get_browse_data_number_of_results(yrs)
+            return render_template('browse_actian_era_year.html', title='Browse Data', browse_data=browse_data,
+                                   list_of_yrs=list_of_yrs,
+                                   yrs=yrs, year=yrs2, total_hits=total_hits)
+
+
     elif yrs == "Roman Consulships":
         browse_data = get_consulate_entries(yrs, yrs2)
         total_hits = get_browse_data_number_of_results(yrs)

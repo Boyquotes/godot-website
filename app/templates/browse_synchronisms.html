@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block app_content %}
+    <h1>Browse Synchronisms</h1>
+
+    {%- for rec in synchronisms_list %}
+        <li style="margin-bottom:5px"><a href="/id/{{ rec.split('/')[-1] }}">{{ synchronisms_list[rec]['date_string'] }} ({{ synchronisms_list[rec]['attestation_title'] }})</a></li>
+    {%- endfor %}
+<p>&nbsp;</p>
+{% endblock %}

@@ -43,7 +43,7 @@
     <h4>Titulature Entries</h4>
     <p style="margin-bottom:2em; margin-left: 2em">
       {% for entry in emperor_titulature_list_entries_last_level %}
-        <span style="padding-right:10px"><a href="/id/{{ entry['godot_uri'].split("/")[-1] }}">{{yrs3}}: {{ entry['entry'] }}</a></span><br />
+        <span style="padding-right:10px"><a href="/id/{{ entry['godot_uri'].split('/')[-1] }}">{{yrs3}}: {{ entry['entry'] }}</a></span><br />
       {% endfor %}
     </p>
   {% endblock %}

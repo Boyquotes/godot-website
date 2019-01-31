@@ -1118,8 +1118,11 @@ def get_date_string_for_godot_uri(godot_uri):
     return date_string[:-3]
 
 
-
 def get_synchronisms():
+    """
+    returns dictionary of all synchronisms from different calendar systems
+    :return: dict
+    """
     query = """
     match (g:GODOT {type:'synchron'})--(a:Attestation), (ct:CalendarType),
     p = shortestPath((g)<-[*..15]-(ct)) 
@@ -1136,21 +1139,15 @@ def get_synchronisms():
             calendar_type_dict[record['godot_uri']] = {"type":record['type']}
         att_title = record['attestation']['title']
         result_dict[record['godot_uri']] = {"attestation_title": att_title}
-
-    # remove all entries in list with length = 1
-    double_dict = {}
-    for entry in result_dict:
-        #print(len(result_dict[entry]))
-        if len(result_dict[entry]) >= 2:
-            double_dict[entry] = result_dict[entry]
-
-    # for all godot_uris in double_dict look for data to construct date string
     for godot_uri in result_dict:
         date_string = get_date_string_for_godot_uri(godot_uri)
         result_dict[godot_uri].update({"date_string": date_string})
-
-
-    return result_dict
+    # return only synchronisms from two different calendar systems
+    result_return_dict = {}
+    for element in result_dict:
+        if "=" in result_dict[element]['date_string']:
+            result_return_dict[element] = result_dict[element]
+    return result_return_dict
 
 
 def _clean_string(str):

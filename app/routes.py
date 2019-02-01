@@ -400,6 +400,22 @@ def tools_api():
     return render_template('tools_api.html', title="Tools: API")
 
 
+@app.route('/api/v1/query', methods=['GET', 'POST'])
+def api_v1():
+    godot_uri = request.args.get('id')
+    resp_dict = {}
+    date_string = get_date_string_for_godot_uri(godot_uri)
+    attestations = get_attestations(godot_uri)
+    attestations_list = []
+    for att in attestations:
+        attestations_list.append({'title':att['title'], 'uri':att['uri'], 'last_update':str(att['last_update']), 'date_string':att['date_string'], 'username':att['username'],})
+    resp_dict['attestations'] = attestations_list
+    resp_dict['date_translation'] = date_string
+    resp_dict_json = jsonify(resp_dict)
+    resp_dict_json.headers.add('Access-Control-Allow-Origin', '*')
+    return resp_dict_json
+
+
 @app.route('/tools/identify/consulate', methods=['GET', 'POST'])
 def tools_search_consulate():
     form = SearchRomanConsulate()

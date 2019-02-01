@@ -7,6 +7,7 @@ from functools import reduce
 import math
 from itertools import combinations
 import re
+from flask import jsonify
 
 
 def get_all_roman_emperors():
@@ -1084,38 +1085,65 @@ def jd_to_date(jd):
 
 def get_date_string_for_godot_uri(godot_uri):
     query = """
-    match (g:GODOT {uri:'%s'})--(a:Attestation) , (ct:CalendarType)<--(common_node),
-    p = allShortestPaths((g)<-[*..15]-(ct)) 
-    with p, common_node, a
-    match (t:Timeline), p2 = shortestPath((common_node)-[*..15]-(t))
-    return distinct(p) as p, p2 as p2, a.title as title
+    match (g:GODOT {uri:'%s'}) return g.type as type
     """ % godot_uri
     results = query_neo4j_db(query)
-    date_string = ""
+    godot_type = ""
     for record in results:
-        p_nodes = record['p'].nodes
-        date_partial_month_str = ""
-        date_partial_day_str = ""
-        for n in p_nodes:
-            label = list(n.labels)[0]
-            if label == "CalendarPartial":
-                if n['type'] == "day":
-                    date_partial_day_str += n['value']
-                elif n['type'] == "month":
-                    date_partial_month_str += n['value']
-        # get common date string (like year x of king y)
-        p2 = record['p2']
-        p2_nodes = p2.nodes
-        date_common_str = ""
-        for n in p2_nodes:
-            label = list(n.labels)[0]
-            if label == "CalendarPartial":
-                if n['type'] == "name":
-                    date_common_str += n['value']
-                elif n['type'] == "year":
-                    date_common_str += "year " + n['value'] + " of "
-        date_string += date_common_str+" "+date_partial_month_str+" "+date_partial_day_str+" = "
-    return date_string[:-3]
+        godot_type = record['type']
+    if godot_type == "synchron":
+        query = """
+        match (g:GODOT {uri:'%s'})--(a:Attestation) , (ct:CalendarType)<--(common_node),
+        p = allShortestPaths((g)<-[*..15]-(ct)) 
+        with p, common_node, a
+        match (t:Timeline), p2 = shortestPath((common_node)-[*..15]-(t))
+        return distinct(p) as p, p2 as p2, a.title as title
+        """ % godot_uri
+        results = query_neo4j_db(query)
+        date_string = ""
+
+        for record in results:
+            p_nodes = record['p'].nodes
+            date_partial_month_str = ""
+            date_partial_day_str = ""
+            for n in p_nodes:
+                label = list(n.labels)[0]
+                if label == "CalendarPartial":
+                    if n['type'] == "day":
+                        date_partial_day_str += n['value']
+                    elif n['type'] == "month":
+                        date_partial_month_str += n['value']
+            # get common date string (like year x of king y)
+            p2 = record['p2']
+            p2_nodes = p2.nodes
+            date_common_str = ""
+            for n in p2_nodes:
+                label = list(n.labels)[0]
+                if label == "CalendarPartial":
+                    if n['type'] == "name":
+                        date_common_str += n['value']
+                    elif n['type'] == "year":
+                        date_common_str += "year " + n['value'] + " of "
+            date_string += date_common_str+" "+date_partial_month_str+" "+date_partial_day_str+" = "
+        return date_string[:-3]
+    else:
+        # simple date (no synchronism)
+        query = """
+        match (g:GODOT {uri:'%s'}), (t:Timeline)-->(yrs:YearReferenceSystem),
+        p = allShortestPaths((g)<-[*..15]-(yrs))
+        return p
+        """ % godot_uri
+        results = query_neo4j_db(query)
+        date_string = ""
+        for record in results:
+            p_nodes = record['p'].nodes
+            for n in p_nodes:
+                label = list(n.labels)[0]
+                if label == "YearReferenceSystem":
+                    date_string += n['type'] + " "
+                elif label == "CalendarPartial":
+                    date_string += n['type'] + " " + n['value'] + " "
+        return date_string.strip()
 
 
 def get_synchronisms():
@@ -1148,6 +1176,19 @@ def get_synchronisms():
         if "=" in result_dict[element]['date_string']:
             result_return_dict[element] = result_dict[element]
     return result_return_dict
+
+
+def get_godot_uri_information_as_json(godot_uri):
+    """
+    returns information for given gosdot uri as json for API
+    :param godsot_uri: string of godot uri
+    :return: json
+    date_string
+    attestations list (each item with date_string, uri, contributor, last update)
+
+    """
+    date_string = get_date_string_for_godot_uri(godot_uri)
+    return jsonify({"date_string": date_string})
 
 
 def _clean_string(str):

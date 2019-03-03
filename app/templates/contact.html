@@ -1,19 +1,30 @@
 {% extends "base.html" %}
 {% block app_content %}
-        <h1>Contact</h1>
-        <p>GODOT is a collaboration of these people and projects:
-        <ul>
-        <li><a href="http://www.trismegistos.org/">Trismegistos</a>: Prof. M. Depauw (KU Leuven)</li>
-        <li><a href="http://www.ircyr.kcl.ac.uk/">Inscriptions of Roman Cyrenaica</a>: Prof. C. Roueche (King's College London)</li>
-        <li><a href="https://edh-www.adw.uni-heidelberg.de/">Epigraphic Database Heidelberg</a>: Dr. Frank Grieshaber (Heidelberg Academy of Sciences and Humanities; Heidelberg University); Prof. C. Witschel (Heidelberg University)</li>
-        </ul>
-        </p>
-        <p>Contact mail address: <a href="mailto:frank.grieshaber@zaw.uni-heidelberg.de">frank.grieshaber@zaw.uni-heidelberg.de</a></p>
-        <p>GODOT is supported by the <a href="https://mellon.org/">Andrew W. Mellon Foundation</a>.</p>
-        <h2 style="margin-top:1.5em">GODOT Graph Statistics</h2>
-        <p>Number of GODOT URIs: {{ number_of_godot_uris }}</p>
-        <p>Number of nodes: {{ number_of_nodes }}</p>
-        <p>Number of relationships: {{ number_of_relations }}</p>
-        <p>Number of attestations: {{ number_of_attestations }}</p>
-        <p>&nbsp;</p>
+    <h1>Contact</h1>
+    <p>GODOT is a collaboration of these people and projects:
+    <ul>
+    <li><a href="http://www.trismegistos.org/">Trismegistos</a>: Prof. M. Depauw (KU Leuven)</li>
+    <li><a href="http://www.ircyr.kcl.ac.uk/">Inscriptions of Roman Cyrenaica</a>: Prof. C. Roueche (King's College London)</li>
+    <li><a href="https://edh-www.adw.uni-heidelberg.de/">Epigraphic Database Heidelberg</a>: Dr. Frank Grieshaber (Heidelberg Academy of Sciences and Humanities; Heidelberg University); Prof. C. Witschel (Heidelberg University)</li>
+    </ul>
+    </p>
+    <p>Contact mail address: <a href="mailto:frank.grieshaber@zaw.uni-heidelberg.de">frank.grieshaber@zaw.uni-heidelberg.de</a></p>
+    <h2 style="margin-top:1.5em">Data License, Credits and Acknowledgements</h2>
+    <p>Thie website is build on and around open data from the following projects:
+    <ul>
+    <li><a href="http://papyri.info">papyri.info</a>: Creative Commons Attribution 3.0 License (via <a href="https://trismegistos.org">Trismegistos</a>)</li>
+    <li><a href="https://ircyr.kcl.ac.uk/">Inscriptions of Roman Cyrenaica</a>: Creative Commons Licence Attribution UK 2.0</li>
+    <li><a href="https://edh-www.adw.uni-heidelberg.de">Epigraphic Database Heidelberg</a>: Creative Commons Attribution-ShareAlike 4.0</li>
+    <li><a href="http://numismatics.org/ocre/">Online Coins of the Roman Empire (OCRE)</a>: Open Database License</li>
+    </ul>
+    </p>
+    <p>The GODOT logo has been created by Dr. B. Gräf and Dr. F. Grieshaber under the Creative Commons Attribution 4.0 License.</p>
+    <p>The image in the header of the GODOT website shows a fragement of the Fasti Praenestini under the Creative Commons Attribution 2.5 Generic license (image taken from <a href="https://commons.wikimedia.org/wiki/File:Fasti_Praenestini_Massimo_n3.jpg">Wikimedia Commons</a> with some croppings).</p>
+    <p>GODOT is supported by the <a href="https://mellon.org/">Andrew W. Mellon Foundation</a>.</p>
+    <h2 style="margin-top:1.5em">GODOT Graph Statistics</h2>
+    <p>Number of GODOT URIs: {{ number_of_godot_uris }}</p>
+    <p>Number of nodes: {{ number_of_nodes }}</p>
+    <p>Number of relationships: {{ number_of_relations }}</p>
+    <p>Number of attestations: {{ number_of_attestations }}</p>
+    <p>&nbsp;</p>
 {% endblock %}

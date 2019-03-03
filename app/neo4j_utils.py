@@ -1167,6 +1167,7 @@ def get_synchronisms():
             calendar_type_dict[record['godot_uri']] = {"type":record['type']}
         att_title = record['attestation']['title']
         result_dict[record['godot_uri']] = {"attestation_title": att_title}
+    print(calendar_type_dict)
     for godot_uri in result_dict:
         date_string = get_date_string_for_godot_uri(godot_uri)
         result_dict[godot_uri].update({"date_string": date_string})

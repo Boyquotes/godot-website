@@ -12,12 +12,12 @@
     {% endwith %}
 
     <h1>GODOT Detail View</h1>
-    <h3 style="margin-bottom: 2em;"><div id="godot_uri">https://godot.date/id/{{ id }}</div></h3>
-        <div class="g_tooltip">
-            <button class="btn btn-godot-reset btn-xs" style="margin-left:0; width:200px; margin-top:-3em;" onclick="copy2clipboard()" id="copy_button">
-                Copy URI to clipboard
-            </button>
-        </div>
+    <h3 style="margin-bottom: 2em;">
+        <span id="godot_uri" style="height:28px">https://godot.date/id/{{ id }} &nbsp;
+            <span class="g_tooltip"><img src="/static/clippy.png" style="height:28px;width:25px;cursor:pointer;vertical-align:middle" onclick="copy2clipboard()" alt="Copy URI to clipboard" title="Copy URI to clipboard"/></span> &nbsp; <span id="copy_button" style="color:#aa2222; font-size:0.7em"></span>
+        </span>
+    </h3>
+
     <h3>Calendar Date Information</h3>
     <ul>
     {%- for path in paths %}
@@ -121,7 +121,7 @@
             document.body.removeChild(textarea)
             document.getElementById("copy_button").innerText = "Copied!"
             setTimeout(function() {
-                document.getElementById("copy_button").innerText = "Copy URI to clipboard"
+                document.getElementById("copy_button").innerText = ""
             }, 1000);
         }
     </script>

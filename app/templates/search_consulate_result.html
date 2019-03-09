@@ -12,11 +12,7 @@
     {% endwith %}
         <h1>Identify Roman Consulate: Result</h1>
         <p>{{ consulate }}<br /> <a href="{{godot_uri}}" id="godot_uri">{{ godot_uri }}</a>
-        <span class="g_tooltip">
-            <button class="btn btn-godot-reset btn-xs" style="margin-left:10px; width:200px; " onclick="copy2clipboard()" id="copy_button">
-                Copy URI to clipboard
-            </button>
-        </span>
+            <span class="g_tooltip"><img src="/static/clippy.png" style="height:28px;width:25px;cursor:pointer;vertical-align:middle;margin-left:1em;" onclick="copy2clipboard()" alt="Copy URI to clipboard" title="Copy URI to clipboard"/></span> &nbsp; <span id="copy_button" style="color:#aa2222; font-size:0.7em"></span>
         </p>
 
         <p><b>Properties</b>: </p>
@@ -56,7 +52,7 @@
             document.body.removeChild(textarea)
             document.getElementById("copy_button").innerText = "Copied!"
             setTimeout(function() {
-                document.getElementById("copy_button").innerText = "Copy URI to clipboard"
+                document.getElementById("copy_button").innerText = ""
             }, 1000);
         }
     </script>

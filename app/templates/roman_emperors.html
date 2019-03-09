@@ -25,11 +25,11 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
-        <p>
+        <!--<p>
             {{ form.victory_titles.label }}<br>
             {{ form.victory_titles(size=10, style='width:30em;') }}
-        </p>
-        <p>{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
+        </p>-->
+        <p style="margin-top:2em;">{{ form.submit(class='btn btn-godot btn-sm', type="submit") }} {{ form.reset(class='btn btn-godot-reset btn-sm', type="reset") }}</p>
         <p>&nbsp;</p>
     </form>
 {% endblock %}

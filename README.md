@@ -10,4 +10,6 @@ This repository holds the code for the website which is based on the following f
 - Neo4j Graph Database
 - Apache Solr
 
-All code and data can be reused under the CC BY-SA 4.0 licence.
+[![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2615393.svg)](https://doi.org/10.5281/zenodo.2615393)

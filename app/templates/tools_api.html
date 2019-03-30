@@ -3,5 +3,121 @@
 {% block app_content %}
         <h1>GODOT &ndash; Tools</h1>
         <h3>Application programming interface (API)</h3>
-        <p>The GODOT API allows for accessing data in the GODOT graph.</p>
+        <p>The GODOT API allows for accessing data in the GODOT graph. the generic URI for querying is as follows:</p>
+        <p><pre>https://godot.date/api/v1/query?id={GODOT ID}</pre></p>
+        <p>The JSON response consists mainly of an English translation of the date and a list of attestations:</p>
+        <p><pre>{<br />  "date_translation": "...",<br />  "attestations": [...]<br />}</pre></p>
+        <p>Example: <a href="https://godot.date/api/v1/query?id=https://godot.date/id/WbFCQ7e2jgvCawNkp22ixQ">https://godot.date/api/v1/query?id=https://godot.date/id/WbFCQ7e2jgvCawNkp22ixQ</a></p>
+        <pre>{
+	"attestations": [{
+		"date_string": "Imp(eratori) Vespasiano / Caesari Aug(usto) / pontif(ici) maximo / trib(unicia) potest(ate) X / imp(eratori) XX co(n)s(uli) VIIII p(atri) p(atriae) / C(aius) Domitius / Florus / t(estamento) f(ieri) i(ussit)",
+		"last_update": "2018-12-28",
+		"title": "HD067231",
+		"uri": "https://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD067231",
+		"username": "grieshaber"
+	}, {
+		"date_string": "Imp(erator) Caesar Vespas/ianus Aug(ustus) pontif(ex) / max(imus) trib(unicia) pot(estate) X imp(erator) / XX co(n)s(ul) IX p(ater) p(atriae) censor / viam Aug(ustam) ab Iano / ad Oceanum refe/cit po{a}ntes fecit / veteres restituit",
+		"last_update": "2018-12-28",
+		"title": "HD032156",
+		"uri": "https://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD032156",
+		"username": "grieshaber"
+	}, {
+		"date_string": "[Imp(eratori) Caesari] / [Vespasiano] / [Augusto] / [pont(ifici) max(imo) trib(unicia)] / potest[ate X] / imp(eratori) XX c[o(n)s(uli) VIIII] / p(atri) p(atriae) cen[sori]",
+		"last_update": "2018-12-28",
+		"title": "HD025436",
+		"uri": "https://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD025436",
+		"username": "grieshaber"
+	}, {
+		"date_string": "[Imp(erator) Caes(ar) Ve]spasianus / [Aug(ustus) p]ontif(ex) / [maximus t]ribunic(ia) / [potestat(e) X] imp(erator) XX / [censor c]o(n)s(ul) VIIII / [pater pa]triae",
+		"last_update": "2018-12-28",
+		"title": "HD021642",
+		"uri": "https://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD021642",
+		"username": "grieshaber"
+	}, {
+		"date_string": "Imp(eratori) Caes(ari) Ve[sp(asiano) Aug(usto) pont(ifici)] / max(imo) trib(unicia) pot(estate) [X imp(eratori) XX p(atri) p(atriae) co(n)s(uli) IX] / Imp(eratori) Vesp(asiano) Caes(ari) Au[g(usti) f(ilio) pont(ifici) trib(unicia) pot(estate)] / VIII imp(eratori) XIIII co(n)[s(uli) VII?] / [[[Imp(eratori)? Domitiano? Caes(ari)? Aug(usti)? f(ilio)? ---]]] / [[[------]]] / G(aio) Calpetano Ra[ntio Quirinali] / Val(erio) Festo leg(ato) A[ug(usti) pr(o) pr(aetore)] / D(ecimo) Cornelio Ma[eciano leg(ato) Aug(usti)] / L(ucio) Arruntio Max[imo proc(uratori) Aug(usti)] / leg(ionis) VII gem(inae) [fel(icis)] / civitates [X] / Aquiflavien[ses Aobrigenses] / Bibali Coel[erni Equaesi] / Interamic[i Limici Aebisoci?]/ Quarque[r]ni Ta[magani]",
+		"last_update": "2018-12-28",
+		"title": "HD000478",
+		"uri": "https://edh-www.adw.uni-heidelberg.de/edh/inschrift/HD000478",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1070",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1070",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1069",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1069",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1068",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1068",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1067",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1067",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1066",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1066",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1065",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1065",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1064",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1064",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1063",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1063",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1062",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1062",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1061",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1061",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1060",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1060",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1059",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1059",
+		"username": "grieshaber"
+	}, {
+		"date_string": "IMP CAESAR VESPASIANVS AVG // TR POT X COS VIIII",
+		"last_update": "2018-12-28",
+		"title": "RIC II, Part 1 (second edition) Vespasian 1058",
+		"uri": "http://numismatics.org/ocre/id/ric.2_1(2).ves.1058",
+		"username": "grieshaber"
+	}],
+	"date_translation": "number 10 Titulature Part Tribunicia Potestas name Vespasian Titulature of Roman Emperors"
+}</pre>
 {% endblock %}

@@ -8,7 +8,7 @@ $(function() {
               }
               q = q.slice(0, -12)
               $.ajax({
-              url: "http://localhost:8983/solr/roman_consuls/select",
+              url: "http://godot.date:8983/solr/roman_consuls/select",
               data: {
                   q: "label:"+q,
                   fl: "label,godot_uri",

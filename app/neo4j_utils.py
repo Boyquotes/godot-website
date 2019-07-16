@@ -516,6 +516,7 @@ def get_eponyms():
     match (:YearReferenceSystem {type:'Eponymous officials'})-->(yrs:YearReferenceSystem)--(g:GODOT) 
     where not yrs.pleiades_uri = ""
     return yrs, g.uri as g
+    order by yrs.type
     """
     results = query_neo4j_db(query)
     list_of_eponyms = []

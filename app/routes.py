@@ -485,7 +485,7 @@ def eponyms_detailview_edit(godot_id):
         godot_uri = form.godot_uri.data
         place_label = form.place_label.data
         type = form.type.data
-        godot_uri = update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description)
+        godot_uri = update_godot_uri_for_eponymous_office(godot_uri,type, place_label, pleiades_uri, wikidata_uri, description)
         return render_template('eponymous_office_add_result.html', title="Edit Eponymous Office Result",
                                data_text="Edit Eponymous Office Result", description=description,
                                wikidata_uri=wikidata_uri, pleiades_uri=pleiades_uri, place_label=place_label, type=type,

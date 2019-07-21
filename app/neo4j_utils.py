@@ -652,9 +652,10 @@ def get_office_data_by_official_id(official_godot_id):
     return result_dict
 
 
-def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikidata_uri, description):
+def update_godot_uri_for_eponymous_office(godot_uri, type, place_label, pleiades_uri, wikidata_uri, description):
     """
     updates data for eponymous office specified by combination of type/place_label/pleiades_uri
+    :godot_uri:
     :param type:
     :param place_label:
     :param pleiades_uri:
@@ -663,10 +664,10 @@ def update_godot_uri_for_eponymous_office(type, place_label, pleiades_uri, wikid
     :return: godot URI of office
     """
     query = """
-     match (yrs:YearReferenceSystem {type:'%s', place_label:'%s', pleiades_uri:'%s'})-[:hasGodotUri]->(g:GODOT)
-     set yrs.wikidata_uri = '%s', yrs.description = '%s'
+     match (yrs:YearReferenceSystem)-[:hasGodotUri]->(g:GODOT {uri:'%s'})
+     set yrs.type = '%s', yrs.place_label= '%s', yrs.pleiades_uri= '%s', yrs.wikidata_uri = '%s', yrs.description = '%s' 
      return g.uri as g
-     """ % (type, place_label, pleiades_uri, wikidata_uri, _clean_string(description))
+     """ % (godot_uri, type, place_label, pleiades_uri, wikidata_uri, _clean_string(description))
     results = query_neo4j_db(query)
     if results:
         for record in results:

@@ -19,11 +19,33 @@
                                   {%- if response['dateGregorian'].startswith("-") %} {{ response['dateGregorian'][1:] }} BC {%- else %} {{ response['dateGregorian']}} {%- endif %} (Gregorian)</p>
     {%- else %}
         <p style="font-size:18px"><b>Date Range Start</b>: {{ response['dateRangeStart']['egyptianDateString'] }}</p>
-        <p style="font-size:18px">{%- if response['dateRangeStart']['dateJulian'].startswith("-") %}{{ response['dateRangeStart']['dateJulian'][1:] }} BC {%- else %} {{ response['dateRangeStart']['dateJulian']}} {%- endif %} (Julian)<br />
-                                  {%- if response['dateRangeStart']['dateGregorian'].startswith("-") %}{{ response['dateRangeEnd']['dateGregorian'][1:] }} BC {%- else %} response['dateRangeEnd']['dateGregorian'] {% endif %} (Gregorian)</p>
+        <p style="font-size:18px">
+            {%- if response['dateRangeStart']['dateJulian'].startswith("-") %}
+                {{ response['dateRangeStart']['dateJulian'][1:] }} BC
+            {%- else %}
+                {{ response['dateRangeStart']['dateJulian']}}
+            {%- endif %} (Julian)<br />
+
+            {%- if response['dateRangeStart']['dateGregorian'].startswith("-") %}
+                {{ response['dateRangeEnd']['dateGregorian'][1:] }} BC
+            {%- else %}
+                {{ response['dateRangeEnd']['dateGregorian'] }}
+            {% endif %} (Gregorian)
+        </p>
+
         <p style="font-size:18px"><b>Date Range End</b>: {{ response['dateRangeEnd']['egyptianDateString'] }}</p>
-        <p style="font-size:18px">{%- if response['dateRangeEnd']['dateJulian'].startswith("-") %}{{ response['dateRangeEnd']['dateJulian'][1:] }} BC {%- else %} {{ response['dateRangeStart']['dateJulian']}} {%- endif %} (Julian)<br />
-                                  {%- if response['dateRangeEnd']['dateGregorian'].startswith("-") %}{{ response['dateRangeEnd']['dateGregorian'][1:] }} BC {%- else %} response['dateRangeEnd']['dateGregorian'] {% endif %} (Gregorian)</p>
+        <p style="font-size:18px">
+            {%- if response['dateRangeEnd']['dateJulian'].startswith("-") %}
+                {{ response['dateRangeEnd']['dateJulian'][1:] }} BC
+            {%- else %}
+                {{ response['dateRangeStart']['dateJulian']}}
+            {%- endif %} (Julian)<br />
+            {%- if response['dateRangeEnd']['dateGregorian'].startswith("-") %}
+                {{ response['dateRangeEnd']['dateGregorian'][1:] }} BC
+            {%- else %}
+                {{ response['dateRangeEnd']['dateGregorian']}}
+            {% endif %} (Gregorian)
+        </p>
     {%- endif %}
 
     <p style="margin-top:2em"><a href="/convert/egyptian/roman_emperors">Another date conversion...</a></p>

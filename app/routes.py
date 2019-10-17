@@ -448,14 +448,20 @@ def reconcile():
         if query.startswith("{"):
             query = json.loads(query)['query']
         results = search(query)
-        return _jsonpify({"result": results})
+        resp_dict_json = _jsonpify({"result": results})
+        resp_dict_json.headers.add('Access-Control-Allow-Origin', '*')
+        return resp_dict_json#_jsonpify({"result": results})
     if queries:
         queries = json.loads(queries)
         results = {}
         for (key, query) in queries.items():
             results[key] = {"result": app.search(query['query'])}
-        return _jsonpify(results)
-    return _jsonpify(get_openrefine_metadata())
+        resp_dict_json = _jsonpify({"result": results})
+        resp_dict_json.headers.add('Access-Control-Allow-Origin', '*')
+        return resp_dict_json
+    resp_dict_json = _jsonpify(get_openrefine_metadata())
+    resp_dict_json.headers.add('Access-Control-Allow-Origin', '*')
+    return resp_dict_json
 
 
 @app.route('/eponymous_office/add', methods=['GET', 'POST'])

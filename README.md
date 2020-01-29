@@ -10,6 +10,8 @@ This repository holds the code for the website which is based on the following f
 - Neo4j Graph Database
 - Apache Solr
 
+Creating this application has been supported by the [Andrew W. Mellon Foundation](https://mellon.org/) (July - December 2018).
+
 [![License: CC BY-SA 4.0](https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2615393.svg)](https://doi.org/10.5281/zenodo.2615393)

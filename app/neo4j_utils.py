@@ -369,6 +369,10 @@ def get_attestations(godot_uri):
             tmp_dict.update({'node_id': record['b']})
             for (k, v) in record["a"].items():
                 tmp_dict[k] = v
+                if k == "uri" and v.startswith('ircyr:'):
+                    tmp_arr = v.split(':')
+                    if len(tmp_arr) == 2:
+                        tmp_dict[k] = "https://ircyr2020.inslib.kcl.ac.uk/en/inscriptions/" + tmp_arr[1] + ".html"
             att.append(tmp_dict)
     return att
 
